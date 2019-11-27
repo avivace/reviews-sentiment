@@ -27,14 +27,14 @@ cnt_positve = Counter()
 
 for row in positive_reviews:
     cnt_positve.update(row.split(" "))
-print("Vocabulary size for positve reviews:", len(cnt_positve.keys()))
+print("Vocabulary size for positive reviews:", len(cnt_positve.keys()))
 
 
 cnt_negative = Counter()
 
 for row in negative_reviews:
     cnt_negative.update(row.split(" "))
-print("Vocabulary size for positve reviews:", len(cnt_negative.keys()))
+print("Vocabulary size for negative reviews:", len(cnt_negative.keys()))
 
 cnt_total = Counter()
 for row in reviews:
