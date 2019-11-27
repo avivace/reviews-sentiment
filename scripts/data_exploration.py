@@ -8,7 +8,9 @@ import seaborn as sns
 color = sns.color_palette()
 sns.set_style("dark")
 
-pathfile = r'C:\Users\luca\Documents\GitHub\reviews-sentiment\datasets'
+with open('DatasetsPath.txt', 'r') as myfile:
+    pathfile = myfile.read()
+#pathfile = r'C:\Users\Matteo\University\Magistrale\Data Analytics\Progetto\reviews-sentiment\datasets'
 
 df = pd.read_csv(pathfile + '\Gourmet_food.csv', index_col=0)
 

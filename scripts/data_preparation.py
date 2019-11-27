@@ -2,7 +2,10 @@
 
 import pandas as pd
 
-pathfile = r'C:\Users\luca\Documents\GitHub\reviews-sentiment\datasets'
+with open('DatasetsPath.txt', 'r') as myfile:
+    pathfile = myfile.read()
+
+#pathfile = r'C:\Users\Matteo\University\Magistrale\Data Analytics\Progetto\reviews-sentiment\datasets'
 df = pd.read_json(pathfile + '\Grocery_and_Gourmet_Food_5.json', lines=True)
 
 

@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 from collections import Counter
 
 
-pathfile = r'C:\Users\luca\Documents\GitHub\reviews-sentiment\datasets'
+with open('DatasetsPath.txt', 'r') as myfile:
+    pathfile = myfile.read()
 
 df = pd.read_csv(pathfile + '\Gourmet_food.csv', index_col=0)
 
