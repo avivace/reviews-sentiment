@@ -2,20 +2,33 @@
 
 import pandas as pd 
 import numpy as np
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
 import seaborn as sns
 color = sns.color_palette()
 sns.set_style("dark")
 
+from data_utils import *
+import os
+
+#%%
+'''
 with open('DatasetsPath.txt', 'r') as myfile:
     pathfile = myfile.read()
 #pathfile = r'C:\Users\Matteo\University\Magistrale\Data Analytics\Progetto\reviews-sentiment\datasets'
 
 df = pd.read_csv(pathfile + '\Gourmet_food.csv', index_col=0)
+'''
+#%%
+# You must be in \reviews-sentiment folder
+os.chdir("..")
 
 #%%
-print("exploratory_data_analysis")
+# Load dataset
+path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
+df = load_dataset(path)
+#%% 
+print("Exploratory_data_analysis")
 print("Number of reviews:", len(df))
 
 # Score Distribution
@@ -28,21 +41,20 @@ print("Average Score: ", np.mean(df.overall))
 print("Median Score: ", np.median(df.overall))
 #%%
 
-def most_reviewed_products(n_products):
-    reviews_per_product = df['asin'].value_counts()
-    most_reviews = reviews_per_product.nlargest(n_products)
-    most_reviews = most_reviews.reset_index()
-    most_reviews = most_reviews.drop('asin', axis=1)
-    
-    definitive = df.merge(most_reviews, left_on='asin', right_on='index')
-    definitive = definitive.drop('index', axis=1)
-    
-    return definitive
-    
-top_products = most_reviewed_products(20)
+df = vote_to_opinion(df)
+# Score Distribution
+ax = plt.axes()
+sns.countplot(df.opinion, ax=ax)
+ax.set_title('Score Distribution')
+plt.show()
 
+print("Proportion of positive review:", len(df[df.opinion == "positive"]) / len(df))
+print("Proportion of neutral review:", len(df[df.opinion == "neutral"]) / len(df))
+print("Proportion of negative review:", len(df[df.opinion == "negative"]) / len(df))
 #%% Stacked barplot (x-axis asin code, y-axis opinion)
 ### TODO: barre con difetto da fixare
+
+top_products = most_reviewed_products(df, 20)
 r = list(top_products['asin'].unique())
 positive = list(top_products.loc[top_products['opinion'] == 'positive', 'asin'].value_counts())
 neutral = list(top_products.loc[top_products['opinion'] == 'neutral', 'asin'].value_counts())
@@ -66,35 +78,16 @@ plt.show()
 
 #%% TODO 
 # Correlation between votes and opinion with a boxplot.
-# Maybe a better representation can be considered
+# Maybe a better representation than boxplot can be considered
+# This part of code DOESN'T work
 
-def significative_reviews(n_votes):
-    return df[df['vote'] >= n_votes]
-
-df_zero = significative_reviews(5)
-# Use a color palette
-plt.boxplot(x=df_zero['opinion'], y=pd.to_numeric(df_zero['vote'], errors='coerce'), palette="Blues")
+df_significative_reviews = significative_reviews(df, 5)
+plt.boxplot(x=df_significative_reviews['opinion'], 
+            y=pd.to_numeric(df_significative_reviews['vote'],
+            errors='coerce'), 
+            palette="Blues")
 plt.show()
 
-#%%
-# library & dataset
-import seaborn as sns
-df_i = sns.load_dataset('iris')
- 
-# Use a color palette
-sns.boxplot(y=df_i["sepal_length"], palette="Blues")
-#sns.plt.show()
-
-#%%
-
-ax = plt.axes()
-sns.countplot(df.opinion, ax=ax)
-ax.set_title('Sentiment Positive vs Negative Distribution')
-plt.show()
-
-print("Proportion of positive review:", len(df[df.opinion == "positive"]) / len(df))
-print("Proportion of neutral review:", len(df[df.opinion == "neutral"]) / len(df))
-print("Proportion of negative review:", len(df[df.opinion == "negative"]) / len(df))
 
 
 
