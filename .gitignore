@@ -1,1 +1,3 @@
 scripts/DatasetsPath.txt
+datasets/*
+!datasets/pull_datasets.sh
