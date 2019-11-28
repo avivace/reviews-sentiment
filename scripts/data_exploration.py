@@ -12,7 +12,7 @@ from data_utils import *
 import os
 
 # You must be in \reviews-sentiment folder
-#os.chdir("..")
+os.chdir("..")
 
 # Load dataset
 path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
@@ -44,7 +44,6 @@ print("Proportion of positive review:", len(df[df.opinion == "positive"]) / len(
 print("Proportion of neutral review:", len(df[df.opinion == "neutral"]) / len(df))
 print("Proportion of negative review:", len(df[df.opinion == "negative"]) / len(df))
 
-#%%
 #Stacked barplot (x-axis asin code, y-axis opinion)
 
 top_products = most_reviewed_products(df, 20)
@@ -71,23 +70,34 @@ plt.xticks(r, names, rotation=90)
 plt.xlabel('code product')
 plt.show()
 
-#%%
-
 def most_active_reviewers(df, n_reviewers):
     n_reviews = df['reviewerID'].value_counts()
     most_reviews = n_reviews.nlargest(n_reviewers)
     most_reviews = most_reviews.reset_index()
     most_reviews = most_reviews.drop('reviewerID', axis=1)
+    print("CCC \n", most_reviews)
     
     definitive = df.merge(most_reviews, left_on='reviewerID', right_on='index')
     definitive = definitive.drop('index', axis=1)
     return definitive
     
 top_reviewers = most_active_reviewers(df, 50)
+print("DDD \n",top_reviewers)
 top_reviewers = top_reviewers.groupby('reviewerID').agg({'overall':'mean',
                                                          'vote':'mean',
-                                                         'asin':'count'}).reset_index()
-#%%
+                                                         'asin':'count'}).sort_values(['asin'], ascending=[False]).reset_index()
+print("EEE \n",top_reviewers)
+
+r = list(top_reviewers['reviewerID'].unique())
+bar_width = 0.85
+names = tuple(r)
+
+plt.bar(r, top_reviewers['overall'], color='#b5ffb9', edgecolor='white', width=bar_width)
+plt.bar(r, top_reviewers['asin'], bottom=top_reviewers['overall'], color='#f9bc86', edgecolor='white', width=bar_width)
+plt.xticks(r, names, rotation=90)
+plt.xlabel('Reviewer ID')
+plt.show()
+
 
 '''# Correlation between votes and opinion with a boxplot.
 # Maybe a better representation than boxplot can be considered
