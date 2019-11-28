@@ -92,8 +92,8 @@ r = list(top_reviewers['reviewerID'].unique())
 bar_width = 0.85
 names = tuple(r)
 
+plt.bar(r, top_reviewers['asin'], color='#f9bc86', edgecolor='white', width=bar_width)
 plt.bar(r, top_reviewers['overall'], color='#b5ffb9', edgecolor='white', width=bar_width)
-plt.bar(r, top_reviewers['asin'], bottom=top_reviewers['overall'], color='#f9bc86', edgecolor='white', width=bar_width)
 plt.xticks(r, names, rotation=90)
 plt.xlabel('Reviewer ID')
 plt.show()
