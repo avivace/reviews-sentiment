@@ -46,7 +46,7 @@ print("Proportion of negative review:", len(df[df.opinion == "negative"]) / len(
 
 #%%
 #Stacked barplot (x-axis asin code, y-axis opinion)
-### TODO: qualcosa è sbagliato qui
+
 top_products = most_reviewed_products(df, 20)
 r = list(top_products['asin'].unique())
 positive = list(top_products.loc[top_products['opinion'] == 'positive', 'asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
@@ -67,9 +67,26 @@ names = tuple(r)
 plt.bar(r, positive_percentage, color='#b5ffb9', edgecolor='white', width=bar_width)
 plt.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edgecolor='white', width=bar_width)
 plt.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width)
-plt.xticks(r, names)
-plt.xlabel("group")
+plt.xticks(r, names, rotation=90)
+plt.xlabel('code product')
 plt.show()
+
+#%%
+
+def most_active_reviewers(df, n_reviewers):
+    n_reviews = df['reviewerID'].value_counts()
+    most_reviews = n_reviews.nlargest(n_reviewers)
+    most_reviews = most_reviews.reset_index()
+    most_reviews = most_reviews.drop('reviewerID', axis=1)
+    
+    definitive = df.merge(most_reviews, left_on='reviewerID', right_on='index')
+    definitive = definitive.drop('index', axis=1)
+    return definitive
+    
+top_reviewers = most_active_reviewers(df, 50)
+top_reviewers = top_reviewers.groupby('reviewerID').agg({'overall':'mean',
+                                                         'vote':'mean',
+                                                         'asin':'count'}).reset_index()
 #%%
 
 '''# Correlation between votes and opinion with a boxplot.
