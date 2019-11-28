@@ -12,7 +12,7 @@ from data_utils import *
 import os
 
 # You must be in \reviews-sentiment folder
-os.chdir("..")
+#os.chdir("..")
 
 # Load dataset
 path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
@@ -44,19 +44,19 @@ print("Proportion of positive review:", len(df[df.opinion == "positive"]) / len(
 print("Proportion of neutral review:", len(df[df.opinion == "neutral"]) / len(df))
 print("Proportion of negative review:", len(df[df.opinion == "negative"]) / len(df))
 
-
-'''#Stacked barplot (x-axis asin code, y-axis opinion)
+#%%
+#Stacked barplot (x-axis asin code, y-axis opinion)
 ### TODO: qualcosa è sbagliato qui
 top_products = most_reviewed_products(df, 20)
 r = list(top_products['asin'].unique())
-positive = list(top_products.loc[top_products['opinion'] == 'positive', 'asin'].value_counts())
-neutral = list(top_products.loc[top_products['opinion'] == 'neutral', 'asin'].value_counts())
-negative = list(top_products.loc[top_products['opinion'] == 'negative', 'asin'].value_counts())
+positive = list(top_products.loc[top_products['opinion'] == 'positive', 'asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
+neutral = list(top_products.loc[top_products['opinion'] == 'neutral', 'asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
+negative = list(top_products.loc[top_products['opinion'] == 'negative', 'asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
 raw_data = {'positive': positive, 'neutral': neutral, 'negative': negative}
 
 print("Opinions ",raw_data)
 
-totals = list(top_products['asin'].value_counts())
+totals = list(top_products['asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
 positive_percentage = [i / j * 100 for i, j in zip(positive, totals)]
 neutral_percentage = [i / j * 100 for i, j in zip(neutral, totals)]
 negative_percentage = [i / j * 100 for i, j in zip(negative, totals)]
@@ -69,7 +69,8 @@ plt.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edge
 plt.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width)
 plt.xticks(r, names)
 plt.xlabel("group")
-plt.show()'''
+plt.show()
+#%%
 
 '''# Correlation between votes and opinion with a boxplot.
 # Maybe a better representation than boxplot can be considered
