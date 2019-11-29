@@ -13,21 +13,17 @@ from collections import Counter
 import os
 
 #%%
-'''
-with open('DatasetsPath.txt', 'r') as myfile:
-    pathfile = myfile.read()
-
-df = pd.read_csv(pathfile + '\Gourmet_food.csv', index_col=0)
-'''
-
-#%%
 # You must be in \reviews-sentiment folder
 os.chdir("..")
 
 # Load dataset
 path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
 df = load_dataset(path)
+
+#Features selection
 df = remove_cols(df)
+
+#Create new feature "opinion" based on vote
 df = vote_to_opinion(df)
 
 #%%
