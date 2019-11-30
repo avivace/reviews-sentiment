@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+### Import libraries ###
+
 import pandas as pd 
 import numpy as np
 
@@ -8,16 +10,45 @@ import seaborn as sns
 color = sns.color_palette()
 sns.set_style("dark")
 
-from data_utils import *
+from data_utils import load_dataset, remove_cols, vote_to_opinion
 import os
 
+### Functions ###
+
+def most_reviewed_products(df, n_products):
+    reviews_per_product = df['asin'].value_counts()
+    most_reviews = reviews_per_product.nlargest(n_products)
+    most_reviews = most_reviews.reset_index()
+    most_reviews = most_reviews.drop('asin', axis=1)
+    
+    definitive = df.merge(most_reviews, left_on='asin', right_on='index')
+    definitive = definitive.drop('index', axis=1)
+    
+    return definitive
+
+
+def significative_reviews(df, n_votes):
+    return df[df['vote'] >= n_votes]
+
+
+def most_active_reviewers(df, n_reviewers):
+    n_reviews = df['reviewerID'].value_counts()
+    most_reviews = n_reviews.nlargest(n_reviewers)
+    most_reviews = most_reviews.reset_index()
+    most_reviews = most_reviews.drop('reviewerID', axis=1)
+    print("CCC \n", most_reviews)
+    
+    definitive = df.merge(most_reviews, left_on='reviewerID', right_on='index')
+    definitive = definitive.drop('index', axis=1)
+    return definitive
+
+#%%
 # You must be in \reviews-sentiment folder
 os.chdir("..")
 
 # Load dataset
 path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
 df = load_dataset(path)
-
 #Create new feature "opinion" based on vote
 df = vote_to_opinion(df)
 
@@ -70,16 +101,6 @@ plt.xticks(r, names, rotation=90)
 plt.xlabel('code product')
 plt.show()
 
-def most_active_reviewers(df, n_reviewers):
-    n_reviews = df['reviewerID'].value_counts()
-    most_reviews = n_reviews.nlargest(n_reviewers)
-    most_reviews = most_reviews.reset_index()
-    most_reviews = most_reviews.drop('reviewerID', axis=1)
-    print("CCC \n", most_reviews)
-    
-    definitive = df.merge(most_reviews, left_on='reviewerID', right_on='index')
-    definitive = definitive.drop('index', axis=1)
-    return definitive
     
 top_reviewers = most_active_reviewers(df, 50)
 print("DDD \n",top_reviewers)

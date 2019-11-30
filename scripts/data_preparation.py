@@ -19,13 +19,21 @@ os.chdir("..")
 # Load dataset
 path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
 df = load_dataset(path)
-
 #Features selection
 df = remove_cols(df)
-
 #Create new feature "opinion" based on vote
 df = vote_to_opinion(df)
 
+#%%
+
+reviews_values = df.reviewText.values
+reviews = [reviews_values[i] for i in range(len(reviews_values))]
+#%%
+#tokenized_reviews = tokenization(reviews)
+filtered_reviews = removing_stop_words(reviews)
+
+#%%
+reviews = tokenization(filtered_reviews)
 #%%
 
 reviews = df.reviewText.values
@@ -49,35 +57,3 @@ negative_tokenized = tokenization(negative_reviews)
 positive_filtered = removing_stop_word(positive_tokenized)
 negative_filtered = removing_stop_words(negative_tokenized)
 
-#%% STRATEGIA DA VALUTARE - BONESI
-cnt_positve = Counter()
-
-for row in positive_reviews:
-    cnt_positve.update(row.split(" "))
-print("Vocabulary size for positive reviews:", len(cnt_positve.keys()))
-
-
-cnt_negative = Counter()
-
-for row in negative_reviews:
-    cnt_negative.update(row.split(" "))
-print("Vocabulary size for negative reviews:", len(cnt_negative.keys()))
-
-cnt_total = Counter()
-for row in reviews:
-    cnt_total.update(row.split(" "))
-
-pos_neg_ratio = Counter()
-vocab_pos_neg = (set(cnt_positve.keys())).intersection(set(cnt_negative.keys()))
-for word in vocab_pos_neg:
-    if cnt_total[word] > 100:
-        ratio = cnt_positve[word] / float(cnt_negative[word] + 1)
-    if ratio > 1:
-        pos_neg_ratio[word] = np.log(ratio)
-    else:
-        pos_neg_ratio[word] = -np.log(1 / (ratio + 0.01))
-
-positive_dict = {}
-for word, cnt in pos_neg_ratio.items():
-    if (cnt > 1):
-        positive_dict[word] = cnt
