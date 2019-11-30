@@ -47,7 +47,7 @@ def most_active_reviewers(df, n_reviewers):
 os.chdir("..")
 
 # Load dataset
-path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
+path = r'./datasets/Grocery_and_Gourmet_Food_5.json'
 df = load_dataset(path)
 #Create new feature "opinion" based on vote
 df = vote_to_opinion(df)
@@ -60,7 +60,9 @@ print("Number of records:", len(df))
 ax = plt.axes()
 sns.countplot(df.overall, ax=ax)
 ax.set_title('Score Distribution')
-plt.show()
+# plt.show()
+plt.savefig('figures/1_scoredistribution.svg', format='svg')
+
 
 print("Average Score: ", np.mean(df.overall))
 print("Median Score: ", np.median(df.overall))
@@ -69,7 +71,8 @@ print("Median Score: ", np.median(df.overall))
 ax = plt.axes()
 sns.countplot(df.opinion, ax=ax)
 ax.set_title('Opinion Distribution')
-plt.show()
+#plt.show()
+plt.savefig('figures/1_opiniondistribution.svg', format='svg')
 
 print("Proportion of positive review:", len(df[df.opinion == "positive"]) / len(df))
 print("Proportion of neutral review:", len(df[df.opinion == "neutral"]) / len(df))
@@ -99,8 +102,8 @@ plt.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edge
 plt.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width)
 plt.xticks(r, names, rotation=90)
 plt.xlabel('code product')
-plt.show()
-
+# plt.show()
+plt.savefig('figures/1_reviews.svg', format='svg')
     
 top_reviewers = most_active_reviewers(df, 50)
 print("DDD \n",top_reviewers)
@@ -117,8 +120,8 @@ plt.bar(r, top_reviewers['asin'], color='#f9bc86', edgecolor='white', width=bar_
 plt.bar(r, top_reviewers['overall'], color='#b5ffb9', edgecolor='white', width=bar_width)
 plt.xticks(r, names, rotation=90)
 plt.xlabel('Reviewer ID')
-plt.show()
-
+# plt.show()
+plt.savefig('figures/1_reviewers.svg', format='svg')
 
 '''# Correlation between votes and opinion with a boxplot.
 # Maybe a better representation than boxplot can be considered
@@ -130,9 +133,3 @@ plt.boxplot(x=df_significative_reviews['opinion'],
             errors='coerce'), 
             palette="Blues")
 plt.show()'''
-
-
-
-
-
-
