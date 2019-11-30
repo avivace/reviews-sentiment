@@ -4,6 +4,9 @@ datasets/*
 # But keep the script to pull them there
 !datasets/pull_datasets.sh
 
+# Ignore cached dataframes
+.pkl
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
