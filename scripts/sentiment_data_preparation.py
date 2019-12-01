@@ -14,29 +14,50 @@ import os
 
 #%%
 # You must be in \reviews-sentiment folder
-os.chdir("..")
+#os.chdir("..")
 
 # Load dataset
-path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
-df = load_dataset(path)
-#Features selection
-df = remove_cols(df)
-#Create new feature "opinion" based on vote
-df = vote_to_opinion(df)
+#path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
+#df = load_dataset(path)
 
-#%%
 
+def run(df):
+    #Features selection
+    df = remove_cols(df)
+
+    #Create new feature "opinion" based on vote
+    df = vote_to_opinion(df)
+
+    #Remove neutral reviews
+    df.drop(df[df.opinion == 'neutral'].index, inplace=True)
+    #alternative to drop: df[df['opinion'].map(lambda x: str(x)!="neutral")]
+
+    #Remove stop words
+    df['reviewTextNoStopWords'] = remove_stop_words(df['reviewText'])
+
+    #Sentence tokenization
+    df['reviewTextTokenized'] = tokenization(df['reviewTextNoStopWords'])
+
+    #Drop non-final review texts
+    df.drop(['reviewText', 'reviewTextNoStopWords'], axis=1)
+
+    #Save prepared dataset for Sentiment Analysis
+    #df.to_csv("datasets\preparedForSentimentAnalysis.csv", sep='\t', encoding='utf-8')
+
+''' OLD #%%
+#Get the reviews
 reviews_values = df.reviewText.values
 reviews = [reviews_values[i] for i in range(len(reviews_values))]
 #%%
-#tokenized_reviews = tokenization(reviews)
+#Remove stop words
 filtered_reviews = removing_stop_words(reviews)
 
 #%%
+#Sentence tokenization
 reviews = tokenization(filtered_reviews)
-#%%
+#%%'''
 
-reviews = df.reviewText.values
+''' OLD reviews = df.reviewText.values
 labels = df.opinion.values
 
 if df.opinion[3] == "positive":
@@ -55,5 +76,5 @@ negative_tokenized = tokenization(negative_reviews)
 #%% Stop words
 
 positive_filtered = removing_stop_word(positive_tokenized)
-negative_filtered = removing_stop_words(negative_tokenized)
+negative_filtered = removing_stop_words(negative_tokenized)'''
 

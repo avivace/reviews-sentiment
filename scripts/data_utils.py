@@ -204,6 +204,7 @@ def old_tokenization(reviews_list):
 
 #%%
 def pos_tagging(df):
+    pass
     
 def get_wordnet_pos(treebank_tag):
 
