@@ -1,24 +1,32 @@
 # -*- coding: utf-8 -*-
 
 ### Import libraries ###
-import pandas as pd 
-import numpy as np
 import nltk
-import re
+import gensim
+nltk.download('wordnet')
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-color = sns.color_palette()
-sns.set_style("dark")
-
-from data_utils import load_dataset, remove_cols, vote_to_opinion, removing_stop_words
-from collections import Counter
-import os
+from topic_sentiment_data_preparation import bag_of_words, create_dictionary, tf_idf, preprocessing_reviews
 
 ### Functions ###
-def run(df):
-    pass
 
+def run(df):
+    preprocessed_reviews = preprocessing_reviews(df)
+    dictionary = create_dictionary(df, preprocessed_reviews)
+    # LDA using Bag of Words
+    bow_corpus = bag_of_words(df, preprocessed_reviews)
+    lda_model = gensim.models.LdaMulticore(bow_corpus, num_topics=10, id2word=dictionary, passes=2, workers=2)
+    for idx, topic in lda_model.print_topics(-1):
+        print('Topic: {} \nWords: {}'.format(idx, topic))
+    
+    corpus_tfidf = tf_idf(df, bow_corpus)
+    # LDA using Tf-Idf
+    lda_model_tfidf = gensim.models.LdaMulticore(corpus_tfidf, num_topics=10, id2word=dictionary, passes=2, workers=4)
+    for idx, topic in lda_model_tfidf.print_topics(-1):
+        print('Topic: {} Word: {}'.format(idx, topic))
+
+'''
+
+#%% FERRI E BASSO
 def topic_based_tokenization(reviews):
     tokenizedReviews = {}
     key = 1
@@ -40,25 +48,11 @@ def topic_based_tokenization(reviews):
     return tokenizedReviews
 
 #%%
-# You must be in \reviews-sentiment folder
-os.chdir("..")
-
-# Load dataset
-path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
-df = load_dataset(path)
-# Features selection
-df = remove_cols(df)
-# Create new feature "opinion" based on vote
-df = vote_to_opinion(df)
-# Most frequent product 
-product_id = df.asin.mode().iloc[0]
-# Extract reviews
-df_product = df[df['asin'] == product_id]
-
-#%%
 reviews_values = df_product.reviewText.values
 reviews = [reviews_values[i] for i in range(len(reviews_values))]
 
 #%%
 reviews_filtered = removing_stop_words(reviews)
 reviews_tokenized = topic_based_tokenization(reviews_filtered)
+
+'''
