@@ -1,24 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import pandas as pd 
-import numpy as np
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-color = sns.color_palette()
-sns.set_style("dark")
-
-from data_utils import *
-from collections import Counter
-import os
-
+from data_utils import remove_cols, vote_to_opinion, preprocessing
 #%%
-# You must be in \reviews-sentiment folder
-#os.chdir("..")
-
-# Load dataset
-#path = r'.\datasets\Grocery_and_Gourmet_Food_5.json'
-#df = load_dataset(path)
 
 
 def run(df):
@@ -31,20 +14,26 @@ def run(df):
     #Remove neutral reviews
     df.drop(df[df.opinion == 'neutral'].index, inplace=True)
     #alternative to drop: df[df['opinion'].map(lambda x: str(x)!="neutral")]
+    reviews = df['reviewText'].tolist()
+    # Preprocessing
+    df['preprocessedReview'] = preprocessing(reviews)
 
+    
+'''
     #Remove stop words
     df['reviewTextNoStopWords'] = remove_stop_words(df['reviewText'])
 
     #Sentence tokenization
     df['reviewTextTokenized'] = tokenization(df['reviewTextNoStopWords'])
 
+
     #Drop non-final review texts
     df.drop(['reviewText', 'reviewTextNoStopWords'], axis=1)
-
+    
     #Save prepared dataset for Sentiment Analysis
     #df.to_csv("datasets\preparedForSentimentAnalysis.csv", sep='\t', encoding='utf-8')
 
-''' OLD #%%
+OLD #%%
 #Get the reviews
 reviews_values = df.reviewText.values
 reviews = [reviews_values[i] for i in range(len(reviews_values))]
