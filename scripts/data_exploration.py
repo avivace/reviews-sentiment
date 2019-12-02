@@ -2,7 +2,6 @@
 
 ### Import libraries ###
 
-import pandas as pd 
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -10,7 +9,7 @@ import seaborn as sns
 color = sns.color_palette()
 sns.set_style("dark")
 
-from data_utils import load_dataset, remove_cols, vote_to_opinion
+from data_utils import vote_to_opinion
 
 ### Functions ###
 
@@ -119,6 +118,7 @@ def run(df):
     # plt.show()
     plt.savefig('figures/1_reviewers.svg', format='svg')
     print("Exported 1_reviewers.svg")
+    
     '''# Correlation between votes and opinion with a boxplot.
     # Maybe a better representation than boxplot can be considered
     # This part of code DOESN'T work
