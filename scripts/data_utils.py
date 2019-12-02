@@ -16,7 +16,6 @@ def load_dataset(pathfile):
     df = pd.read_json(pathfile, lines=True)
     df['vote'].fillna(0, inplace=True)
     df['vote'] = pd.to_numeric(df['vote'], errors='coerce')
-    df.dropna(inplace=True) 
     return df
     
 def remove_cols(df):
