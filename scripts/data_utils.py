@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd 
-import numpy as np
-import matplotlib.pyplot as plt
 import re
+from nltk.tokenize import RegexpTokenizer
 
 import nltk
 from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.corpus import wordnet
-from nltk import word_tokenize 
+from nltk.stem import SnowballStemmer
 nltk.download('punkt')
 nltk.download('stopwords')
 
@@ -159,8 +157,10 @@ contractions_dict = {
 "you've": "you have"
 }
 
+stemmer = SnowballStemmer('english')
 contractions_re = re.compile('(%s)' % '|'.join(contractions_dict.keys()))
 punctuation_re = re.compile('([!,.:;?])(\w)')
+tokenizer = RegexpTokenizer(r'\w+')
 
 def expand_contractions(string, contractions_dict=contractions_dict):
     def replace(match):
@@ -175,33 +175,28 @@ def fix_punctuation(string, contractions_dict=contractions_dict):
         return match.group(1) + ' ' + match.group(2)
     return punctuation_re.sub(replace, string)
 
-def removing_stop_words(reviews):
+
+def lemmatize_stemming(text):
+    return stemmer.stem(WordNetLemmatizer().lemmatize(text, pos='v'))
+
+
+def preprocessing(reviews):
     stopwords = nltk.corpus.stopwords.words("english")
-    stopwords.remove('not')
-    stopwords.remove('and')
-    stopwords.remove('or')
-    stopwords.remove('but')
     filtered_reviews = []
     for review in reviews:
         review = fix_punctuation(review)
         review = expand_contractions(review)
-        filtered_review = (' '.join([word for word in review.split() if word not in stopwords]))
-        filtered_review = str(filtered_review)
-        filtered_review = re.sub(r'\(.*?\)','', filtered_review)
+        filtered_review = []
+        for word in tokenizer.tokenize(review):
+            if word not in stopwords:
+                filtered_review.append(lemmatize_stemming(word))
+        #filtered_review = (' '.join([word for word in review.split() if word not in stopwords]))
+        #filtered_review = str(filtered_review)
+        #filtered_review = re.sub(r'\(.*?\)','', filtered_review)
         filtered_reviews.append(filtered_review)
     return filtered_reviews
 
-
-
-def old_tokenization(reviews_list):
-    tokenized_reviews = []
-    for review in reviews_list:
-        review_tokenized = []
-        for word in word_tokenize(review):
-            review_tokenized.append(word)
-        tokenized_reviews.append(review_tokenized)
-    return tokenized_reviews
-
+'''
 #%%
 def pos_tagging(df):
     pass
@@ -222,3 +217,4 @@ def get_wordnet_pos(treebank_tag):
 def lemmatization(filtered_reviews):
     pass
 
+'''
