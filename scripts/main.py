@@ -8,7 +8,7 @@ from data_utils import load_dataset
 import pandas
 
 # Let's get back to the root folder of the project
-#os.chdir("..")
+os.chdir("..")
 #os.chdir(r'./reviews-sentiment/')
 
 # Data loading

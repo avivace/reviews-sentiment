@@ -21,7 +21,7 @@ def create_dictionary(df, preprocessed_reviews):
     
 
 def bag_of_words(df, preprocessed_reviews):
-    dictionary = create_dictionary(df)
+    dictionary = create_dictionary(df, preprocessed_reviews)
     bow_corpus = [dictionary.doc2bow(doc) for doc in preprocessed_reviews]
     return bow_corpus
     

@@ -3,7 +3,6 @@
 from data_utils import remove_cols, vote_to_opinion, preprocessing
 #%%
 
-
 def run(df):
     #Features selection
     df = remove_cols(df)
