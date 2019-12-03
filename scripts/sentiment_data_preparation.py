@@ -1,21 +1,62 @@
 # -*- coding: utf-8 -*-
 
 from data_utils import remove_cols, vote_to_opinion, preprocessing
+import nltk
+nltk.download('vader_lexicon')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import pandas as pd
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
 #%%
+def wordcloud(data, title = None):
+    wordcloud = WordCloud(
+        background_color = 'white',
+        max_words = 200,
+        max_font_size = 40, 
+        scale = 3,
+        random_state = 42
+    ).generate(str(data))
+
+    fig = plt.figure(1, figsize = (20, 20))
+    plt.axis('off')
+    if title: 
+        fig.suptitle(title, fontsize = 20)
+        fig.subplots_adjust(top = 2.3)
+
+    plt.imshow(wordcloud)
+    plt.show()
+    
 
 def run(df):
     #Features selection
     df = remove_cols(df)
-
     #Create new feature "opinion" based on vote
     df = vote_to_opinion(df)
-
-    #Remove neutral reviews
+    # Wordcloud before remove neutral reviews
+    # Remove neutral reviews
     df.drop(df[df.opinion == 'neutral'].index, inplace=True)
-    #alternative to drop: df[df['opinion'].map(lambda x: str(x)!="neutral")]
+    #alternative: df[df['opinion'].map(lambda x: str(x)!="neutral")]
     reviews = df['reviewText'].tolist()
     # Preprocessing
     df['preprocessedReview'] = preprocessing(reviews)
+    #alternative: df['preprocessed_review'] = df['reviewText'].apply(lambda x: preprocessing(x))
+    # Create sentiment for each review.
+    # Quattro diverse colonne neutral, pos, neg e compound.
+    # Valore tra 0 e 1 che stima la probabilità del sentiment, il compound è calcolato rispetto a questi tre valori
+    # Testata su review intera, non pre-processata. Vedere se funziona e come
+    analyser = SentimentIntensityAnalyzer()
+    df['sentiments'] = df['preprocessedReview'].apply(lambda x: analyser.polarity_scores(x))
+    df = pd.concat([df.drop(['sentiments'], axis=1), df['sentiments'].apply(pd.Series)], axis=1)
+    # Number of characters
+    df["nb_chars"] = df["preprocessedReview"].apply(lambda x: len(x))
+    # Numbers of words
+    df["nb_words"] = df["preprocessedReview"].apply(lambda x: len(x.split(" ")))
+    # Most positive reviews
+    df[df["nb_words"] >= 5].sort_values("pos", ascending = False)[["reviewText", "pos"]].head(10)
+    # Most negative reviews
+    df[df["nb_words"] >= 5].sort_values("neg", ascending = True)[["reviewText", "neg"]].head(10)
+
 
     
 '''
