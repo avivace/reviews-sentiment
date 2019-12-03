@@ -179,13 +179,17 @@ def fix_punctuation(string, contractions_dict=contractions_dict):
 def lemmatize_stemming(text):
     return stemmer.stem(WordNetLemmatizer().lemmatize(text, pos='v'))
 
-
 def preprocessing(reviews):
+    #reviews = reviews.lower()
+    reviews = [review.lower() for review in reviews]
     stopwords = nltk.corpus.stopwords.words("english")
     filtered_reviews = []
     for review in reviews:
-        review = fix_punctuation(review)
-        review = expand_contractions(review)
+        try:
+            review = fix_punctuation(review)
+            review = expand_contractions(review)
+        except:
+            print(review)
         filtered_review = []
         for word in tokenizer.tokenize(review):
             if word not in stopwords:
@@ -197,7 +201,6 @@ def preprocessing(reviews):
     return filtered_reviews
 
 '''
-#%%
 def pos_tagging(df):
     pass
     
