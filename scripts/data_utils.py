@@ -9,6 +9,9 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.stem import SnowballStemmer
 nltk.download('punkt')
 nltk.download('stopwords')
+    
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 #%% Basic functions
 
@@ -201,6 +204,27 @@ def preprocessing(reviews):
         filtered_reviews.append(filtered_review)
     return filtered_reviews
  
+#%% Data exploration
+    
+def wordcloud(data, title = None):
+    wordcloud = WordCloud(
+        background_color = 'white',
+        max_words = 200,
+        max_font_size = 40, 
+        scale = 3,
+        random_state = 42
+    ).generate(str(data))
+
+    fig = plt.figure(1, figsize = (20, 20))
+    plt.axis('off')
+    if title: 
+        fig.suptitle(title, fontsize = 20)
+        fig.subplots_adjust(top = 2.3)
+
+    plt.imshow(wordcloud)
+    plt.show()
+#%%
+
 '''
 def get_wordnet_pos(treebank_tag):
 
