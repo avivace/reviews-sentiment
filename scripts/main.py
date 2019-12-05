@@ -53,4 +53,5 @@ def aspect_based_sentiment_analysis_step():
     topic_sentiment_analysis.run(df_copy_for_aspect_based)
     
 os.chdir(r'./scripts')
+data_exploration_step()
 aspect_based_sentiment_analysis_step()

@@ -3,11 +3,13 @@
 ### Import libraries ###
 
 import numpy as np
+import pandas as pd
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 color = sns.color_palette()
 sns.set_style("dark")
+import os
 
 from data_utils import vote_to_opinion
 
@@ -40,8 +42,12 @@ def most_active_reviewers(df, n_reviewers):
     definitive = definitive.drop('index', axis=1)
     return definitive
 
+#%%
 
 def run(df):
+    current_directory = os.getcwd()
+    os.chdir('..')
+    
     #Create new feature "opinion" based on vote
     df = vote_to_opinion(df)
 
@@ -50,22 +56,22 @@ def run(df):
     print("Number of records:", len(df))
 
     # Score Distribution
-    ax = plt.axes()
-    sns.countplot(df.overall, ax=ax)
-    ax.set_title('Score Distribution')
+    fig, ax1 = plt.subplots()
+    sns.countplot(df.overall, ax=ax1)
+    ax1.set_title('Score Distribution')
     # plt.show()
-    plt.savefig('figures/1_scoredistribution.svg', format='svg')
+    ax1.figure.savefig('figures/1_scoredistribution.svg', format='svg')
     print("Exported 1_scoredistribution.svg")
 
     print("Average Score: ", np.mean(df.overall))
     print("Median Score: ", np.median(df.overall))
 
     #Opinion Distribution
-    ax = plt.axes(label="a")
-    sns.countplot(df.opinion, ax=ax)
-    ax.set_title('Opinion Distribution')
+    fig, ax2 = plt.subplots()
+    sns.countplot(df.opinion, ax=ax2)
+    ax2.set_title('Opinion Distribution')
     #plt.show()
-    plt.savefig('figures/1_opiniondistribution.svg', format='svg')
+    ax2.figure.savefig('figures/1_opiniondistribution.svg', format='svg')
     print("Exported 1_opiniondistribution.svg")
 
     print("Proportion of positive review:", len(df[df.opinion == "positive"]) / len(df))
@@ -73,33 +79,38 @@ def run(df):
     print("Proportion of negative review:", len(df[df.opinion == "negative"]) / len(df))
 
     #Stacked barplot (x-axis asin code, y-axis opinion)
-
+    fig, ax3 = plt.subplots()
     top_products = most_reviewed_products(df, 20)
     r = list(top_products['asin'].unique())
     positive = list(top_products.loc[top_products['opinion'] == 'positive', 'asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
     neutral = list(top_products.loc[top_products['opinion'] == 'neutral', 'asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
     negative = list(top_products.loc[top_products['opinion'] == 'negative', 'asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
     raw_data = {'positive': positive, 'neutral': neutral, 'negative': negative}
+    raw_data = pd.DataFrame(raw_data)
 
     #print("Opinions ",raw_data)
-
-    totals = list(top_products['asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
-    positive_percentage = [i / j * 100 for i, j in zip(positive, totals)]
-    neutral_percentage = [i / j * 100 for i, j in zip(neutral, totals)]
-    negative_percentage = [i / j * 100 for i, j in zip(negative, totals)]
+    
+    totals = [i+j+k for i,j,k in zip(raw_data['positive'], raw_data['neutral'], raw_data['negative'])]
+    #totals = list(top_products['asin'].value_counts().reindex(top_products['asin'].unique(), fill_value=0))
+    positive_percentage = [i / j * 100 for i, j in zip(raw_data['positive'], totals)]
+    neutral_percentage = [i / j * 100 for i, j in zip(raw_data['neutral'], totals)]
+    negative_percentage = [i / j * 100 for i, j in zip(raw_data['negative'], totals)]
 
     bar_width = 0.85
     names = tuple(r)
 
-    plt.bar(r, positive_percentage, color='#b5ffb9', edgecolor='white', width=bar_width)
-    plt.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edgecolor='white', width=bar_width)
-    plt.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width)
-    plt.xticks(r, names, rotation=90)
-    plt.xlabel('code product')
+    ax3.bar(r, positive_percentage, color='#b5ffb9', edgecolor='white', width=bar_width)
+    ax3.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edgecolor='white', width=bar_width)
+    ax3.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width)
+    #ax.xticks(r, names, rotation=90)
+    ax3.set_xticklabels(r, rotation=90)
+    ax3.set_xlabel('Code product')
     # plt.show()
-    plt.savefig('figures/1_reviews.svg', format='svg')
+    ax3.figure.savefig('figures/1_reviews.svg', format='svg')
     print("Exported 1_reviews.svg")
 
+    # Top 50 reviewers
+    fig, ax4 = plt.subplots()
     top_reviewers = most_active_reviewers(df, 50)
     #print("DDD \n",top_reviewers)
     top_reviewers = top_reviewers.groupby('reviewerID').agg({'overall':'mean',
@@ -111,13 +122,15 @@ def run(df):
     bar_width = 0.85
     names = tuple(r)
 
-    plt.bar(r, top_reviewers['asin'], color='#f9bc86', edgecolor='white', width=bar_width)
-    plt.bar(r, top_reviewers['overall'], color='#b5ffb9', edgecolor='white', width=bar_width)
-    plt.xticks(r, names, rotation=90)
-    plt.xlabel('Reviewer ID')
+    ax4.bar(r, top_reviewers['asin'], color='#f9bc86', edgecolor='white', width=bar_width)
+    ax4.bar(r, top_reviewers['overall'], color='#b5ffb9', edgecolor='white', width=bar_width)
+    ax4.set_xticklabels(r, rotation=90)
+    ax4.set_xlabel('Reviewer ID')
     # plt.show()
-    plt.savefig('figures/1_reviewers.svg', format='svg')
+    ax4.figure.savefig('figures/1_reviewers.svg', format='svg')
     print("Exported 1_reviewers.svg")
+    
+    os.chdir(current_directory)
     
     '''# Correlation between votes and opinion with a boxplot.
     # Maybe a better representation than boxplot can be considered
