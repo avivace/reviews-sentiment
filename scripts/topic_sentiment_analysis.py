@@ -9,65 +9,48 @@ import matplotlib.pyplot as plt
 from topic_sentiment_data_preparation import bag_of_words, create_dictionary, tf_idf, preprocessing_reviews
 
 ### Functions ###
+def evaluate_topic(corpus, num_topics, dictionary, texts):
+    coherence = []
+    for n in range(1, num_topics):
+        model = gensim.models.LdaMulticore(corpus=corpus, 
+                                           num_topics=n, 
+                                           random_state=42, 
+                                           id2word=dictionary, 
+                                           passes=2, 
+                                           workers=2,
+                                           alpha=0.01,
+                                           eta=0.0001,
+                                           per_word_topics=True)
+        cm = gensim.models.ldamodel.CoherenceModel(model=model, dictionary=dictionary, coherence='c_v', texts=texts)
+        coherence.append(cm.get_coherence())
+        print('\nNumber of topic:', n)
+        for idx, topic in model.print_topics(-1):
+            print('\nTopic: {} \nWords: {}'.format(idx, topic))    
+    return coherence
+        
 
+def plot_coherence(num_topics, coherence):
+    x_axis = range(1, num_topics)
+    plt.plot(x_axis, coherence)
+    plt.xlabel("Number of topics")
+    plt.ylabel("Coherence score")
+    plt.show()
+    
+    
 def run(df):
     preprocessed_reviews = preprocessing_reviews(df)
     dictionary = create_dictionary(df, preprocessed_reviews)
+    num_topics = 10
+    
     # LDA using Bag of Words
     bow_corpus = bag_of_words(df, preprocessed_reviews)
-    lda_model = gensim.models.LdaMulticore(corpus=bow_corpus, num_topics=10, id2word=dictionary, passes=2, workers=2)
-    for idx, topic in lda_model.print_topics(-1):
-        print('Topic: {} \nWords: {}'.format(idx, topic))    
-
-    
-    ### Topic coherence per trovare il miglior numero di topic
-    print('topic coherence\n\n\n')
-    limit = 10
-    coherence_bow = []
-    for n in range(1, limit):
-        lda_model = gensim.models.LdaMulticore(corpus=bow_corpus, num_topics=n, id2word=dictionary, passes=2, workers=2)
-        cm = gensim.models.ldamodel.CoherenceModel(model=lda_model, dictionary=dictionary, coherence='c_v', texts=preprocessed_reviews)
-        print(cm.get_coherence())
-        coherence_bow.append(cm.get_coherence())
-        print('TOPIC:', n)
-        for idx, topic in lda_model.print_topics(-1):
-            print('Topic: {} \nWords: {}'.format(idx, topic))    
-        
-    x = range(1, limit)
-    plt.plot(x, coherence_bow)
-    plt.xlabel("num_topics")
-    plt.ylabel("Coherence score")
-    plt.show()
-    
-    
-    
-    corpus_tfidf = tf_idf(df, bow_corpus)
+    coherence_bow = evaluate_topic(corpus=bow_corpus, num_topics=num_topics, dictionary=dictionary, texts=preprocessed_reviews)
+    plot_coherence(num_topics=num_topics, coherence=coherence_bow)
+       
     # LDA using Tf-Idf
-    lda_model_tfidf = gensim.models.LdaMulticore(corpus=corpus_tfidf, num_topics=10, id2word=dictionary, passes=2, workers=2)
-    for idx, topic in lda_model_tfidf.print_topics(-1):
-        print('Topic: {} Word: {}'.format(idx, topic))
-    
-        
-    print('topic coherence\n\n\n')
-    limit = 10
-    coherence_tfidf = []
-    for n in range(1, limit):
-        lda_model_tfidf = gensim.models.LdaMulticore(corpus=corpus_tfidf, num_topics=n, id2word=dictionary, passes=2, workers=4)
-        cm = gensim.models.ldamodel.CoherenceModel(model=lda_model_tfidf, dictionary=dictionary, coherence='c_v', texts=preprocessed_reviews)
-        print(cm.get_coherence())
-        coherence_tfidf.append(cm.get_coherence())
-        print('TOPIC:', n)
-        for idx, topic in lda_model_tfidf.print_topics(-1):
-            print('Topic: {} \nWords: {}'.format(idx, topic))    
-        
-    x = range(1, limit)
-    plt.plot(x, coherence_tfidf)
-    plt.xlabel("num_topics")
-    plt.ylabel("Coherence score")
-    plt.show()
-
-    
-
+    corpus_tfidf = tf_idf(df, bow_corpus)
+    coherence_tfidf = evaluate_topic(corpus=corpus_tfidf, num_topics=num_topics, dictionary=dictionary, texts=preprocessed_reviews)
+    plot_coherence(num_topics=num_topics, coherence=coherence_tfidf)
 '''
 #%% FERRI E BASSO
 def topic_based_tokenization(reviews):

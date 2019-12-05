@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from data_utils import preprocessing
+from data_utils import preprocessing, wordcloud
 import gensim
 from gensim import models
 
@@ -11,6 +11,7 @@ def preprocessing_reviews(df):
     df_product = df[df['asin'] == product_id]
     reviews = df_product['reviewText'].tolist()
     preprocessed_reviews = preprocessing(reviews)
+    wordcloud(preprocessed_reviews)
     return preprocessed_reviews
 
 
@@ -22,7 +23,7 @@ def create_dictionary(df, preprocessed_reviews):
 
 def bag_of_words(df, preprocessed_reviews):
     dictionary = create_dictionary(df, preprocessed_reviews)
-    bow_corpus = [dictionary.doc2bow(doc) for doc in preprocessed_reviews]
+    bow_corpus = [dictionary.doc2bow(text) for text in preprocessed_reviews]
     return bow_corpus
     
 
