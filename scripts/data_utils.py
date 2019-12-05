@@ -177,7 +177,8 @@ def fix_punctuation(string, contractions_dict=contractions_dict):
 
 
 def lemmatize_stemming(text):
-    return stemmer.stem(WordNetLemmatizer().lemmatize(text, pos='v'))
+    #return stemmer.stem(WordNetLemmatizer().lemmatize(text, pos=['N', 'R', 'W', 'B']))
+    return WordNetLemmatizer().lemmatize(text)
 
 def preprocessing(reviews):
     #reviews = reviews.lower()
@@ -199,11 +200,8 @@ def preprocessing(reviews):
         #filtered_review = re.sub(r'\(.*?\)','', filtered_review)
         filtered_reviews.append(filtered_review)
     return filtered_reviews
-
+ 
 '''
-def pos_tagging(df):
-    pass
-    
 def get_wordnet_pos(treebank_tag):
 
     if treebank_tag.startswith('J'):
@@ -216,8 +214,5 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.ADV
     else:
         return ''
-
-def lemmatization(filtered_reviews):
-    pass
 
 '''
