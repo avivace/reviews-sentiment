@@ -27,28 +27,30 @@ except:
 	df.to_pickle('cached_dataframe.pkl')
 
 #%%
-#Data exploration
-importlib.reload(data_exploration)
-data_exploration.run(df)
+def data_exploration_step():
+    #Data exploration
+    importlib.reload(data_exploration)
+    data_exploration.run(df)
 
-#Copy for Sentiment analysis
-df_copy_for_sentiment_analysis = df.copy(deep=True)
+def sentiment_analysis_step():
+    #Copy for Sentiment analysis
+    df_copy_for_sentiment_analysis = df.copy(deep=True)
+    #Data Preparation for Sentiment Analysis
+    importlib.reload(sentiment_data_preparation)
+    sentiment_data_preparation.run(df_copy_for_sentiment_analysis)
+    #Sentiment Analysis
+    importlib.reload(sentiment_analysis)
+    sentiment_analysis.run(df_copy_for_sentiment_analysis)
 
-#Data Preparation for Sentiment Analysis
-importlib.reload(sentiment_data_preparation)
-sentiment_data_preparation.run(df_copy_for_sentiment_analysis)
-
-#Sentiment Analysis
-importlib.reload(sentiment_analysis)
-sentiment_analysis.run(df_copy_for_sentiment_analysis)
-
-#Copy for Aspect based
-df_copy_for_aspect_based = df.copy(deep=True)
-
-#Data Preparation for Aspect based
-importlib.reload(topic_sentiment_data_preparation)
-topic_sentiment_data_preparation.run(df_copy_for_aspect_based)
-
-#Aspect based
-importlib.reload(topic_sentiment_analysis)
-topic_sentiment_analysis.run(df_copy_for_aspect_based)
+def aspect_based_sentiment_analysis_step():
+    #Copy for Aspect based
+    df_copy_for_aspect_based = df.copy(deep=True)
+    #Data Preparation for Aspect based
+    #importlib.reload(topic_sentiment_data_preparation)
+    #topic_sentiment_data_preparation.run(df_copy_for_aspect_based)
+    #Aspect based
+    importlib.reload(topic_sentiment_analysis)
+    topic_sentiment_analysis.run(df_copy_for_aspect_based)
+    
+os.chdir(r'./scripts')
+aspect_based_sentiment_analysis_step()
