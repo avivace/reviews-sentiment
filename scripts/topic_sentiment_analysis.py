@@ -5,28 +5,34 @@ import nltk
 import gensim
 nltk.download('wordnet')
 import matplotlib.pyplot as plt
+import pandas as pd
+import pyLDAvis.gensim
 
 from topic_sentiment_data_preparation import bag_of_words, create_dictionary, tf_idf, preprocessing_reviews, preprocessing_reviews_top_products
 
 ### Functions ###
-def evaluate_topic(corpus, num_topics, dictionary, texts):
-    coherence = []
+
+def evaluate_multiple_lda(corpus, num_topics, dictionary, texts):
+    lda_model, coherence_list = [], []
     for n in range(1, num_topics):
         model = gensim.models.LdaMulticore(corpus=corpus, 
                                            num_topics=n, 
                                            random_state=42, 
                                            id2word=dictionary, 
-                                           passes=2, 
+                                           passes=10, 
                                            workers=2,
                                            alpha=0.01,
-                                           eta=0.0001,
-                                           per_word_topics=True)
+                                           eta=0.0001)
+        lda_model.append(model)
         cm = gensim.models.ldamodel.CoherenceModel(model=model, dictionary=dictionary, coherence='c_v', texts=texts)
-        coherence.append(cm.get_coherence())
+        coherence_list.append(cm.get_coherence())
         print('\nNumber of topic:', n)
         for idx, topic in model.print_topics(-1):
-            print('\nTopic: {} \nWords: {}'.format(idx, topic))    
-    return coherence
+            print('\nTopic: {} \nWords: {}'.format(idx, topic)) 
+    top_coherence_pos = coherence_list.index(max(coherence_list))
+    ideal_topics = top_coherence_pos + 1
+    lda_best_model = lda_model[top_coherence_pos]
+    return coherence_list, lda_best_model, ideal_topics
         
 
 def plot_coherence(num_topics, coherence):
@@ -36,26 +42,49 @@ def plot_coherence(num_topics, coherence):
     plt.ylabel("Coherence score")
     plt.show()
     
+def show_topics(model, ideal_topics, num_words):
+    topics = model.show_topics()
+    for topic in topics:
+        print(topic)
+        
+    word_dict = {};
+    for i in range(ideal_topics):
+        words = model.show_topic(i, topn = num_words)
+        word_dict['Topic # ' + '{:02d}'.format(i+1)] = [i[0] for i in words]
+    topic_df = pd.DataFrame(word_dict)
+    print(topic_df)
+    
+def topic_visualization(model, corpus, dictionary):
+    lda_display = pyLDAvis.gensim.prepare(model, corpus, dictionary, sort_topics=False)
+    pyLDAvis.display(lda_display)
+
     
 def run(df):
-    #preprocessed_reviews = preprocessing_reviews(df)
+    preprocessed_reviews = preprocessing_reviews(df)
     # Da stella: the main assumption underlying LDA is that document exhibit multiple topics
     # Usare più prodotti (top 20?), Stella fa l'esempio considerando un corpus di articoli di giornale per trovare i vari topic
-    top_products = 20
-    preprocessed_reviews = preprocessing_reviews_top_products(df, top_products)
+    #top_products = 20
+#    preprocessed_reviews = preprocessing_reviews_top_products(df, top_products)
     #preprocessing
     dictionary = create_dictionary(df, preprocessed_reviews)
     num_topics = 10
     
     # LDA using Bag of Words
     bow_corpus = bag_of_words(df, preprocessed_reviews)
-    coherence_bow = evaluate_topic(corpus=bow_corpus, num_topics=num_topics, dictionary=dictionary, texts=preprocessed_reviews)
-    plot_coherence(num_topics=num_topics, coherence=coherence_bow)
-       
+    coherence_list, lda_best_model, ideal_topics = evaluate_multiple_lda(corpus=bow_corpus, 
+                                                                         num_topics=num_topics, 
+                                                                         dictionary=dictionary, 
+                                                                         texts=preprocessed_reviews)
+    plot_coherence(num_topics=num_topics, coherence=coherence_list)
+    show_topics(lda_best_model, ideal_topics, num_words=15)
+    topic_visualization(lda_best_model, bow_corpus, dictionary)
+      
+    '''
     # LDA using Tf-Idf
     corpus_tfidf = tf_idf(df, bow_corpus)
     coherence_tfidf = evaluate_topic(corpus=corpus_tfidf, num_topics=num_topics, dictionary=dictionary, texts=preprocessed_reviews)
     plot_coherence(num_topics=num_topics, coherence=coherence_tfidf)
+    '''
 '''
 #%% FERRI E BASSO
 def topic_based_tokenization(reviews):

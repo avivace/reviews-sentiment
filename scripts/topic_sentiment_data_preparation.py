@@ -5,6 +5,8 @@ from data_exploration import most_reviewed_products
 import gensim
 from gensim import models
 
+from collections import defaultdict
+
 
 def preprocessing_reviews_top_products(df, top_products):
     df_products = most_reviewed_products(df, top_products)
@@ -12,6 +14,16 @@ def preprocessing_reviews_top_products(df, top_products):
     preprocessed_reviews = preprocessing(reviews)
     wordcloud(preprocessed_reviews)
     return preprocessed_reviews
+
+def remove_less_frequent_words(reviews):
+    frequency = defaultdict(int)
+    for review in reviews:
+        for token in review:
+            frequency[token] += 1
+    
+    cleaned_reviews = [[token for token in review if frequency[token] > 1] for review in reviews]
+    return cleaned_reviews
+            
     
 def preprocessing_reviews(df):
     # Most frequent product 
@@ -20,13 +32,14 @@ def preprocessing_reviews(df):
     df_product = df[df['asin'] == product_id]
     reviews = df_product['reviewText'].tolist()
     preprocessed_reviews = preprocessing(reviews)
-    wordcloud(preprocessed_reviews)
-    return preprocessed_reviews
+    cleaned_reviews = remove_less_frequent_words(preprocessed_reviews)
+    wordcloud(cleaned_reviews)
+    return cleaned_reviews
 
 
 def create_dictionary(df, preprocessed_reviews):
     dictionary = gensim.corpora.Dictionary(preprocessed_reviews)
-    dictionary.filter_extremes(no_below=10) #, no_above=0.5)#, keep_n=100000)
+    dictionary.filter_extremes(no_below=10, no_above=0.5, keep_n=100000)
     return dictionary
     
 
