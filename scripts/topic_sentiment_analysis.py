@@ -6,7 +6,7 @@ import gensim
 nltk.download('wordnet')
 import matplotlib.pyplot as plt
 
-from topic_sentiment_data_preparation import bag_of_words, create_dictionary, tf_idf, preprocessing_reviews
+from topic_sentiment_data_preparation import bag_of_words, create_dictionary, tf_idf, preprocessing_reviews, preprocessing_reviews_top_products
 
 ### Functions ###
 def evaluate_topic(corpus, num_topics, dictionary, texts):
@@ -38,7 +38,12 @@ def plot_coherence(num_topics, coherence):
     
     
 def run(df):
-    preprocessed_reviews = preprocessing_reviews(df)
+    #preprocessed_reviews = preprocessing_reviews(df)
+    # Da stella: the main assumption underlying LDA is that document exhibit multiple topics
+    # Usare più prodotti (top 20?), Stella fa l'esempio considerando un corpus di articoli di giornale per trovare i vari topic
+    top_products = 20
+    preprocessed_reviews = preprocessing_reviews_top_products(df, top_products)
+    #preprocessing
     dictionary = create_dictionary(df, preprocessed_reviews)
     num_topics = 10
     

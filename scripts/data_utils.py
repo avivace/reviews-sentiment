@@ -196,7 +196,7 @@ def preprocessing(reviews):
             print(review)
         filtered_review = []
         for word in tokenizer.tokenize(review):
-            if word not in stopwords:
+            if word not in stopwords and len(word) > 2:
                 filtered_review.append(lemmatize_stemming(word))
         #filtered_review = (' '.join([word for word in review.split() if word not in stopwords]))
         #filtered_review = str(filtered_review)

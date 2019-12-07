@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from data_utils import preprocessing, wordcloud
+from data_exploration import most_reviewed_products
 import gensim
 from gensim import models
 
+
+def preprocessing_reviews_top_products(df, top_products):
+    df_products = most_reviewed_products(df, top_products)
+    reviews = df_products['reviewText'].tolist()
+    preprocessed_reviews = preprocessing(reviews)
+    wordcloud(preprocessed_reviews)
+    return preprocessed_reviews
+    
 def preprocessing_reviews(df):
     # Most frequent product 
     product_id = df.asin.mode().iloc[0]
