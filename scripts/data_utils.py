@@ -13,6 +13,8 @@ nltk.download('stopwords')
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
+import spacy
+
 #%% Basic functions
 
 def load_dataset(pathfile):
@@ -178,10 +180,21 @@ def fix_punctuation(string, contractions_dict=contractions_dict):
         return match.group(1) + ' ' + match.group(2)
     return punctuation_re.sub(replace, string)
 
+nlp = spacy.load('en', disable=['parser', 'ner'])
 
+def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
+    """https://spacy.io/api/annotation"""
+    lemmatized = []
+    for sent in texts:
+        doc = nlp(" ".join(sent)) 
+        lemmatized.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
+    return lemmatized
+
+'''
 def lemmatize_stemming(text):
     #return stemmer.stem(WordNetLemmatizer().lemmatize(text, pos=['N', 'R', 'W', 'B']))
     return WordNetLemmatizer().lemmatize(text)
+'''
 
 def preprocessing(reviews):
     #reviews = reviews.lower()
@@ -197,7 +210,8 @@ def preprocessing(reviews):
         filtered_review = []
         for word in tokenizer.tokenize(review):
             if word not in stopwords and len(word) > 2:
-                filtered_review.append(lemmatize_stemming(word))
+                #filtered_review.append(lemmatize_stemming(word))
+                filtered_review.append(word)
         #filtered_review = (' '.join([word for word in review.split() if word not in stopwords]))
         #filtered_review = str(filtered_review)
         #filtered_review = re.sub(r'\(.*?\)','', filtered_review)

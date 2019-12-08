@@ -25,6 +25,7 @@ except:
 	# Store the dataframe on disk
 	print("Caching the dataframe")
 	df.to_pickle('cached_dataframe.pkl')
+    
 
 #%%
 def data_exploration_step():

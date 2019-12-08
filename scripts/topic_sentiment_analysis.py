@@ -8,7 +8,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pyLDAvis.gensim
 
-from topic_sentiment_data_preparation import bag_of_words, create_dictionary, tf_idf, preprocessing_reviews, make_bigrams
+from topic_sentiment_data_preparation import bag_of_words
+from topic_sentiment_data_preparation import create_dictionary
+from topic_sentiment_data_preparation import tf_idf
+from topic_sentiment_data_preparation import preprocessing_reviews
+from topic_sentiment_data_preparation import make_bigrams
+from data_utils import lemmatization
 
 ### Functions ###
 
@@ -61,15 +66,18 @@ def topic_visualization(model, corpus, dictionary):
 def run(df):
     preprocessed, bigram = preprocessing_reviews(df)
     bigram_reviews = make_bigrams(preprocessed, bigram)
-    dictionary = create_dictionary(df, bigram_reviews)
+    lemmatized = lemmatization(bigram_reviews)
+    print(lemmatized[:100])
+    dictionary = create_dictionary(df, lemmatized)
     num_topics = 10
     
     # LDA using Bag of Words
-    bow_corpus = bag_of_words(df, bigram_reviews)
+    bow_corpus = bag_of_words(df, lemmatized)
     coherence_list, lda_best_model, ideal_topics = evaluate_multiple_lda(corpus=bow_corpus, 
                                                                          num_topics=num_topics, 
                                                                          dictionary=dictionary, 
-                                                                         texts=bigram_reviews)
+                                                                         texts=lemmatized)
+    print(coherence_list)
     plot_coherence(num_topics=num_topics, coherence=coherence_list)
     show_topics(lda_best_model, ideal_topics, num_words=15)
     topic_visualization(lda_best_model, bow_corpus, dictionary)
