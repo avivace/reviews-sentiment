@@ -16,15 +16,15 @@ os.chdir("..")
 # Data loading
 try:
 	# Try to load a cached version of the dataframe
-	print("Trying to load the cached dataframe")
-	df = pd.read_pickle('cached_dataframe.pkl')
+    print("Trying to load the cached dataframe")
+    df = pd.read_pickle('cached_dataframe.pkl')
 except:
-	print("No cached dataframe, loading the dataset from disk")
-	path = r'./datasets/Grocery_and_Gourmet_Food_5.json'
-	df = load_dataset(path)
-	# Store the dataframe on disk
-	print("Caching the dataframe")
-	df.to_pickle('cached_dataframe.pkl')
+    print("No cached dataframe, loading the dataset from disk")
+    path = r'./datasets/Grocery_and_Gourmet_Food_5.json'
+    df = load_dataset(path)
+    # Store the dataframe on disk
+    print("Caching the dataframe")
+    df.to_pickle('cached_dataframe.pkl')
     
 
 #%%
@@ -54,5 +54,6 @@ def aspect_based_sentiment_analysis_step():
     topic_sentiment_analysis.run(df_copy_for_aspect_based)
     
 os.chdir(r'./scripts')
-data_exploration_step()
+#data_exploration_step()
+sentiment_analysis_step()
 aspect_based_sentiment_analysis_step()

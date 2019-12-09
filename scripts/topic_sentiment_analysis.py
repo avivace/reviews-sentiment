@@ -59,16 +59,16 @@ def show_topics(model, ideal_topics, num_words):
     print(topic_df)
     
 def topic_visualization(model, corpus, dictionary):
-    lda_display = pyLDAvis.gensim.prepare(model, corpus, dictionary, sort_topics=False)
-    pyLDAvis.display(lda_display)
+    lda_display = pyLDAvis.gensim.prepare(model, corpus, dictionary, sort_topics=True)
+    #pyLDAvis.display(lda_display)
+    lda_display
 
     
 def run(df):
     preprocessed, bigram = preprocessing_reviews(df)
-    bigram_reviews = make_bigrams(preprocessed, bigram)
-    lemmatized = lemmatization(bigram_reviews)
-    print(lemmatized[:100])
-    dictionary = create_dictionary(df, lemmatized)
+    lemmatized = lemmatization(preprocessed)
+    bigram_reviews = make_bigrams(lemmatized, bigram)
+    dictionary = create_dictionary(df, bigram_reviews)
     num_topics = 10
     
     # LDA using Bag of Words

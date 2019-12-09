@@ -15,10 +15,7 @@ def remove_less_frequent_words(reviews):
     
     cleaned = [[token for token in review if frequency[token] > 1] for review in reviews]
     return cleaned
-            
-def make_bigrams(texts, bigram):
-    bigram_mod = gensim.models.phrases.Phraser(bigram)
-    return [bigram_mod[doc] for doc in texts]
+
     
 def preprocessing_reviews(df):
     # Most frequent product 
@@ -38,6 +35,11 @@ def create_dictionary(df, texts):
     dictionary.filter_extremes(no_below=10, no_above=0.5, keep_n=100000)
     return dictionary
     
+            
+def make_bigrams(texts, bigram):
+    bigram_mod = gensim.models.phrases.Phraser(bigram)
+    return [bigram_mod[doc] for doc in texts]
+
 
 def bag_of_words(df, texts):
     dictionary = create_dictionary(df, texts)
