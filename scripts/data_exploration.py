@@ -10,7 +10,6 @@ import seaborn as sns
 color = sns.color_palette()
 sns.set_style("dark")
 import os
-
 from data_utils import vote_to_opinion
 
 ### Functions ###
@@ -50,6 +49,13 @@ def run(df):
     
     #Create new feature "opinion" based on vote
     df = vote_to_opinion(df)
+    
+    df['words'] = [len(t) for t in df['reviewText']]
+    df.head(4)
+    fig, ax = plt.subplots(figsize=(10,10))
+    ax.boxplot(df['words'])
+    ax.set_xlabel('Reviews')
+    ax.figure.savefig('figures/1_lengthreviews.svg', format='svg')
 
     print("DATA EXPLORATION")
 
@@ -120,7 +126,6 @@ def run(df):
 
     r = list(top_reviewers['reviewerID'].unique())
     bar_width = 0.85
-    names = tuple(r)
 
     ax4.bar(r, top_reviewers['asin'], color='#f9bc86', edgecolor='white', width=bar_width)
     ax4.bar(r, top_reviewers['overall'], color='#b5ffb9', edgecolor='white', width=bar_width)
