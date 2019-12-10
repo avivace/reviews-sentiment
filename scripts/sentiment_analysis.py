@@ -8,9 +8,11 @@ from sentiment_data_preparation import token_frequency
 
 import pandas as pd
 import numpy as np
+import itertools
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.model_selection import train_test_split   
 from sklearn import metrics
+from sklearn.svm import LinearSVC
 
 
 def train_predict_model(classifier, train_features, train_labels, test_features):
@@ -44,19 +46,47 @@ def get_metrics(true_labels, predicted_labels):
                         4))
     
 
+def plot_confusion_matrix(cm, classes=['positive', 'negative']):
+    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title('Confusion matrix')
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+    
+    fmt = '.2f'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+    
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.show()
+    
+def compute_confusion_matrix(true_labels, predicted_labels, classes=['positive', 'negative']):
+    cm = metrics.confusion_matrix(y_true=true_labels, y_pred=predicted_labels, 
+                                  labels=classes)
+    return cm
+
+
 def display_confusion_matrix(true_labels, predicted_labels, classes=['positive', 'negative']):
     
     total_classes = len(classes)
     level_labels = [total_classes*[0], list(range(total_classes))]
 
-    cm = metrics.confusion_matrix(y_true=true_labels, y_pred=predicted_labels, 
-                                  labels=classes)
+    cm = compute_confusion_matrix(true_labels=true_labels, 
+                                  predicted_labels=predicted_labels,
+                                  classes=classes)
     cm_frame = pd.DataFrame(data=cm, 
                             columns=pd.MultiIndex(levels=[['Predicted:'], classes], 
                                                   codes=level_labels), 
                             index=pd.MultiIndex(levels=[['Actual:'], classes], 
                                                 codes=level_labels)) 
     print(cm_frame) 
+    return cm
     
     
 def display_classification_report(true_labels, predicted_labels, classes=['positive', 'negative']):
@@ -81,8 +111,6 @@ def display_model_performance_metrics(true_labels, predicted_labels, classes=['p
     display_confusion_matrix(true_labels=true_labels, predicted_labels=predicted_labels, 
                              classes=classes)
     
-
-
 
 def run(df):
     #df = df[:50000]
@@ -118,12 +146,10 @@ def run(df):
     cv_train_features = cv.fit_transform(reviews_train)
     cv_test_features = cv.transform(reviews_test)
     
-    tv = TfidfVectorizer(min_df=0.0, max_df=1.0, ngram_range=(1,2),
+    tv = TfidfVectorizer(min_df=7, max_df=0.8, ngram_range=(1, 2),
                      sublinear_tf=True)
     tv_train_features = tv.fit_transform(reviews_train)
     tv_test_features = tv.transform(reviews_test)
-    
-    from sklearn.svm import LinearSVC
 
     lr = LogisticRegression(penalty='l2', max_iter=100, C=1)
     svc = LinearSVC()
@@ -157,6 +183,15 @@ def run(df):
                                                 test_features=tv_test_features)
     display_model_performance_metrics(true_labels=sentiment_test,
                                       predicted_labels=svc_predictions_tfidf)
+    
+    # Plot confusion matrix
+    cm = compute_confusion_matrix(true_labels=sentiment_test,
+                                  predicted_labels=svc_predictions_tfidf)
+    
+
+    plot_confusion_matrix(cm)
+    
+
     
     
     
