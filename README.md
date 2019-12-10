@@ -9,6 +9,9 @@ By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://gi
 Set up the a Python virtual environment and install required packages
 
 ```bash
+# run this as sudo if it doesn't work
+python3 -m spacy download en
+
 cd scripts
 python3 -m venv .
 source bin/activate
