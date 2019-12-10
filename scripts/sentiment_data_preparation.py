@@ -15,13 +15,22 @@ import matplotlib.pyplot as plt
 
 
 #%%
-
-
-def data_preparation(df):
+def undersampling(df):
     df = remove_cols(df)
     #Create new feature "opinion" based on vote
     df = vote_to_opinion(df)
     df.drop(df[df.opinion == 'neutral'].index, inplace=True)
+    positive, negative = df.opinion.value_counts()
+    df_positive = df[df.opinion == 'positive']
+    df_positive = df_positive.sample(negative, random_state=42)
+    df_negative = df[df.opinion == 'negative']
+    df = pd.concat([df_positive, df_negative])
+    df = df.sample(frac=1)
+    return df
+
+
+def data_preparation(df):
+    df = undersampling(df)
     #alternative: df[df['opinion'].map(lambda x: str(x)!="neutral")]
     reviews = df['reviewText'].tolist()
     preprocessed = preprocessing(reviews)
@@ -37,7 +46,7 @@ def retrieve_opinion(df, sentiment):
     
 
 def vectorization(df):
-    cvector = CountVectorizer(max_features=2500, min_df=7, max_df=0.8)
+    cvector = CountVectorizer(max_features=10000, min_df=7, max_df=0.8)
     cvector.fit(df.preprocessedReview)
     
     negative_matrix = cvector.transform(df[df['opinion'] == 'negative']['preprocessedReview'])
