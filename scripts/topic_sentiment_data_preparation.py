@@ -25,29 +25,32 @@ def preprocessing_reviews(df):
     reviews = df_product['reviewText'].tolist()
     preprocessed = preprocessing(reviews)
     cleaned = remove_less_frequent_words(preprocessed)
-    bigram = gensim.models.Phrases(cleaned, min_count=5, threshold=100)
+    # Remove empty lists
+    cleaned = [e for e in cleaned if e]
     wordcloud(cleaned)
-    return cleaned, bigram
+    return cleaned
 
 
-def create_dictionary(df, texts):
+def create_dictionary(texts):
     dictionary = gensim.corpora.Dictionary(texts)
     dictionary.filter_extremes(no_below=10, no_above=0.5, keep_n=100000)
+    dictionary.compactify()
     return dictionary
     
             
-def make_bigrams(texts, bigram):
+def make_bigrams(texts):
+    bigram = gensim.models.Phrases(texts, min_count=5, threshold=100)
     bigram_mod = gensim.models.phrases.Phraser(bigram)
     return [bigram_mod[doc] for doc in texts]
 
 
-def bag_of_words(df, texts):
-    dictionary = create_dictionary(df, texts)
+def bag_of_words(texts):
+    dictionary = create_dictionary(texts)
     corpus = [dictionary.doc2bow(text) for text in texts]
     return corpus
     
 
-def tf_idf(df, corpus):
+def tf_idf(corpus):
     tfidf = models.TfidfModel(corpus)
     corpus_tfidf = tfidf[corpus]
     return corpus_tfidf

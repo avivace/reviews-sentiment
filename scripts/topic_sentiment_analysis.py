@@ -13,7 +13,6 @@ from topic_sentiment_data_preparation import create_dictionary
 from topic_sentiment_data_preparation import tf_idf
 from topic_sentiment_data_preparation import preprocessing_reviews
 from topic_sentiment_data_preparation import make_bigrams
-from data_utils import lemmatization
 
 ### Functions ###
 
@@ -21,12 +20,13 @@ def evaluate_multiple_lda(corpus, num_topics, dictionary, texts):
     lda_model, coherence_list = [], []
     for n in range(1, num_topics):
         model = gensim.models.LdaModel(corpus=corpus, 
-                                           num_topics=n, 
-                                           random_state=42, 
-                                           id2word=dictionary, 
-                                           passes=10, 
-                                           alpha=0.01,
-                                           eta=0.0001)
+                                       num_topics=n, 
+                                       random_state=42, 
+                                       chunksize=100,
+                                       id2word=dictionary, 
+                                       passes=10, 
+                                       alpha=0.01,
+                                       eta=0.0001)
         lda_model.append(model)
         cm = gensim.models.ldamodel.CoherenceModel(model=model, dictionary=dictionary, coherence='c_v', texts=texts)
         coherence_list.append(cm.get_coherence())
@@ -36,6 +36,7 @@ def evaluate_multiple_lda(corpus, num_topics, dictionary, texts):
     top_coherence_pos = coherence_list.index(max(coherence_list))
     ideal_topics = top_coherence_pos + 1
     lda_best_model = lda_model[top_coherence_pos]
+    print(coherence_list)
     return coherence_list, lda_best_model, ideal_topics
         
 
@@ -62,29 +63,32 @@ def topic_visualization(model, corpus, dictionary):
     lda_display = pyLDAvis.gensim.prepare(model, corpus, dictionary, sort_topics=True)
     #pyLDAvis.display(lda_display)
     lda_display
+    pyLDAvis.save_html(lda_display, 'lda.html')
 
     
 def run(df):
-    preprocessed, bigram = preprocessing_reviews(df)
-    lemmatized = lemmatization(preprocessed)
-    bigram_reviews = make_bigrams(lemmatized, bigram)
-    dictionary = create_dictionary(df, bigram_reviews)
+    preprocessed = preprocessing_reviews(df)
+    print(preprocessed[:10])
+    bigram_reviews = make_bigrams(preprocessed)
+    print(bigram_reviews[:10])
+    dictionary = create_dictionary(bigram_reviews)
+    print(dictionary)
     num_topics = 10
     
     # LDA using Bag of Words
-    bow_corpus = bag_of_words(df, lemmatized)
+    bow_corpus = bag_of_words(bigram_reviews)
     coherence_list, lda_best_model, ideal_topics = evaluate_multiple_lda(corpus=bow_corpus, 
                                                                          num_topics=num_topics, 
                                                                          dictionary=dictionary, 
-                                                                         texts=lemmatized)
+                                                                         texts=bigram_reviews)
     print(coherence_list)
     plot_coherence(num_topics=num_topics, coherence=coherence_list)
-    show_topics(lda_best_model, ideal_topics, num_words=15)
+    show_topics(lda_best_model, ideal_topics, num_words=10)
     topic_visualization(lda_best_model, bow_corpus, dictionary)
       
     '''
     # LDA using Tf-Idf
-    corpus_tfidf = tf_idf(df, bow_corpus)
+    corpus_tfidf = tf_idf(bow_corpus)
     coherence_tfidf = evaluate_topic(corpus=corpus_tfidf, num_topics=num_topics, dictionary=dictionary, texts=preprocessed_reviews)
     plot_coherence(num_topics=num_topics, coherence=coherence_tfidf)
     '''

@@ -34,7 +34,6 @@ def data_preparation(df):
     #alternative: df[df['opinion'].map(lambda x: str(x)!="neutral")]
     reviews = df['reviewText'].tolist()
     preprocessed = preprocessing(reviews)
-    lemmatized = lemmatization(preprocessed)
     df['preprocessedReview'] = [' '.join(review) for review in lemmatized]
     return df
 

@@ -55,5 +55,5 @@ def aspect_based_sentiment_analysis_step():
     
 os.chdir(r'./scripts')
 #data_exploration_step()
-sentiment_analysis_step()
+#sentiment_analysis_step()
 aspect_based_sentiment_analysis_step()
