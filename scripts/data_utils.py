@@ -182,13 +182,22 @@ def fix_punctuation(string, contractions_dict=contractions_dict):
 
 nlp = spacy.load('en', disable=['parser', 'ner'])
 
+'''
 def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     """https://spacy.io/api/annotation"""
     lemmatized = []
     for sent in texts:
+        print(sent)
         doc = nlp(" ".join(sent)) 
+        print(doc)
         lemmatized.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
     return lemmatized
+'''
+
+def lemmatization(text, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
+    """https://spacy.io/api/annotation"""
+    doc = nlp(' '.join(text))
+    return [token.lemma_ for token in doc if token.pos_ in allowed_postags]
 
 '''
 def lemmatize_stemming(text):
@@ -212,10 +221,11 @@ def preprocessing(reviews):
             if word not in stopwords and len(word) > 2:
                 #filtered_review.append(lemmatize_stemming(word))
                 filtered_review.append(word)
+        lemmatized = lemmatization(filtered_review)
         #filtered_review = (' '.join([word for word in review.split() if word not in stopwords]))
         #filtered_review = str(filtered_review)
         #filtered_review = re.sub(r'\(.*?\)','', filtered_review)
-        filtered_reviews.append(filtered_review)
+        filtered_reviews.append(lemmatized)
     return filtered_reviews
  
 #%% Data exploration
