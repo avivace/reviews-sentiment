@@ -103,7 +103,6 @@ def run(df):
     negative_percentage = [i / j * 100 for i, j in zip(raw_data['negative'], totals)]
 
     bar_width = 0.85
-    names = tuple(r)
 
     ax3.bar(r, positive_percentage, color='#b5ffb9', edgecolor='white', width=bar_width)
     ax3.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edgecolor='white', width=bar_width)

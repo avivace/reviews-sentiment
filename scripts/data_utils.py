@@ -5,8 +5,6 @@ import re
 from nltk.tokenize import RegexpTokenizer
 
 import nltk
-from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.stem import SnowballStemmer
 nltk.download('punkt')
 nltk.download('stopwords')
     
@@ -162,7 +160,6 @@ contractions_dict = {
 "you've": "you have"
 }
 
-stemmer = SnowballStemmer('english')
 contractions_re = re.compile('(%s)' % '|'.join(contractions_dict.keys()))
 punctuation_re = re.compile('([!,.:;?])(\w)')
 tokenizer = RegexpTokenizer(r'\w+')
@@ -182,28 +179,11 @@ def fix_punctuation(string, contractions_dict=contractions_dict):
 
 nlp = spacy.load('en', disable=['parser', 'ner'])
 
-'''
-def lemmatization(texts, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
-    """https://spacy.io/api/annotation"""
-    lemmatized = []
-    for sent in texts:
-        print(sent)
-        doc = nlp(" ".join(sent)) 
-        print(doc)
-        lemmatized.append([token.lemma_ for token in doc if token.pos_ in allowed_postags])
-    return lemmatized
-'''
-
 def lemmatization(text, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     """https://spacy.io/api/annotation"""
     doc = nlp(' '.join(text))
     return [token.lemma_ for token in doc if token.pos_ in allowed_postags]
 
-'''
-def lemmatize_stemming(text):
-    #return stemmer.stem(WordNetLemmatizer().lemmatize(text, pos=['N', 'R', 'W', 'B']))
-    return WordNetLemmatizer().lemmatize(text)
-'''
 
 def preprocessing(reviews):
     #reviews = reviews.lower()
