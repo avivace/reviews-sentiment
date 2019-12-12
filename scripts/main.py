@@ -44,6 +44,6 @@ def aspect_based_sentiment_analysis_step():
 
 if __name__ == "__main__":
     os.chdir(r'./scripts')
-    data_exploration_step()
+    #data_exploration_step()
     #sentiment_analysis_step()
-    #aspect_based_sentiment_analysis_step()
+    aspect_based_sentiment_analysis_step()

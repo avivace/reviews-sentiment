@@ -46,8 +46,8 @@ def make_bigrams(texts):
     return [bigram_mod[doc] for doc in texts]
 
 
-def bag_of_words(texts):
-    dictionary = create_dictionary(texts)
+def bag_of_words(texts, dictionary):
+    #dictionary = create_dictionary(texts)
     corpus = [dictionary.doc2bow(text) for text in texts]
     return corpus
     

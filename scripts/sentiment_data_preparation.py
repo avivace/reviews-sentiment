@@ -4,11 +4,8 @@ from data_utils import remove_cols
 from data_utils import wordcloud
 from data_utils import vote_to_opinion
 from data_utils import preprocessing
-from data_utils import lemmatization
 import nltk
 from sklearn.feature_extraction.text import CountVectorizer
-nltk.download('vader_lexicon')
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
