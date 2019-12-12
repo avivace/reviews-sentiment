@@ -19,15 +19,9 @@ def most_reviewed_products(df, n_products):
     most_reviews = reviews_per_product.nlargest(n_products)
     most_reviews = most_reviews.reset_index()
     most_reviews = most_reviews.drop('asin', axis=1)
-    
     definitive = df.merge(most_reviews, left_on='asin', right_on='index')
     definitive = definitive.drop('index', axis=1)
-    
     return definitive
-
-
-def significative_reviews(df, n_votes):
-    return df[df['vote'] >= n_votes]
 
 
 def most_active_reviewers(df, n_reviewers):
@@ -35,8 +29,6 @@ def most_active_reviewers(df, n_reviewers):
     most_reviews = n_reviews.nlargest(n_reviewers)
     most_reviews = most_reviews.reset_index()
     most_reviews = most_reviews.drop('reviewerID', axis=1)
-    #print("CCC \n", most_reviews)
-    
     definitive = df.merge(most_reviews, left_on='reviewerID', right_on='index')
     definitive = definitive.drop('index', axis=1)
     return definitive
@@ -50,10 +42,10 @@ def run(df):
     #Create new feature "opinion" based on vote
     df = vote_to_opinion(df)
     
-    df['words'] = [len(t) for t in df['reviewText']]
+    df['n_words'] = [len(t) for t in df['reviewText']]
     df.head(4)
     fig, ax = plt.subplots(figsize=(10,10))
-    ax.boxplot(df['words'])
+    ax.boxplot(df['n_words'])
     ax.set_xlabel('Reviews')
     ax.figure.savefig('figures/1_lengthreviews.svg', format='svg')
 
@@ -130,19 +122,7 @@ def run(df):
     ax4.bar(r, top_reviewers['overall'], color='#b5ffb9', edgecolor='white', width=bar_width)
     ax4.set_xticklabels(r, rotation=90)
     ax4.set_xlabel('Reviewer ID')
-    # plt.show()
     ax4.figure.savefig('figures/1_reviewers.svg', format='svg')
     print("Exported 1_reviewers.svg")
     
     os.chdir(current_directory)
-    
-    '''# Correlation between votes and opinion with a boxplot.
-    # Maybe a better representation than boxplot can be considered
-    # This part of code DOESN'T work
-
-    df_significative_reviews = significative_reviews(df, 5)
-    plt.boxplot(x=df_significative_reviews['opinion'], 
-                y=pd.to_numeric(df_significative_reviews['vote'],
-                errors='coerce'), 
-                palette="Blues")
-    plt.show()'''

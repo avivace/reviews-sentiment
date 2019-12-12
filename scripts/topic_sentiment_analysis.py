@@ -14,7 +14,7 @@ import os
 from topic_sentiment_data_preparation import bag_of_words
 from topic_sentiment_data_preparation import create_dictionary
 from topic_sentiment_data_preparation import tf_idf
-from topic_sentiment_data_preparation import preprocessing_reviews
+from topic_sentiment_data_preparation import data_preparation
 from topic_sentiment_data_preparation import make_bigrams
 
 ### Functions ###
@@ -71,7 +71,7 @@ def topic_visualization(model, corpus, dictionary):
 
     
 def run(df):
-    preprocessed = preprocessing_reviews(df)
+    preprocessed = data_preparation(df)
     bigram_reviews = make_bigrams(preprocessed)
     dictionary = create_dictionary(bigram_reviews)
     max_topics = 10

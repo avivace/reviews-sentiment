@@ -16,10 +16,6 @@ import matplotlib.pyplot as plt
 
 #%%
 def undersampling(df):
-    df = remove_cols(df)
-    #Create new feature "opinion" based on vote
-    df = vote_to_opinion(df)
-    df.drop(df[df.opinion == 'neutral'].index, inplace=True)
     positive, negative = df.opinion.value_counts()
     df_positive = df[df.opinion == 'positive']
     df_positive = df_positive.sample(negative, random_state=42)
@@ -30,6 +26,10 @@ def undersampling(df):
 
 
 def data_preparation(df):
+    df = remove_cols(df)
+    #Create new feature "opinion" based on vote
+    df = vote_to_opinion(df)    
+    df.drop(df[df.opinion == 'neutral'].index, inplace=True)
     df = undersampling(df)
     #alternative: df[df['opinion'].map(lambda x: str(x)!="neutral")]
     reviews = df['reviewText'].tolist()
@@ -44,8 +44,7 @@ def retrieve_opinion(df, sentiment):
     wordcloud(reviews)
     
 
-def vectorization(df):
-    cvector = CountVectorizer(max_features=10000, min_df=7, max_df=0.8)
+def vectorization(df, cvector):
     cvector.fit(df.preprocessedReview)
     
     negative_matrix = cvector.transform(df[df['opinion'] == 'negative']['preprocessedReview'])

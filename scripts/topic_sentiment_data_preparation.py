@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from data_utils import preprocessing, wordcloud
-from data_exploration import most_reviewed_products
+from data_utils import preprocessing
+from data_utils import wordcloud
+from data_utils import remove_cols
 import gensim
 from gensim import models
 
@@ -17,7 +18,8 @@ def remove_less_frequent_words(reviews):
     return cleaned
 
     
-def preprocessing_reviews(df):
+def data_preparation(df):
+    df = remove_cols(df)
     # Most frequent product 
     product_id = df.asin.mode().iloc[0]
     # Create a dataframe composed by the most reviewed product

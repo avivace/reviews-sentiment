@@ -199,12 +199,8 @@ def preprocessing(reviews):
         filtered_review = []
         for word in tokenizer.tokenize(review):
             if word not in stopwords and len(word) > 2:
-                #filtered_review.append(lemmatize_stemming(word))
                 filtered_review.append(word)
         lemmatized = lemmatization(filtered_review)
-        #filtered_review = (' '.join([word for word in review.split() if word not in stopwords]))
-        #filtered_review = str(filtered_review)
-        #filtered_review = re.sub(r'\(.*?\)','', filtered_review)
         filtered_reviews.append(lemmatized)
     return filtered_reviews
  
@@ -227,20 +223,3 @@ def wordcloud(data, title = None):
 
     plt.imshow(wordcloud)
     plt.show()
-#%%
-
-'''
-def get_wordnet_pos(treebank_tag):
-
-    if treebank_tag.startswith('J'):
-        return wordnet.ADJ
-    elif treebank_tag.startswith('V'):
-        return wordnet.VERB
-    elif treebank_tag.startswith('N'):
-        return wordnet.NOUN
-    elif treebank_tag.startswith('R'):
-        return wordnet.ADV
-    else:
-        return ''
-
-'''

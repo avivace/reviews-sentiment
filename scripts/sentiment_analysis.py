@@ -126,9 +126,11 @@ def run(df):
     negative = df[df.opinion == 'negative'].index
     '''
     df = data_preparation(df)
+    df = df[df.preprocessedReview != '']
     retrieve_opinion(df, 'positive')
     retrieve_opinion(df, 'negative')
-    term_frequency = vectorization(df)   
+    cv = CountVectorizer(max_features=10000, min_df=7, max_df=0.8)
+    term_frequency = vectorization(df, cv)   
     plot_frequency(term_frequency)
     zipf_law(term_frequency)
     token_frequency(term_frequency, 'positive')
@@ -137,14 +139,12 @@ def run(df):
     
     # Machine learning
     # Valutare di cancellare anche reviews con tot parole
-    df = df[df.preprocessedReview != '']
     reviews = np.array(df['preprocessedReview'])
     sentiments = np.array(df['opinion']) 
     reviews_train, reviews_test, sentiment_train, sentiment_test = train_test_split(reviews, 
                                                                                     sentiments, 
                                                                                     test_size=0.2, 
                                                                                     random_state=42)
-    cv = CountVectorizer(max_features=50000)
     cv_train_features = cv.fit_transform(reviews_train)
     cv_test_features = cv.transform(reviews_test)
     
