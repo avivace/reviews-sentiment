@@ -93,20 +93,28 @@ def format_topics_sentences(model, corpus, texts):
     contents = pd.Series(texts)
     df = pd.concat([df, contents], axis=1)
     df = df.reset_index()
-    df.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contrib', 'Keywords', 'Text']
+    df.columns = ['review', 'topic_num', 'topic_perc_contribution', 'keywords', 'text']
     return df
 
 
 def sentiment_polarity(df):
+    sentiment = pd.DataFrame()
+    sentiment = pd.concat([sentiment, df], ignore_index=True)
     analyser = SentimentIntensityAnalyzer()
-    df['sentiments'] = df['Text'].str.join(' ').apply(lambda x:
-                                                      analyser.polarity_scores(x))
-    df = pd.concat([df.drop(['sentiments'], axis=1), 
-                    df['sentiments'].apply(pd.Series)],
-                    axis=1)
+    sentiment['sentiments'] = sentiment['text'].str.join(' ').apply(lambda x:
+                                                          analyser.polarity_scores(x))
+    sentiment = pd.concat([sentiment.drop(['sentiments'], axis=1), 
+                           sentiment['sentiments'].apply(pd.Series)],
+                          axis=1)
     # Numbers of words
-    df["nb_words"] = df["Text"].apply(lambda x: len(x))
-    return df
+    sentiment['words_nb'] = sentiment["text"].apply(lambda x: len(x))
+    sentiment_final = sentiment.groupby(['topic_num', 
+                                         'keywords']).agg({'neg':'mean',
+                                                           'neu':'mean',
+                                                           'pos':'mean',
+                                                           'compound':'mean',
+                                                           'topic_perc_contribution':'count'}).reset_index()
+    return sentiment_final, sentiment
 
 
 def most_representative_document(df):
@@ -114,28 +122,26 @@ def most_representative_document(df):
     # Most representative document for each topic
     sent_topics_sorted_df = pd.DataFrame()
     
-    sent_topics_outdf_grpd = df.groupby('Dominant_Topic')
+    sent_topics_outdf_grpd = df.groupby('topic_num')
     
     for i, grp in sent_topics_outdf_grpd:
         sent_topics_sorted_df = pd.concat([sent_topics_sorted_df, 
-                                                 grp.sort_values(['Topic_Perc_Contrib'], ascending=[0]).head(1)], 
-                                                axis=0)
+                                           grp.sort_values(['topic_perc_contribution'], 
+                                                           ascending=[0]).head(1)], 
+                                           axis=0)
     sent_topics_sorted_df.reset_index(drop=True, inplace=True)
-    #sent_topics_sorted_df.columns = ['Topic_Num', "Topic_Perc_Contrib", "Keywords", "Text"]
+    sent_topics_sorted_df.columns = ['review', 'topic_num', 'topic_perc_contribution', 'keywords', 'text']
+    sent_topics_sorted_df.drop(['review'], axis=1, inplace=True)
     return sent_topics_sorted_df
 
 
-def topic_distribution_across_documents(df):
+def topic_distribution_across_documents(df, sentiment):
     # Number of Documents for Each Topic
-    topic_counts = df['Dominant_Topic'].value_counts()
-    #polarity_sentiment = sent_topics_sorted_df.groupby('Dominant_Topic')['compound'].mean()
-    polarity_sentiment = df.groupby('Dominant_Topic').agg({'neg': 'mean',
-                                                           'pos': 'mean',
-                                                           'neu': 'mean',
-                                                           'compound': 'mean'})
+    sentiment.rename(columns={'dominant_topic':'topic'})
+    topic_counts = df['topic_num'].value_counts()
     topic_contribution = round(topic_counts/topic_counts.sum(), 4)
-    topic_num_keywords = df[['Dominant_Topic', 'Keywords']]
-    df_dominant_topics = pd.concat([topic_num_keywords, topic_counts, topic_contribution, polarity_sentiment], axis=1)
+    topic_contribution.rename(columns={'topic_num':'perc_contribution'})
+    df_dominant_topics = pd.concat([sentiment, topic_contribution], axis=1)
     
     # Change Column names
     #df_dominant_topics.columns = ['Dominant_Topic', 'Topic_Keywords', 'Num_Documents', 'Perc_Documents']
@@ -190,25 +196,27 @@ def run(df):
     plot_coherence(num_topics=len(num_topics), coherence=best_coherences)
     show_topics(best_model, best_num_topics, num_words=10)
     topic_visualization(best_model, bow_corpus, dictionary)
-    
+
+
     # Alcune probs sono 0.5, valutare se togliere quelle comprese tra 0.4 e 0.6
     topic_sents_keywords = format_topics_sentences(best_model, bow_corpus, bigram_reviews)
 
     topic_sents_keywords.to_pickle('dataframes/topic_sents_keywords.pkl')
     
-    sentiment_df = sentiment_polarity(topic_sents_keywords)
-    pos = sentiment_df[sentiment_df["nb_words"] >= 5].sort_values("pos", ascending = False)[["Text", "pos"]]
-    neg = sentiment_df[sentiment_df["nb_words"] >= 5].sort_values("neg", ascending = False)[["Text", "neg"]]
+    sentiment_df, words = sentiment_polarity(topic_sents_keywords)
+    pos = words[words["words_nb"] >= 5].sort_values("pos", ascending = False)[["text", "pos"]].head(20)
+    neg = words[words["words_nb"] >= 5].sort_values("neg", ascending = False)[["text", "neg"]].head(20)
     
     pos.to_pickle('dataframes/positive.pkl')
     
     neg.to_pickle('dataframes/negative.pkl')
         
-    most_repr_rews = most_representative_document(sentiment_df)
+    most_repr_rews = most_representative_document(topic_sents_keywords)
+
     
     most_repr_rews.to_pickle('dataframes/most_repr_rews.pkl')
     
-    df_dominant_topics = topic_distribution_across_documents(most_repr_rews)
+    df_dominant_topics = topic_distribution_across_documents(topic_sents_keywords, sentiment_df)
     
     df_dominant_topics.to_pickle('dataframes/dominant_topics.pkl')
 
