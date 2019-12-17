@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from data_utils import preprocessing
 from data_utils import wordcloud
 from data_utils import remove_cols
 import gensim
@@ -8,16 +7,14 @@ from gensim import models
 
 from collections import defaultdict
 
-def remove_less_frequent_words(reviews):
-    frequency = defaultdict(int)
-    for review in reviews:
-        for token in review:
-            frequency[token] += 1
-    
-    cleaned = [[token for token in review if frequency[token] > 1] for review in reviews]
-    return cleaned
 
-    
+def topic_analysis_data_preparation(df):
+    product_id = df.asin.mode().iloc[0]
+    df_product = df[df['asin'] == product_id]
+    wordcloud(df_product['preprocessedReview'])
+    return df_product
+
+'''
 def data_preparation(df):
     df = remove_cols(df)
     # Most frequent product 
@@ -31,6 +28,7 @@ def data_preparation(df):
     cleaned = [e for e in cleaned if e]
     wordcloud(cleaned)
     return cleaned
+'''
 
 
 def create_dictionary(texts):

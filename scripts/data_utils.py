@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import pandas as pd 
+
 import re
 from nltk.tokenize import RegexpTokenizer
 
@@ -10,10 +10,12 @@ nltk.download('stopwords')
     
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+from collections import defaultdict
 
 import spacy
 
-#%% Basic functions
+import pandas as pd 
+
 
 def load_dataset(pathfile):
     df = pd.read_json(pathfile, lines=True)
@@ -22,15 +24,17 @@ def load_dataset(pathfile):
     df.dropna(subset=['reviewText'], inplace=True)
     return df
     
+
+### DATA MANIPULATION ###
 def remove_cols(df):
     df = df.drop(['image',
               'reviewTime',
-              'reviewerID',
               'reviewerName',
               'style',
               'unixReviewTime'], axis=1)
     return df
     
+
 def vote_to_opinion(df):
     df.loc[df.overall == 3, 'opinion'] = "neutral"
     df.loc[df.overall > 3, 'opinion'] = "positive"
@@ -38,7 +42,10 @@ def vote_to_opinion(df):
     return df
 
 
-#%% Data preprocessing
+def words_count(df):
+    df['n_words'] = [len(t) for t in df['reviewText']]
+    return df
+
  
 contractions_dict = { 
 "ain't": "am not / are not / is not / has not / have not",
@@ -159,7 +166,6 @@ contractions_dict = {
 "you're": "you are",
 "you've": "you have"
 }
-
 contractions_re = re.compile('(%s)' % '|'.join(contractions_dict.keys()))
 punctuation_re = re.compile('([!,.:;?])(\w)')
 tokenizer = RegexpTokenizer(r'\w+')
@@ -172,25 +178,39 @@ def expand_contractions(string, contractions_dict=contractions_dict):
 
 def fix_punctuation(string, contractions_dict=contractions_dict):
     def replace(match):
-        print(match)
-        print(match.group(1) + ' ' + match.group(2))
+        #print(match)
+        #print(match.group(1) + ' ' + match.group(2))
         return match.group(1) + ' ' + match.group(2)
     return punctuation_re.sub(replace, string)
 
-nlp = spacy.load('en', disable=['parser', 'ner'])
 
+def remove_less_frequent_words(reviews):
+    frequency = defaultdict(int)
+    for review in reviews:
+        for token in review:
+            frequency[token] += 1
+    
+    cleaned = [[token for token in review if frequency[token] > 1] for review in reviews]
+    return cleaned
+
+
+nlp = spacy.load('en', disable=['parser', 'ner'])
 def lemmatization(text, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     """https://spacy.io/api/annotation"""
     doc = nlp(' '.join(text))
     return [token.lemma_ for token in doc if token.pos_ in allowed_postags]
 
 
-def preprocessing(reviews):
+def text_preprocessing(reviews):
     #reviews = reviews.lower()
     reviews = [review.lower() for review in reviews]
     stopwords = nltk.corpus.stopwords.words("english")
     filtered_reviews = []
+    no_review = 0
     for review in reviews:
+        no_review += 1
+        if no_review % 100 == 0:
+            print('Review n.', no_review, '/', len(reviews))
         try:
             review = fix_punctuation(review)
             review = expand_contractions(review)
@@ -202,7 +222,24 @@ def preprocessing(reviews):
                 filtered_review.append(word)
         lemmatized = lemmatization(filtered_review)
         filtered_reviews.append(lemmatized)
+    filtered_reviews = remove_less_frequent_words(filtered_reviews)
     return filtered_reviews
+
+
+def preprocessed_reviews(df):
+    reviews = df['reviewText'].tolist()
+    preprocessed_reviews = text_preprocessing(reviews)
+    df['preprocessedReview'] = [' '.join(review) for review in preprocessed_reviews]
+    df = df[df.preprocessedReview != '']
+    return df
+
+
+def feature_manipulation(df):
+    df = remove_cols(df)
+    df = vote_to_opinion(df)
+    df = words_count(df)
+    df = preprocessed_reviews(df)
+    return df
  
 #%% Data exploration
     

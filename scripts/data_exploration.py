@@ -10,7 +10,6 @@ import seaborn as sns
 color = sns.color_palette()
 sns.set_style("dark")
 import os
-from data_utils import vote_to_opinion
 
 ### Functions ###
 
@@ -39,19 +38,12 @@ def run(df):
     current_directory = os.getcwd()
     os.chdir('..')
     
-    #Create new feature "opinion" based on vote
-    df = vote_to_opinion(df)
-    
-    df['n_words'] = [len(t) for t in df['reviewText']]
-    df.head(4)
+    # Number of words for each review
     fig, ax = plt.subplots(figsize=(10,10))
     ax.boxplot(df['n_words'])
     ax.set_xlabel('Reviews')
     ax.figure.savefig('figures/1_lengthreviews.svg', format='svg')
-
-    print("DATA EXPLORATION")
-
-    print("Number of records:", len(df))
+    print('Exported 1_lengthreviews.svg')
 
     # Score Distribution
     fig, ax1 = plt.subplots()
@@ -61,20 +53,12 @@ def run(df):
     ax1.figure.savefig('figures/1_scoredistribution.svg', format='svg')
     print("Exported 1_scoredistribution.svg")
 
-    print("Average Score: ", np.mean(df.overall))
-    print("Median Score: ", np.median(df.overall))
-
     #Opinion Distribution
     fig, ax2 = plt.subplots()
     sns.countplot(df.opinion, ax=ax2)
     ax2.set_title('Opinion Distribution')
-    #plt.show()
     ax2.figure.savefig('figures/1_opiniondistribution.svg', format='svg')
     print("Exported 1_opiniondistribution.svg")
-
-    print("Proportion of positive review:", len(df[df.opinion == "positive"]) / len(df))
-    print("Proportion of neutral review:", len(df[df.opinion == "neutral"]) / len(df))
-    print("Proportion of negative review:", len(df[df.opinion == "negative"]) / len(df))
 
     #Stacked barplot (x-axis asin code, y-axis opinion)
     fig, ax3 = plt.subplots()
@@ -109,11 +93,9 @@ def run(df):
     # Top 50 reviewers
     fig, ax4 = plt.subplots()
     top_reviewers = most_active_reviewers(df, 50)
-    #print("DDD \n",top_reviewers)
     top_reviewers = top_reviewers.groupby('reviewerID').agg({'overall':'mean',
                                                              'vote':'mean',
                                                              'asin':'count'}).sort_values(['asin'], ascending=[False]).reset_index()
-    #print("EEE \n",top_reviewers)
 
     r = list(top_reviewers['reviewerID'].unique())
     bar_width = 0.85

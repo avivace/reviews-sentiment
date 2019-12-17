@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from data_utils import remove_cols
 from data_utils import wordcloud
-from data_utils import vote_to_opinion
-from data_utils import preprocessing
+
 import nltk
-from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,6 +19,12 @@ def undersampling(df):
     return df
 
 
+def sentiment_analysis_data_preparation(df):
+    df.drop(df[df.opinion == 'neutral'].index, inplace=True)
+    undersampled = undersampling(df)
+    return undersampled
+
+'''
 def data_preparation(df):
     df = remove_cols(df)
     #Create new feature "opinion" based on vote
@@ -33,6 +36,7 @@ def data_preparation(df):
     preprocessed = preprocessing(reviews)
     df['preprocessedReview'] = [' '.join(review) for review in preprocessed]
     return df
+'''
 
 
 def retrieve_opinion(df, sentiment):
@@ -107,82 +111,3 @@ def token_frequency(df, sentiment):
     plt.xlabel('Token')
     plt.title('Top 50 tokens in {} reviews'.format(sentiment))
     
-
-def run(df):
-    # Preprocessing
-
-    
-    '''
-    # Create sentiment for each review.
-    # Quattro diverse colonne neutral, pos, neg e compound.
-    # Valore tra 0 e 1 che stima la probabilità del sentiment, il compound è calcolato rispetto a questi tre valori
-    # Testata su review intera, non pre-processata. Vedere se funziona e come
-
-    
-    ### Predizione su usefulness e sentiment (Positive > 3, Usefulness?? vedere quantile, 90% sono useless)
-    print(df.vote.quantile(0.95))
-    
-    analyser = SentimentIntensityAnalyzer()
-    df['sentiments'] = df['preprocessedReview'].apply(lambda x: analyser.polarity_scores(x))
-    df = pd.concat([df.drop(['sentiments'], axis=1), df['sentiments'].apply(pd.Series)], axis=1)
-    # Number of characters
-    df["nb_chars"] = df["preprocessedReview"].apply(lambda x: len(x))
-    # Numbers of words
-    df["nb_words"] = df["preprocessedReview"].apply(lambda x: len(x.split(" ")))
-    # Most positive reviews
-    df[df["nb_words"] >= 5].sort_values("pos", ascending = False)[["reviewText", "pos"]].head(10)
-    # Most negative reviews
-    df[df["nb_words"] >= 5].sort_values("neg", ascending = True)[["reviewText", "neg"]].head(10)
-    '''
-    
-
-
-    
-'''
-    #Remove stop words
-    df['reviewTextNoStopWords'] = remove_stop_words(df['reviewText'])
-
-    #Sentence tokenization
-    df['reviewTextTokenized'] = tokenization(df['reviewTextNoStopWords'])
-
-
-    #Drop non-final review texts
-    df.drop(['reviewText', 'reviewTextNoStopWords'], axis=1)
-    
-    #Save prepared dataset for Sentiment Analysis
-    #df.to_csv("datasets\preparedForSentimentAnalysis.csv", sep='\t', encoding='utf-8')
-
-OLD #%%
-#Get the reviews
-reviews_values = df.reviewText.values
-reviews = [reviews_values[i] for i in range(len(reviews_values))]
-#%%
-#Remove stop words
-filtered_reviews = removing_stop_words(reviews)
-
-#%%
-#Sentence tokenization
-reviews = tokenization(filtered_reviews)
-#%%'''
-
-''' OLD reviews = df.reviewText.values
-labels = df.opinion.values
-
-if df.opinion[3] == "positive":
-    print("\nPositive:", reviews[3][:90], "...")
-else:
-    print("\nNegative:", reviews[3][:90], "...")
-    
-positive_reviews = [reviews[i] for i in range(len(reviews)) if labels[i] == "positive"]
-negative_reviews = [reviews[i] for i in range(len(reviews)) if labels[i] == "negative"]
-
-#%% Tokenization
-
-positive_tokenized = tokenization(positive_reviews)
-negative_tokenized = tokenization(negative_reviews)
-
-#%% Stop words
-
-positive_filtered = removing_stop_word(positive_tokenized)
-negative_filtered = removing_stop_words(negative_tokenized)'''
-
