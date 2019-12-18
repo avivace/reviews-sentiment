@@ -194,7 +194,7 @@ def remove_less_frequent_words(reviews):
     return cleaned
 
 
-nlp = spacy.load('en', disable=['parser', 'ner'])
+#nlp = spacy.load('en', disable=['parser', 'ner'])
 def lemmatization(text, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     """https://spacy.io/api/annotation"""
     doc = nlp(' '.join(text))
@@ -236,9 +236,12 @@ def preprocessed_reviews(df):
 
 def feature_manipulation(df):
     df = remove_cols(df)
+    df = preprocessed_reviews(df)
+    return df
+
+def add_columns(df):
     df = vote_to_opinion(df)
     df = words_count(df)
-    df = preprocessed_reviews(df)
     return df
  
 #%% Data exploration

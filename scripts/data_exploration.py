@@ -32,6 +32,18 @@ def most_active_reviewers(df, n_reviewers):
     definitive = definitive.drop('index', axis=1)
     return definitive
 
+def analyze_reviews(df, plot_title):
+    print("Shape of df: ", df.shape)
+
+    fig, ax1 = plt.subplots()
+    sns.countplot(df.overall, ax=ax1)
+    ax1.set_title(plot_title)
+    #plt.show()
+    # ax1.figure.savefig('figures/unverified_scoredistribution.svg', format='svg')
+    # print("Exported unverified_scoredistribution.svg")
+
+    print("Average Score: ", np.mean(df.overall))
+    print("Median Score: ", np.median(df.overall))
 #%%
 
 def run(df):
@@ -106,5 +118,39 @@ def run(df):
     ax4.set_xlabel('Reviewer ID')
     ax4.figure.savefig('figures/1_reviewers.svg', format='svg')
     print("Exported 1_reviewers.svg")
-    
+
+    #Non verified reviews
+    print("### Unverified reviews exploration ###")
+    unverified = df[df['verified'] == False]
+    analyze_reviews(unverified, "Unverified Score Distribution")
+
+    unverified2 = unverified[unverified['opinion'] == 'negative']
+    print("Negative unverified", unverified2.shape)
+    unverified2_head = unverified2.head(10)['reviewText']
+    for x in unverified2_head:
+        print("Review: ", x)
+
+    unverified3 = unverified[unverified['opinion'] == 'positive']
+    print("Positive unverified", unverified3.shape)
+    unverified3_head = unverified3.head(10)['reviewText']
+    for x in unverified3_head:
+        print("Review: ", x)
+
+    fig, ax5 = plt.subplots(figsize=(10,10))
+    ax5.boxplot(unverified['n_words'])
+    ax5.set_xlabel('Unverified Reviews')
+    #ax5.figure.savefig('figures/1_lengthunverifiedreviews.svg', format='svg')
+
+    #Verified reviews
+    print("### Verified reviews exploration ###")
+    verified = df[df['verified'] == True]
+    analyze_reviews(verified, "Verified Score Distribution")
+
+    fig, ax6 = plt.subplots(figsize=(10,10))
+    ax6.boxplot(verified['n_words'])
+    ax6.set_xlabel('Verified Reviews')
+    #ax5.figure.savefig('figures/1_lengthunverifiedreviews.svg', format='svg')
+
+    plt.show()
+
     os.chdir(current_directory)

@@ -6,6 +6,7 @@ import pandas as pd
 from data_utils import load_dataset
 from data_utils import feature_manipulation
 
+from scripts.data_utils import add_columns
 
 
 def load_initial_dataset():
@@ -28,9 +29,12 @@ def load_initial_dataset():
 def data_exploration_step(df):
     #Data exploration
     data_exploration.run(df)
+
+def preprocessing_pre_exploration_dataset(df):
+    preprocessed = add_columns(df)
+    return preprocessed
     
-    
-def preprocessing_dataset(df):
+def preprocessing_post_exploration_dataset(df):
     try:
         print("Trying to load the cached preprocessed dataframe")
         preprocessed = pd.read_pickle('cached_preprocessed_dataframe.pkl')
@@ -58,9 +62,10 @@ def aspect_based_sentiment_analysis_step(df_preprocessed):
 if __name__ == "__main__":
     os.chdir("..")
     df = load_initial_dataset()
-    df_preprocessed = preprocessing_dataset(df)
+    df_preprocessed1 = preprocessing_pre_exploration_dataset(df)
     os.chdir(r'./scripts')
-    data_exploration_step(df_preprocessed)
+    data_exploration_step(df_preprocessed1)
+    df_preprocessed2 = preprocessing_post_exploration_dataset(df_preprocessed1)
 
-    sentiment_analysis_step(df_preprocessed)
-    aspect_based_sentiment_analysis_step(df_preprocessed)
+    sentiment_analysis_step(df_preprocessed2)
+    aspect_based_sentiment_analysis_step(df_preprocessed2)
