@@ -32,6 +32,7 @@ def most_active_reviewers(df, n_reviewers):
     definitive = definitive.drop('index', axis=1)
     return definitive
 
+
 def analyze_reviews(df, plot_title):
     print("Shape of df: ", df.shape)
 
@@ -44,18 +45,24 @@ def analyze_reviews(df, plot_title):
 
     print("Average Score: ", np.mean(df.overall))
     print("Median Score: ", np.median(df.overall))
+
+
+def plot_boxplot_words(column, label, name_file):
+    fix, ax = plt.subplots(figsize=(10, 10))
+    ax.boxplot(column)
+    ax.set_xlabel(label)
+    ax.figure.savefig('figures/1_{0}.svg'.format(name_file), format='svg')
+    print('Exported 1_{}.svg'.format(name_file))
+
 #%%
 
 def run(df):
+    os.chdir(r'./scripts')
     current_directory = os.getcwd()
     os.chdir('..')
     
     # Number of words for each review
-    fig, ax = plt.subplots(figsize=(10,10))
-    ax.boxplot(df['n_words'])
-    ax.set_xlabel('Reviews')
-    ax.figure.savefig('figures/1_lengthreviews.svg', format='svg')
-    print('Exported 1_lengthreviews.svg')
+    plot_boxplot_words(df['n_words'], 'Reviews', 'lengthreviews')
 
     # Score Distribution
     fig, ax1 = plt.subplots()
@@ -136,21 +143,18 @@ def run(df):
     for x in unverified3_head:
         print("Review: ", x)
 
-    fig, ax5 = plt.subplots(figsize=(10,10))
-    ax5.boxplot(unverified['n_words'])
-    ax5.set_xlabel('Unverified Reviews')
-    #ax5.figure.savefig('figures/1_lengthunverifiedreviews.svg', format='svg')
+    plot_boxplot_words(unverified['n_words'], 'Unverified Reviews', 'lengthunverifiedreviews')
+    plot_boxplot_words(unverified['vote'], 'Unverified Votes', 'unverifiedvotes')
 
     #Verified reviews
     print("### Verified reviews exploration ###")
     verified = df[df['verified'] == True]
     analyze_reviews(verified, "Verified Score Distribution")
 
-    fig, ax6 = plt.subplots(figsize=(10,10))
-    ax6.boxplot(verified['n_words'])
-    ax6.set_xlabel('Verified Reviews')
-    #ax5.figure.savefig('figures/1_lengthunverifiedreviews.svg', format='svg')
-
-    plt.show()
+    plot_boxplot_words(verified['n_words'], 'Verified Reviews', 'lengthverifiedreviews')
+    plot_boxplot_words(verified['vote'], 'Verified Votes', 'verifiedvotes')
+    #plt.show()
+    
+    
 
     os.chdir(current_directory)

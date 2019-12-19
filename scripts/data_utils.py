@@ -15,12 +15,15 @@ from collections import defaultdict
 import spacy
 
 import pandas as pd 
+import numpy as np
 
 
 def load_dataset(pathfile):
     df = pd.read_json(pathfile, lines=True)
     df['vote'].fillna(0, inplace=True)
     df['vote'] = pd.to_numeric(df['vote'], errors='coerce')
+    df = df[np.isfinite(df['vote'])]
+    df['vote'] = df['vote'].astype(int)
     df.dropna(subset=['reviewText'], inplace=True)
     return df
     
@@ -194,7 +197,7 @@ def remove_less_frequent_words(reviews):
     return cleaned
 
 
-#nlp = spacy.load('en', disable=['parser', 'ner'])
+nlp = spacy.load('en', disable=['parser', 'ner'])
 def lemmatization(text, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     """https://spacy.io/api/annotation"""
     doc = nlp(' '.join(text))
@@ -239,10 +242,11 @@ def feature_manipulation(df):
     df = preprocessed_reviews(df)
     return df
 
-def add_columns(df):
-    df = vote_to_opinion(df)
-    df = words_count(df)
-    return df
+
+def add_features(df):
+    df_features = vote_to_opinion(df)
+    df_features = words_count(df_features)
+    return df_features
  
 #%% Data exploration
     
