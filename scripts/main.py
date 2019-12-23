@@ -32,9 +32,8 @@ def data_exploration_step(df):
 
 
 def preprocessing_pre_exploration_dataset(df):
-    df_add_features = add_features(df)
-    preprocessed = pd.DataFrame()
-    preprocessed = pd.concat([preprocessed, df_add_features], axis=1)
+    preprocessed = df.copy(True)
+    add_features(preprocessed)
     return preprocessed
     
 
@@ -45,7 +44,8 @@ def preprocessing_post_exploration_dataset(df):
         preprocessed = pd.read_pickle('cached_preprocessed_dataframe.pkl')
     except:
         print("No cached dataframe, loading the dataset from disk")
-        preprocessed = feature_manipulation(df)
+        preprocessed = df.copy(True)
+        feature_manipulation(preprocessed)
         print("Caching the dataframe")
         preprocessed.to_pickle('cached_preprocessed_dataframe.pkl')
     return preprocessed
@@ -67,8 +67,12 @@ def aspect_based_sentiment_analysis_step(df_preprocessed):
 if __name__ == "__main__":
     df = load_initial_dataset()
     df_exploration = preprocessing_pre_exploration_dataset(df)
-    data_exploration_step(df_exploration)
+    print(df)
+    print(df_exploration)
+    #data_exploration_step(df_exploration)
     df_analysis = preprocessing_post_exploration_dataset(df_exploration)
+    print(df_exploration)
+    print(df_analysis)
     os.chdir(r'./scripts')
     #sentiment_analysis_step(df_analysis)
-    aspect_based_sentiment_analysis_step(df_analysis)
+    #aspect_based_sentiment_analysis_step(df_analysis)
