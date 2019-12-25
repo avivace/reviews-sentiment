@@ -5,7 +5,11 @@ datasets/*
 !datasets/pull_datasets.sh
 
 # Ignore cached dataframes
-.pkl
+*.pkl
+
+# Exported images and web pages
+*.html
+*.svg
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
