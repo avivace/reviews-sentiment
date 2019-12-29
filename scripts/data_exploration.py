@@ -8,7 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 color = sns.color_palette()
-sns.set_style("dark")
+sns.set_style(style="darkgrid")
 import os
 
 ### Functions ###
@@ -49,7 +49,7 @@ def analyze_reviews(df, plot_title):
 
 def plot_boxplot_words(column, label, name_file):
     fix, ax = plt.subplots(figsize=(10, 10))
-    ax.boxplot(column)
+    ax = sns.boxplot(column)
     ax.set_xlabel(label)
     ax.figure.savefig('figures/1_{0}.svg'.format(name_file), format='svg')
     print('Exported 1_{}.svg'.format(name_file))
@@ -112,10 +112,17 @@ def run(df):
     # Top 50 reviewers
     fig, ax4 = plt.subplots()
     top_reviewers = most_active_reviewers(df, 50)
+    '''
     top_reviewers = top_reviewers.groupby('reviewerID').agg({'overall':'mean',
                                                              'vote':'mean',
                                                              'asin':'count'}).sort_values(['asin'], ascending=[False]).reset_index()
-
+    '''
+    sns.countplot(top_reviewers.reviewerID, ax=ax4, order=top_reviewers['reviewerID'].value_counts().index)
+    r = list(top_reviewers['reviewerID'].unique())
+    ax4.set_xticklabels(r, rotation=90)
+    ax4.set_title('Top reviewers')
+    ax4.figure.savefig('figures/1_reviewers.svg', format='svg')
+    '''
     r = list(top_reviewers['reviewerID'].unique())
     bar_width = 0.85
 
@@ -125,7 +132,7 @@ def run(df):
     ax4.set_xlabel('Reviewer ID')
     ax4.figure.savefig('figures/1_reviewers.svg', format='svg')
     print("Exported 1_reviewers.svg")
-
+    '''
     #Non verified reviews
     print("### Unverified reviews exploration ###")
     unverified = df[df['verified'] == False]
@@ -155,6 +162,8 @@ def run(df):
     plot_boxplot_words(verified['vote'], 'Verified Votes', 'verifiedvotes')
     #plt.show()
     
-    
+    fig, ax5 = plt.subplots()
+    ax5 = sns.violinplot(x=df['opinion'], y=df['n_words'])
+    ax5.figure.savefig('figures/1_correlation_words_opinion.svg', format='svg')
 
     os.chdir(current_directory)

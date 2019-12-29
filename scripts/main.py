@@ -69,7 +69,7 @@ if __name__ == "__main__":
     df_exploration = preprocessing_pre_exploration_dataset(df)
     print(df)
     print(df_exploration)
-    #data_exploration_step(df_exploration)
+    data_exploration_step(df_exploration)
     df_analysis = preprocessing_post_exploration_dataset(df_exploration)
     print(df_exploration)
     print(df_analysis)
