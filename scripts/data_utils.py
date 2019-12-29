@@ -46,6 +46,13 @@ def vote_to_opinion(df):
 
 def words_count(df):
     df['n_words'] = [len(t) for t in df['reviewText']]
+    
+
+def transform_unix_date(df):
+    df['date'] = pd.to_datetime(df['unixReviewTime'], unit='s')
+    df['month_year'] = df['date'].dt.to_period('M')
+    df['month'] = df['date'].dt.month
+    df['year'] = df['date'].dt.year
 
 
 contractions_dict = {
@@ -244,10 +251,12 @@ def feature_manipulation(df):
     preprocessed_reviews(df)
     return df
 
-
+    
 def add_features(df):
     vote_to_opinion(df)
     words_count(df)
+    transform_unix_date(df)
+    
 
 
 # %% Data exploration

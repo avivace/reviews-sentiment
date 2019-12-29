@@ -165,5 +165,8 @@ def run(df):
     fig, ax5 = plt.subplots()
     ax5 = sns.violinplot(x=df['opinion'], y=df['n_words'])
     ax5.figure.savefig('figures/1_correlation_words_opinion.svg', format='svg')
+    
+    # Ordinamento date
+    #df = df.sort_values('month_year', ascending=True)
 
     os.chdir(current_directory)
