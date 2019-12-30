@@ -53,7 +53,7 @@ def transform_unix_date(df):
     df['month_year'] = df['date'].dt.to_period('M')
     df['month'] = df['date'].dt.month
     df['year'] = df['date'].dt.year
-
+    df['week_day'] = df['date'].dt.dayofweek
 
 contractions_dict = {
     "ain't": "am not / are not / is not / has not / have not",
