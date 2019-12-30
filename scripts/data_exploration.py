@@ -49,20 +49,24 @@ def most_active_reviewers(df, n_reviewers):
     definitive = definitive.drop('index', axis=1)
     return definitive
 
-# Overall opinion distribution
-def analyze_reviews(df, df_attribute, title, name_file):
+# Overall distributions
+def analyze_reviews(df, df_attribute, title, name_file, ylabel):
     print("Shape of df: ", df.shape)
     fig, ax = plt.subplots(figsize=(10, 10))
     sns.countplot(df_attribute, ax=ax)
     label_typography(ax)
 
-    ax.set_title(title, fontname='Inter', fontsize=20, fontweight=500)
+    # Set and style the title, and move it up a bit (1.02 = 2%)
+    ax.set_title(title, fontname='Inter', fontsize=20, fontweight=500, y=1.02)
     
-    ax.xaxis.label.set_text("Opinion")
+    ax.xaxis.label.set_text(ylabel)
     ax.yaxis.label.set_text("Review Count")
 
     ax.set_yticks([0, 100000, 500000, 1000000])
     ax.set_yticklabels(["0", "100K", "500K", "1M"])
+
+    if (name_file=="review_distribution_per_day"):
+        ax.set_xticklabels(["Sunday", "Monday", "Thuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
 
     ax.figure.savefig(figOutputPath / '1_{0}.svg'.format(name_file), format='svg')
     print('Exported 1_{}.svg'.format(name_file))
@@ -82,10 +86,10 @@ def plot_boxplot_words(column, title, name_file):
 
 def run(df):
     # 1 - Countplot: score distribution    
-    analyze_reviews(df, df.overall, 'Score distribution', 'score_distribution')
+    analyze_reviews(df, df.overall, 'Score distribution', 'score_distribution', 'Score')
     
     # 2 - Countplot: opinion distribution    
-    analyze_reviews(df, df.opinion, 'Opinion distribution', 'opinion_distribution')
+    analyze_reviews(df, df.opinion, 'Opinion distribution', 'opinion_distribution', 'Opinion')
 
 
     #Stacked barplot (x-axis asin code, y-axis opinion)
@@ -148,12 +152,12 @@ def run(df):
     #Non verified reviews
     print("### Unverified reviews exploration ###")
     unverified = df[df['verified'] == False]
-    analyze_reviews(unverified, df.overall, "Unverified score distribution", 'unverified_score_distribution')
+    analyze_reviews(unverified, df.overall, "Unverified score distribution", 'unverified_score_distribution', 'Score')
 
     #Verified reviews
     print("### Verified reviews exploration ###")
     verified = df[df['verified'] == True]
-    analyze_reviews(verified, df.overall, "Verified score distribution", 'verified_score_distribution')
+    analyze_reviews(verified, df.overall, "Verified score distribution", 'verified_score_distribution', 'Score')
 
     reduced_df = df.copy()
     reduced_df = reduced_df[reduced_df['n_words'] <= 1000]
@@ -171,7 +175,7 @@ def run(df):
     ax5.set_title('Distribution of words in review for each opinion')
     ax5.figure.savefig(figOutputPath / '1_correlation_words_opinion.svg', format='svg')
     
-    analyze_reviews(df, df.week_day, 'Review distribution per day', 'review_distribution_per_day')
+    analyze_reviews(df, df.week_day, 'Review distribution per day', 'review_distribution_per_day', 'Day')
     unverified2 = unverified[unverified['opinion'] == 'negative']
     print("Negative unverified", unverified2.shape)
     unverified2_head = unverified2.head(10)['reviewText']
