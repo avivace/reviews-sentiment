@@ -16,11 +16,19 @@ from matplotlib import rcParams
 rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['Inter']
 rcParams['font.weight'] = 500
-
+rcParams['xtick.labelsize'] = 13
+rcParams['ytick.labelsize'] = 13
 
 figOutputPath = Path("../figures/")
 
 ### Functions ###
+
+def label_typography(ax):
+    ax.xaxis.label.set_fontweight(500)
+    ax.yaxis.label.set_fontsize(15)
+    ax.yaxis.label.set_fontweight(500)
+    ax.xaxis.label.set_fontsize(15)
+    return
 
 def most_reviewed_products(df, n_products):
     reviews_per_product = df['asin'].value_counts()
@@ -46,16 +54,13 @@ def analyze_reviews(df, df_attribute, title, name_file):
     print("Shape of df: ", df.shape)
     fig, ax = plt.subplots(figsize=(10, 10))
     sns.countplot(df_attribute, ax=ax)
+    label_typography(ax)
+
     ax.set_title(title, fontname='Inter', fontsize=20, fontweight=500)
     
-    for item in (ax.get_xticklabels() + ax.get_yticklabels()):
-        item.set_fontsize(12)
-    ax.xaxis.label.set_fontsize(15)
     ax.xaxis.label.set_text("Opinion")
-    ax.xaxis.label.set_fontweight(500)
-    ax.yaxis.label.set_fontsize(15)
-    ax.yaxis.label.set_fontweight(500)
     ax.yaxis.label.set_text("Review Count")
+
     ax.set_yticks([0, 100000, 500000, 1000000])
     ax.set_yticklabels(["0", "100K", "500K", "1M"])
 
