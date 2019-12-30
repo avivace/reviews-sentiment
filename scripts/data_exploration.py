@@ -9,6 +9,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 color = sns.color_palette()
 sns.set_style(style="darkgrid")
+from pathlib import Path
+from matplotlib import rcParams
+
+# Default text styling for figures
+rcParams['font.family'] = 'sans-serif'
+rcParams['font.sans-serif'] = ['Inter']
+rcParams['font.weight'] = 500
+
+
+figOutputPath = Path("../figures/")
 
 ### Functions ###
 
@@ -31,17 +41,26 @@ def most_active_reviewers(df, n_reviewers):
     definitive = definitive.drop('index', axis=1)
     return definitive
 
-
+# Overall opinion distribution
 def analyze_reviews(df, df_attribute, title, name_file):
     print("Shape of df: ", df.shape)
     fig, ax = plt.subplots(figsize=(10, 10))
     sns.countplot(df_attribute, ax=ax)
-    ax.set_title(title)
-    ax.figure.savefig(r'./figures/1_{0}.svg'.format(name_file), format='svg')
+    ax.set_title(title, fontname='Inter', fontsize=20, fontweight=500)
+    
+    for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(12)
+    ax.xaxis.label.set_fontsize(15)
+    ax.xaxis.label.set_text("Opinion")
+    ax.xaxis.label.set_fontweight(500)
+    ax.yaxis.label.set_fontsize(15)
+    ax.yaxis.label.set_fontweight(500)
+    ax.yaxis.label.set_text("Review Count")
+    ax.set_yticks([0, 100000, 500000, 1000000])
+    ax.set_yticklabels(["0", "100K", "500K", "1M"])
+
+    ax.figure.savefig(figOutputPath / '1_{0}.svg'.format(name_file), format='svg')
     print('Exported 1_{}.svg'.format(name_file))
-    #plt.show()
-    # ax1.figure.savefig('figures/unverified_scoredistribution.svg', format='svg')
-    # print("Exported unverified_scoredistribution.svg")
 
     print("Average Score: ", np.mean(df.overall))
     print("Median Score: ", np.median(df.overall))
@@ -51,7 +70,7 @@ def plot_boxplot_words(column, title, name_file):
     fig, ax = plt.subplots(figsize=(10, 10))
     ax = sns.boxplot(column)
     ax.set_title(title)
-    ax.figure.savefig(r'./figures/1_{0}.svg'.format(name_file), format='svg')
+    ax.figure.savefig(figOutputPath / '1_{0}.svg'.format(name_file), format='svg')
     print('Exported 1_{}.svg'.format(name_file))
 
 #%%
@@ -110,7 +129,7 @@ def run(df):
     legend.get_frame().set_facecolor('#00FFCC')
     ax3.set_title('Opinion for besteller products')
     # plt.show()
-    ax3.figure.savefig(r'./figures/1_sentiment_reviews_bestseller_products.svg', format='svg')
+    ax3.figure.savefig(figOutputPath / '1_sentiment_reviews_bestseller_products.svg', format='svg')
     print("Exported 1_sentiment_reviews_besteller_products.svg")
 
     # Top 50 reviewers
@@ -125,7 +144,7 @@ def run(df):
     r = list(top_reviewers['reviewerID'].unique())
     ax4.set_xticklabels(r, rotation=90)
     ax4.set_title('Reviewers with most reviews')
-    ax4.figure.savefig(r'./figures/1_reviewers_most_reviews.svg', format='svg')
+    ax4.figure.savefig(figOutputPath / '1_reviewers_most_reviews.svg', format='svg')
     '''
     r = list(top_reviewers['reviewerID'].unique())
     bar_width = 0.85
@@ -161,7 +180,7 @@ def run(df):
     fig, ax5 = plt.subplots()
     ax5 = sns.violinplot(x=reduced_df['opinion'], y=reduced_df['n_words'])
     ax5.set_title('Distribution of words in review for each opinion')
-    ax5.figure.savefig(r'./figures/1_correlation_words_opinion.svg', format='svg')
+    ax5.figure.savefig(figOutputPath / '1_correlation_words_opinion.svg', format='svg')
     
     analyze_reviews(df, df.week_day, 'Review distribution per day', 'review_distribution_per_day')
     unverified2 = unverified[unverified['opinion'] == 'negative']
@@ -206,7 +225,7 @@ def run(df):
     legend.get_frame().set_facecolor('#00FFCC')
     ax6.set_title('Opinion of top reviewers')
     plt.show()
-    ax6.figure.savefig(r'./figures/1_opinion_top_reviewers.svg', format='svg')
+    ax6.figure.savefig(figOutputPath / '1_opinion_top_reviewers.svg', format='svg')
     print("Exported 1_opinion_top_reviewers.svg")
     
     
@@ -240,7 +259,7 @@ def run(df):
     #ax6.legend(loc='lower left', fontsize='large')
     ax7.set_title('Verified vs Unverified reviews of top reviewers')
     plt.show()
-    ax7.figure.savefig(r'./figures/1_verified_unverified.svg', format='svg')
+    ax7.figure.savefig(figOutputPath / '1_verified_unverified.svg', format='svg')
     print("Exported 1_verified_unverified.svg")
     # Ordinamento date
     #df = df.sort_values('month_year', ascending=True)
