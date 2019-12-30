@@ -81,28 +81,12 @@ def plot_boxplot_words(column, title, name_file):
 #%%
 
 def run(df):
-    # Number of words for each review
-    #plot_boxplot_words(df['n_words'], 'Reviews', 'lengthreviews')
-    
+    # 1 - Countplot: score distribution    
     analyze_reviews(df, df.overall, 'Score distribution', 'score_distribution')
-    '''
-    # Score Distribution
-    fig, ax1 = plt.subplots()
-    sns.countplot(df.overall, ax=ax1)
-    ax1.set_title('Score distribution')
-    # plt.show()
-    ax1.figure.savefig(r'./figures/1_score_distribution.svg', format='svg')
-    print("Exported 1_score_distribution.svg")
-    '''
-    #Opinion Distribution
+    
+    # 2 - Countplot: opinion distribution    
     analyze_reviews(df, df.opinion, 'Opinion distribution', 'opinion_distribution')
-    '''
-    fig, ax2 = plt.subplots()
-    sns.countplot(df.opinion, ax=ax2)
-    ax2.set_title('Opinion distribution')
-    ax2.figure.savefig(r'./figures/1_opiniondistribution.svg', format='svg')
-    print("Exported 1_opinion_distribution.svg")
-    '''
+
 
     #Stacked barplot (x-axis asin code, y-axis opinion)
     fig, ax3 = plt.subplots(figsize=(15, 15))
