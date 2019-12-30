@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 color = sns.color_palette()
 sns.set_style(style="darkgrid")
-import os
 
 ### Functions ###
 
@@ -51,16 +50,12 @@ def plot_boxplot_words(column, label, name_file):
     fix, ax = plt.subplots(figsize=(10, 10))
     ax = sns.boxplot(column)
     ax.set_xlabel(label)
-    ax.figure.savefig('figures/1_{0}.svg'.format(name_file), format='svg')
+    ax.figure.savefig(r'./figures/1_{0}.svg'.format(name_file), format='svg')
     print('Exported 1_{}.svg'.format(name_file))
 
 #%%
 
 def run(df):
-    os.chdir(r'./scripts')
-    current_directory = os.getcwd()
-    os.chdir('..')
-    
     # Number of words for each review
     plot_boxplot_words(df['n_words'], 'Reviews', 'lengthreviews')
 
@@ -69,14 +64,14 @@ def run(df):
     sns.countplot(df.overall, ax=ax1)
     ax1.set_title('Score Distribution')
     # plt.show()
-    ax1.figure.savefig('figures/1_scoredistribution.svg', format='svg')
+    ax1.figure.savefig(r'./figures/1_scoredistribution.svg', format='svg')
     print("Exported 1_scoredistribution.svg")
 
     #Opinion Distribution
     fig, ax2 = plt.subplots()
     sns.countplot(df.opinion, ax=ax2)
     ax2.set_title('Opinion Distribution')
-    ax2.figure.savefig('figures/1_opiniondistribution.svg', format='svg')
+    ax2.figure.savefig(r'./figures/1_opiniondistribution.svg', format='svg')
     print("Exported 1_opiniondistribution.svg")
 
     #Stacked barplot (x-axis asin code, y-axis opinion)
@@ -106,7 +101,7 @@ def run(df):
     ax3.set_xticklabels(r, rotation=90)
     ax3.set_xlabel('Code product')
     # plt.show()
-    ax3.figure.savefig('figures/1_reviews.svg', format='svg')
+    ax3.figure.savefig(r'./figures/1_reviews.svg', format='svg')
     print("Exported 1_reviews.svg")
 
     # Top 50 reviewers
@@ -121,7 +116,7 @@ def run(df):
     r = list(top_reviewers['reviewerID'].unique())
     ax4.set_xticklabels(r, rotation=90)
     ax4.set_title('Top reviewers')
-    ax4.figure.savefig('figures/1_reviewers.svg', format='svg')
+    ax4.figure.savefig(r'./figures/1_reviewers.svg', format='svg')
     '''
     r = list(top_reviewers['reviewerID'].unique())
     bar_width = 0.85
@@ -164,9 +159,7 @@ def run(df):
     
     fig, ax5 = plt.subplots()
     ax5 = sns.violinplot(x=df['opinion'], y=df['n_words'])
-    ax5.figure.savefig('figures/1_correlation_words_opinion.svg', format='svg')
+    ax5.figure.savefig(r'./figures/1_correlation_words_opinion.svg', format='svg')
     
     # Ordinamento date
     #df = df.sort_values('month_year', ascending=True)
-
-    os.chdir(current_directory)
