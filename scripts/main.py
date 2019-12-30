@@ -5,22 +5,21 @@ import pandas as pd
 from data_utils import load_dataset
 from data_utils import feature_manipulation
 from data_utils import add_features
-
+from pathlib import Path
 
 def load_initial_dataset():
+    dataset_folder = Path("../datasets/")
     try:
     	# Try to load a cached version of the dataframe
-        print("Trying to load the cached dataframe")
-        df = pd.read_pickle(r'./datasets/cached_dataframe.pkl')
+        print("Trying to load the cached dataframe...")
+        df = pd.read_pickle(dataset_folder / 'chaced_dataframe.pkl')
     except:
         print("No cached dataframe, loading the dataset from disk")
-        #path_file = r'./datasets/Grocery_and_Gourmet_Food_5.json'
-        path_file = r'./datasets/Cell_Phones_and_Accessories_5.json'
-        #path_file = r'./datasets/Magazine_Subscriptions.json'
+        path_file = dataset_folder / 'Grocery_and_Gourmet_Food_5.json'
         df = load_dataset(path_file)
         # Store the dataframe on disk
         print("Caching the dataframe")
-        df.to_pickle(r'./datasets/cached_dataframe.pkl')
+        df.to_pickle(dataset_folder / 'chaced_dataframe.pkl')
     return df
 
 
@@ -38,13 +37,13 @@ def preprocessing_pre_exploration_dataset(df):
 def preprocessing_post_exploration_dataset(df):
     try:
         print("Trying to load the cached preprocessed dataframe")
-        preprocessed = pd.read_pickle(r'./datasets/cached_preprocessed_dataframe.pkl')
+        preprocessed = pd.read_pickle(dataset_folder / 'cached_preprocessed_dataframe.pkl')
     except:
         print("No cached dataframe, loading the dataset from disk")
         preprocessed = df.copy(True)
         feature_manipulation(preprocessed)
-        print("Caching the dataframe")
-        preprocessed.to_pickle(r'./datasets/cached_preprocessed_dataframe.pkl')
+        print("Caching the preprocessed dataframe")
+        preprocessed.to_pickle(dataset_folder / 'cached_preprocessed_dataframe.pkl')
     return preprocessed
 
 
