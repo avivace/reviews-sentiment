@@ -18,6 +18,17 @@ source bin/activate
 pip3 install -r requirements.txt
 ```
 
+Optionally, install a to use the venv packages
+```
+pip3 install --user ipykernel
+python -m ipykernel install --user --name=myenv
+# Check the installed kernels
+jupyter kernelspec list
+# Run Jupyter
+jupyter lab
+```
+
+
 Now, to run the full pipeline:
 ```bash
 python3 main.py
