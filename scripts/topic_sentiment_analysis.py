@@ -14,11 +14,6 @@ import pyLDAvis.gensim
 
 import os
 
-from topic_sentiment_data_preparation import bag_of_words
-from topic_sentiment_data_preparation import create_dictionary
-from topic_sentiment_data_preparation import tf_idf
-from topic_sentiment_data_preparation import topic_analysis_data_preparation
-from topic_sentiment_data_preparation import make_bigrams
 from data_exploration import most_reviewed_products
 
 ### Functions ###
@@ -54,6 +49,30 @@ def products_to_analyze(df, n_best=3, n_worst=3):
     else:
         return products
         
+def create_dictionary(texts):
+    dictionary = gensim.corpora.Dictionary(texts)
+    dictionary.filter_extremes(no_below=10, no_above=0.5, keep_n=100000)
+    dictionary.compactify()
+    return dictionary
+    
+            
+def make_bigrams(texts):
+    bigram = gensim.models.Phrases(texts, min_count=5, threshold=100)
+    bigram_mod = gensim.models.phrases.Phraser(bigram)
+    return [bigram_mod[doc] for doc in texts]
+
+
+def bag_of_words(texts, dictionary):
+    #dictionary = create_dictionary(texts)
+    corpus = [dictionary.doc2bow(text) for text in texts]
+    return corpus
+    
+
+def tf_idf(corpus):
+    tfidf = models.TfidfModel(corpus)
+    corpus_tfidf = tfidf[corpus]
+    return corpus_tfidf
+
 
 def compute_lda_model(corpus, num_topics, dictionary, texts, alpha, beta):
     lda_models, coherences = [], []
@@ -220,18 +239,20 @@ def run(df):
         df_product = df[df['asin'] == product]
         #wordcloud(df_product['preprocessedReview'])
         #df_product = topic_analysis_data_preparation(df)
-        reviews_product = [[r] for r in df_product['preprocessedReview']]
+        #reviews_product = [[r] for r in df_product['preprocessedReview']]
+        reviews_product = [r.split(' ') for r in df_product['preprocessedReview']]
+        print(reviews_product)
         print(len(reviews_product))
         bigram_reviews = make_bigrams(reviews_product)
-        dictionary = create_dictionary(bigram_reviews)
+        dictionary = create_dictionary(reviews_product)
         max_topics = 10
     
         # LDA using Bag of Words
         bow_corpus = bag_of_words(bigram_reviews, dictionary)
         #alpha_list = list(np.arange(0.01, 1, 0.3))
         #beta_list = list(np.arange(0.01, 1, 0.3))
-        alpha_list = [1]
-        beta_list = [0.1]
+        alpha_list = [0.1, 1]
+        beta_list = [0.01, 0.1, 1]
         num_topics = list(range(2, max_topics+1))
         all_coherences, all_lda_models, all_parameters = compute_multiple_lda_models(alphas=alpha_list,
                                                                                      betas=beta_list,
