@@ -168,11 +168,11 @@ def run(df):
     plot_boxplot_words(reduced_unverified['n_words'], 'Distribution of words in unverified reviews', 'length_unverified_reviews')
 
     reduced_verified = reduced_df[reduced_df['verified'] == True]
-    fig, ax8 = plt.subplots(figsize=(10, 10))
-    ax8 = sns.boxplot(reduced_verified['n_words'])
-    ax8.set_title('Distribution of words in verified reviews')
-    ax8.figure.savefig(r'./figures/1_length_verified_reviews.png', format='png')
-    print('Exported 1_length_verified_reviews.svg')
+    fig, ax0 = plt.subplots(figsize=(10, 10))
+    ax0 = sns.boxplot(reduced_verified['n_words'])
+    ax0.set_title('Distribution of words in verified reviews')
+    ax0.figure.savefig(r'./figures/1_length_verified_reviews.png', format='png')
+    print('Exported 1_length_verified_reviews.png')
 
     fig, ax5 = plt.subplots()
     ax5 = sns.violinplot(x=reduced_df['opinion'], y=reduced_df['n_words'])
