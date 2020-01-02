@@ -260,19 +260,3 @@ def run(df):
     print("Exported 1_verified_unverified.svg")
     # Ordinamento date
     #df = df.sort_values('month_year', ascending=True)
-
-    ## Time series analysis
-
-    # 8
-    fig, ax8 = plt.subplots(figsize=(15, 15))
-    # Parse the UNIX datestamp
-    df.unixReviewTime = pd.to_datetime(df.unixReviewTime, unit='s')
-    # Order by helpfulness vote
-    df = df.sort_values("vote",ascending=False)
-    # Group by Month
-    timegrouped = df.groupby(Grouper(key='unixReviewTime', freq='1M'))
-    # List resulting groups: grouped_df.groups.keys()
-    # Cumulative sum reviews during time
-    grouped.size().cumsum().reset_index(name="Count").set_index('unixReviewTime')
-    # Get the 50 most helpful reviews per each period of time (1M)
-
