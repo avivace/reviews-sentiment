@@ -11,11 +11,12 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 import pyLDAvis.gensim
-
-import os
+from pathlib import Path
 
 from data_exploration import most_reviewed_products
 
+figures_folder = Path("../figures/")
+dataframes_folder = Path("../dataframes/")
 ### Functions ###
 
 def worst_products_asin(df, n_worst):
@@ -38,7 +39,7 @@ def top_products_asin(df, n_best):
     return best_n_products
 
 
-def products_to_analyze(df, n_best=3, n_worst=3):
+def products_to_analyze(df, n_best=0, n_worst=0):
     worst = worst_products_asin(df, n_worst)
     best = top_products_asin(df, n_best)
     products = worst + best
@@ -67,12 +68,6 @@ def bag_of_words(texts, dictionary):
     corpus = [dictionary.doc2bow(text) for text in texts]
     return corpus
     
-
-def tf_idf(corpus):
-    tfidf = models.TfidfModel(corpus)
-    corpus_tfidf = tfidf[corpus]
-    return corpus_tfidf
-
 
 def compute_lda_model(corpus, num_topics, dictionary, texts, alpha, beta):
     lda_models, coherences = [], []
@@ -119,7 +114,7 @@ def plot_coherence(num_topics, coherence, product_asin):
     ax0.plot(x_axis, coherence)
     ax0.set_xlabel("Number of topics")
     ax0.set_ylabel("Coherence score")
-    ax0.figure.savefig('figures/3_coherence_plot_{0}.svg'.format(product_asin), format='svg')
+    ax0.figure.savefig(figures_folder / '3_coherence_plot_{0}.svg'.format(product_asin), format='svg')
     
     
 def show_topics(model, ideal_topics, num_words):
@@ -141,9 +136,7 @@ def save_model(model, product_asin):
     
 def topic_visualization(model, corpus, dictionary, product_asin):
     lda_display = pyLDAvis.gensim.prepare(model, corpus, dictionary, sort_topics=True)
-    #pyLDAvis.display(lda_display)
-    lda_display
-    pyLDAvis.save_html(lda_display, 'figures/lda_{0}.html'.format(product_asin))
+    pyLDAvis.save_html(lda_display, 'lda_{0}.html'.format(product_asin))
     
 '''
     
@@ -229,54 +222,53 @@ def topic_distribution_across_documents(df, sentiment):
 '''
 
     
-def run(df):
-    current_directory = os.getcwd()
-    os.chdir('..')
-    
-    product_list = products_to_analyze(df, n_best=2, n_worst=0)
+def run(df):    
+    product_list = products_to_analyze(df, n_best=3, n_worst=3)
     for product in product_list:
-        print(product)
-        df_product = df[df['asin'] == product]
-        #wordcloud(df_product['preprocessedReview'])
-        #df_product = topic_analysis_data_preparation(df)
-        #reviews_product = [[r] for r in df_product['preprocessedReview']]
-        reviews_product = [r.split(' ') for r in df_product['preprocessedReview']]
-        print(reviews_product)
-        print(len(reviews_product))
-        bigram_reviews = make_bigrams(reviews_product)
-        dictionary = create_dictionary(reviews_product)
-        max_topics = 10
-    
-        # LDA using Bag of Words
-        bow_corpus = bag_of_words(bigram_reviews, dictionary)
-        #alpha_list = list(np.arange(0.01, 1, 0.3))
-        #beta_list = list(np.arange(0.01, 1, 0.3))
-        alpha_list = [0.1, 1]
-        beta_list = [0.01, 0.1, 1]
-        num_topics = list(range(2, max_topics+1))
-        all_coherences, all_lda_models, all_parameters = compute_multiple_lda_models(alphas=alpha_list,
-                                                                                     betas=beta_list,
-                                                                                     num_topics=num_topics,
-                                                                                     corpus=bow_corpus,
-                                                                                     texts=bigram_reviews,
-                                                                                     dictionary=dictionary)
-        # Extract best coherence and index 
-        best_coherence_value, index_best_value = max((x, (i, j))
-                                                     for i, row in enumerate(all_coherences)
-                                                     for j, x in enumerate(row))
-        best_alpha = all_parameters[index_best_value[0]][0]
-        best_beta = all_parameters[index_best_value[0]][1]
-        best_model = all_lda_models[index_best_value[0]][index_best_value[1]]
-        print('Best model has {} coherence with {} alpha value and {} beta value'.format(best_coherence_value,
-                                                                                         best_alpha,
-                                                                                         best_beta))
-        best_coherences = all_coherences[index_best_value[0]]
-        best_num_topics = num_topics[0] + index_best_value[1]
-        plot_coherence(num_topics=len(num_topics), coherence=best_coherences, product_asin=product)
-        show_topics(best_model, best_num_topics, num_words=10)
-        # TO DO save model
-        save_model(best_model, product)
-        topic_visualization(best_model, bow_corpus, dictionary, product)
+        figures_folder = Path("../figures/")
+        name_file = '3_coherence_plot_{0}.svg'.format(product)
+        path_file = figures_folder / name_file
+        if path_file.is_file():
+            print('{} already computed.'.format(product))
+        else:
+            print(product)
+            df_product = df[df['asin'] == product]
+            reviews_product = [r.split(' ') for r in df_product['preprocessedReview']]
+            bigram_reviews = make_bigrams(reviews_product)
+            dictionary = create_dictionary(reviews_product)
+            max_topics = 10
+        
+            # LDA using Bag of Words
+            bow_corpus = bag_of_words(bigram_reviews, dictionary)
+            #alpha_list = list(np.arange(0.01, 1, 0.3))
+            #beta_list = list(np.arange(0.01, 1, 0.3))
+            #alpha_list = [0.1, 1]
+            #beta_list = [0.01, 0.1, 1]
+            alpha_list = [1]
+            beta_list = [1]
+            num_topics = list(range(2, max_topics+1))
+            all_coherences, all_lda_models, all_parameters = compute_multiple_lda_models(alphas=alpha_list,
+                                                                                         betas=beta_list,
+                                                                                         num_topics=num_topics,
+                                                                                         corpus=bow_corpus,
+                                                                                         texts=bigram_reviews,
+                                                                                         dictionary=dictionary)
+            # Extract best coherence and index 
+            best_coherence_value, index_best_value = max((x, (i, j))
+                                                         for i, row in enumerate(all_coherences)
+                                                         for j, x in enumerate(row))
+            best_alpha = all_parameters[index_best_value[0]][0]
+            best_beta = all_parameters[index_best_value[0]][1]
+            best_model = all_lda_models[index_best_value[0]][index_best_value[1]]
+            print('Best model has {} coherence with {} alpha value and {} beta value'.format(best_coherence_value,
+                                                                                             best_alpha,
+                                                                                             best_beta))
+            best_coherences = all_coherences[index_best_value[0]]
+            best_num_topics = num_topics[0] + index_best_value[1]
+            plot_coherence(len(num_topics), best_coherences, product)
+            show_topics(best_model, best_num_topics, 10)
+            #save_model(best_model, product)
+            topic_visualization(best_model, bow_corpus, dictionary, product)
 
     '''
     topic_sents_keywords = format_topics_sentences(best_model, bow_corpus, bigram_reviews)
@@ -300,4 +292,3 @@ def run(df):
     
     df_dominant_topics.to_pickle('dataframes/dominant_topics.pkl')
     '''
-    os.chdir(current_directory)
