@@ -12,14 +12,14 @@ def load_initial_dataset():
     try:
     	# Try to load a cached version of the dataframe
         print("Trying to load the cached dataframe...")
-        df = pd.read_pickle(dataset_folder / 'chaced_dataframe.pkl')
+        df = pd.read_pickle(dataset_folder / 'cached_dataframe.pkl')
     except:
         print("No cached dataframe, loading the dataset from disk")
-        path_file = dataset_folder / 'Grocery_and_Gourmet_Food_5.json'
+        path_file = dataset_folder / 'Cell_Phones_and_Accessories_5.json'
         df = load_dataset(path_file)
         # Store the dataframe on disk
         print("Caching the dataframe")
-        df.to_pickle(dataset_folder / 'chaced_dataframe.pkl')
+        df.to_pickle(dataset_folder / 'cached_dataframe.pkl')
     return df
 
 
