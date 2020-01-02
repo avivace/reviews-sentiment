@@ -4,6 +4,7 @@
 
 import numpy as np
 import pandas as pd
+from pandas import Grouper
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -92,7 +93,8 @@ def run(df):
     analyze_reviews(df, df.opinion, 'Opinion distribution', 'opinion_distribution', 'Opinion')
 
 
-    #Stacked barplot (x-axis asin code, y-axis opinion)
+    # 3
+    # Stacked barplot (x-axis asin code, y-axis opinion)
     fig, ax3 = plt.subplots(figsize=(15, 15))
     top_products = most_reviewed_products(df, 20)
     r = list(top_products['asin'].unique())
@@ -125,6 +127,7 @@ def run(df):
     ax3.figure.savefig(figOutputPath / '1_sentiment_reviews_bestseller_products.svg', format='svg')
     print("Exported 1_sentiment_reviews_besteller_products.svg")
 
+    # 4
     # Top 50 reviewers
     fig, ax4 = plt.subplots(figsize=(15, 15))
     top_reviewers = most_active_reviewers(df, 50)
@@ -256,3 +259,10 @@ def run(df):
     print("Exported 1_verified_unverified.svg")
     # Ordinamento date
     #df = df.sort_values('month_year', ascending=True)
+
+    ## Time series analysis
+
+    # 8
+    #
+    df.unixReviewTime = pd.to_datetime(df.unixReviewTime, unit='s')
+    df.groupby(Grouper(key='unixReviewTime', freq='1M'))
