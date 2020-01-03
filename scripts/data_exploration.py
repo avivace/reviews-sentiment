@@ -4,6 +4,7 @@
 
 import numpy as np
 import pandas as pd
+from pandas import Grouper
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -92,7 +93,8 @@ def run(df):
     analyze_reviews(df, df.opinion, 'Opinion distribution', 'opinion_distribution', 'Opinion')
 
 
-    #Stacked barplot (x-axis asin code, y-axis opinion)
+    # 3
+    # Stacked barplot (x-axis asin code, y-axis opinion)
     fig, ax3 = plt.subplots(figsize=(15, 15))
     top_products = most_reviewed_products(df, 20)
     r = list(top_products['asin'].unique())
@@ -125,6 +127,7 @@ def run(df):
     ax3.figure.savefig(figOutputPath / '1_sentiment_reviews_bestseller_products.svg', format='svg')
     print("Exported 1_sentiment_reviews_besteller_products.svg")
 
+    # 4
     # Top 50 reviewers
     fig, ax4 = plt.subplots(figsize=(15, 15))
     top_reviewers = most_active_reviewers(df, 50)
@@ -163,13 +166,14 @@ def run(df):
     reduced_df = reduced_df[reduced_df['n_words'] <= 1000]
     reduced_unverified = reduced_df[reduced_df['verified'] == False]
     plot_boxplot_words(reduced_unverified['n_words'], 'Distribution of words in unverified reviews', 'length_unverified_reviews')
-    #plot_boxplot_words(reduced_unverified['vote'], 'Unverified votes', 'unverified_votes')
 
     reduced_verified = reduced_df[reduced_df['verified'] == True]
-    plot_boxplot_words(reduced_verified['n_words'], 'Distribution of words in verified reviews', 'length_verified_reviews')
-    #plot_boxplot_words(reduced_verified['vote'], 'Verified votes', 'verified_votes')
-    #plt.show()
-    
+    fig, ax0 = plt.subplots(figsize=(10, 10))
+    ax0 = sns.boxplot(reduced_verified['n_words'])
+    ax0.set_title('Distribution of words in verified reviews')
+    ax0.figure.savefig(r'./figures/1_length_verified_reviews.png', format='png')
+    print('Exported 1_length_verified_reviews.png')
+
     fig, ax5 = plt.subplots()
     ax5 = sns.violinplot(x=reduced_df['opinion'], y=reduced_df['n_words'])
     ax5.set_title('Distribution of words in review for each opinion')

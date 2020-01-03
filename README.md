@@ -1,4 +1,4 @@
-# Amazon food reviews sentiment analysis
+# Amazon Reviews sentiment analysis
 
 Data Analytics exam final project.
 
@@ -17,6 +17,17 @@ python3 -m venv .
 source bin/activate
 pip3 install -r requirements.txt
 ```
+
+Optionally, install a ipynb kernel to use the venv packages
+```bash
+pip3 install --user ipykernel
+python -m ipykernel install --user --name=myenv
+# Check the installed kernels
+jupyter kernelspec list
+# Run Jupyter
+jupyter lab
+```
+
 
 Now, to run the full pipeline:
 ```bash
