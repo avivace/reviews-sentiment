@@ -2,9 +2,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import itertools
-from pathlib import Path
-
+from wordcloud import WordCloud
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -12,6 +10,9 @@ from sklearn import metrics
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.metrics import classification_report
+
+import itertools
+from pathlib import Path
 
 figOutputPath = Path("../figures/")
 
@@ -27,6 +28,7 @@ def plot_confusion_matrix(cm, classifier_name, classes=['negative', 'positive'])
     fig, ax = plt.subplots(figsize=(10,10))
     img = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
     ax.set_title('Confusion matrix {}'.format(classifier_name))
+    ax.axis('off')
     fig.colorbar(img)
     tick_marks = np.arange(len(classes))
     ax.set_xticks(tick_marks, classes)
@@ -46,7 +48,7 @@ def plot_confusion_matrix(cm, classifier_name, classes=['negative', 'positive'])
                       format='svg')
 
 
-def roc(y_true, y_pred, classifier_name, pos_label=1):
+def plot_roc(y_true, y_pred, classifier_name, pos_label=1):
     fpr, tpr, threshold = metrics.roc_curve(y_true, y_pred, pos_label)
     roc_auc = metrics.auc(fpr, tpr)
     fig, ax = plt.subplots(figsize=(10,10))
@@ -62,16 +64,29 @@ def roc(y_true, y_pred, classifier_name, pos_label=1):
                       format='svg')
 
 
-def compute_confusion_matrix(true_labels, predicted_labels, classes=['positive', 'negative']):
-    cm = metrics.confusion_matrix(y_true=true_labels, y_pred=predicted_labels, 
-                                  labels=classes)
-    return cm
+def wordcloud(text, name_figure, title=None):
+    wordcloud = WordCloud(
+        background_color='whitesmoke',
+        max_words=200,
+        max_font_size=40,
+        scale=3,
+        random_state=42
+    ).generate(str(text))
 
-
+    fig = plt.figure(1, figsize=(20, 20))
+    #ax = plt.axes([0, 0, 1, 1])
+    plt.axis('off')   
+    plt.imshow(wordcloud, interpolation='nearest')
+    
+    plt.savefig(figOutputPath / '2_wordcloud_{}.svg'.format(name_figure),
+                      format='svg')
+    #plt.show()
+    
+    
 def retrieve_opinion(df, sentiment):
     opinion = df[df['opinion'] == sentiment]
     reviews = opinion['preprocessedReview'].tolist()
-    #wordcloud(reviews)
+    wordcloud(reviews, sentiment)
     
 
 def get_term_frequency(df, cvector):
@@ -158,17 +173,20 @@ def sentiment_analysis_data_preparation(df):
 
 
 def run(df):  
-    df = sentiment_analysis_data_preparation(df)
+    count_vector = CountVectorizer(max_features=100000, min_df=10, max_df=0.5, ngram_range=(1, 2))
+    #count_vector2 = CountVectorizer() #Used only to calculate the term frequency on the dataset
+    df['words'] = [len(t) for t in df['preprocessedReview']]
+    df = df[df['words'] < 300]
     retrieve_opinion(df, 'positive')
     retrieve_opinion(df, 'negative')
-    count_vector = CountVectorizer() #max_features=10000, min_df=7, max_df=0.8, ngram_range=(1, 2))
-
-    count_vector2 = CountVectorizer() #Used only to calculate the term frequency on the dataset
     term_frequency = get_term_frequency(df, count_vector)
     plot_frequency(term_frequency)
     zipf_law(term_frequency)
     token_frequency(term_frequency, 'positive')
     token_frequency(term_frequency, 'negative')
+
+    df = sentiment_analysis_data_preparation(df)
+    
     
     
     ### Machine learning ###
@@ -228,9 +246,9 @@ def run(df):
 
     # Logistic Regression CV with grid search su BOW
     reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
-                                                                                    sentiments,
-                                                                                    test_size=0.5,
-                                                                                    random_state=42)
+                                                                                                sentiments,
+                                                                                                test_size=0.5,
+                                                                                                random_state=42)
     count_vector_features = count_vector.fit_transform(reviews_train)
     count_vector_validation_features = count_vector.transform(reviews_validation)
 
@@ -252,6 +270,9 @@ def run(df):
     y_true, y_pred = sentiment_validation, best_lr.predict(count_vector_validation_features)
     print("Report on validation set")
     print(classification_report(y_true, y_pred))
+    cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
+    plot_confusion_matrix(cm, 'lr')
+    plot_roc(y_true, y_pred, 'lr')
 
 
 

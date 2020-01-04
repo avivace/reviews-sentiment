@@ -35,6 +35,7 @@ def preprocessing_pre_exploration_dataset(df):
     
 
 def preprocessing_post_exploration_dataset(df):
+    dataset_folder = Path("../datasets/")
     try:
         print("Trying to load the cached preprocessed dataframe")
         preprocessed = pd.read_pickle(dataset_folder / 'cached_preprocessed_dataframe.pkl')
@@ -48,16 +49,9 @@ def preprocessing_post_exploration_dataset(df):
 
 
 def sentiment_analysis_step(df_preprocessed):
-    #Copy for Sentiment analysis
-    #df_copy_for_sentiment_analysis = df.copy(deep=True)
-    #Sentiment Analysis
     sentiment_analysis.run(df_preprocessed)
 
 def aspect_based_sentiment_analysis_step(df_preprocessed):
-    #Copy for Aspect based
-    #df_copy_for_aspect_based = df.copy(deep=True)
-    #Aspect based
-    #topic_sentiment_analysis.run(df_copy_for_aspect_based)
     topic_sentiment_analysis.run(df_preprocessed)
 
 if __name__ == "__main__":
@@ -65,9 +59,9 @@ if __name__ == "__main__":
     df_exploration = preprocessing_pre_exploration_dataset(df)
     print(df)
     print(df_exploration)
-    data_exploration_step(df_exploration)
+    #data_exploration_step(df_exploration)
     df_analysis = preprocessing_post_exploration_dataset(df_exploration)
     print(df_exploration)
     print(df_analysis)
-    #sentiment_analysis_step(df_analysis)
+    sentiment_analysis_step(df_analysis)
     #aspect_based_sentiment_analysis_step(df_analysis)

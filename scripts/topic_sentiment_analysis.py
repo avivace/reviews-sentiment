@@ -11,9 +11,10 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 import pyLDAvis.gensim
-from pathlib import Path
 
 from data_exploration import most_reviewed_products
+
+from pathlib import Path
 
 figures_folder = Path("../figures/")
 dataframes_folder = Path("../dataframes/")
