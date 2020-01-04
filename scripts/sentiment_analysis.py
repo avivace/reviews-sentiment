@@ -1,26 +1,19 @@
 # -*- coding: utf-8 -*-
-from sentiment_data_preparation import sentiment_analysis_data_preparation
-from sentiment_data_preparation import retrieve_opinion
-from sentiment_data_preparation import get_term_frequency
-from sentiment_data_preparation import plot_frequency
-from sentiment_data_preparation import zipf_law
-from sentiment_data_preparation import token_frequency
-
-
-import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import itertools
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from pathlib import Path
+
+
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn import metrics
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import classification_report
 
+figOutputPath = Path("../figures/")
 
 def train_predict_model(classifier, train_features, train_labels, test_features):
     # build model    
@@ -29,36 +22,11 @@ def train_predict_model(classifier, train_features, train_labels, test_features)
     predictions = classifier.predict(test_features) 
     return predictions    
 
-'''
-def get_metrics(true_labels, predicted_labels):
-    
-    print('Accuracy:', np.round(
-                        metrics.accuracy_score(true_labels, 
-                                               predicted_labels),
-                        4))
-    print('Precision:', np.round(
-                        metrics.precision_score(true_labels, 
-                                               predicted_labels,
-                                               average='weighted'),
-                        4))
-    print('Recall:', np.round(
-                        metrics.recall_score(true_labels, 
-                                               predicted_labels,
-                                               average='weighted'),
-                        4))
-    print('F1 Score:', np.round(
-                        metrics.f1_score(true_labels, 
-                                               predicted_labels,
-                                               average='weighted'),
-                        4))
-'''
-    
 
-def plot_confusion_matrix(cm, name_model, classes=['positive', 'negative']):
+def plot_confusion_matrix(cm, classifier_name, classes=['negative', 'positive']):
     fig, ax = plt.subplots(figsize=(10,10))
     img = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
-    title = 'Confusion matrix ' + name_model
-    ax.set_title(title)
+    ax.set_title('Confusion matrix {}'.format(classifier_name))
     fig.colorbar(img)
     tick_marks = np.arange(len(classes))
     ax.set_xticks(tick_marks, classes)
@@ -74,10 +42,24 @@ def plot_confusion_matrix(cm, name_model, classes=['positive', 'negative']):
     fig.tight_layout()
     ax.set_ylabel('True label')
     ax.set_xlabel('Predicted label')
-    ax.figure.savefig('figures/2_confusion_matrix_{}.svg'.format(name_model),
+    ax.figure.savefig(figOutputPath / '2_confusion_matrix_{}.svg'.format(classifier_name),
                       format='svg')
-    print('Exported 2_confusion_matrix.svg')
 
+
+def roc(y_true, y_pred, classifier_name, pos_label=1):
+    fpr, tpr, threshold = metrics.roc_curve(y_true, y_pred, pos_label)
+    roc_auc = metrics.auc(fpr, tpr)
+    fig, ax = plt.subplots(figsize=(10,10))
+    ax.set_title('Receiver Operating Characteristic of {}'.format(classifier_name))
+    ax.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
+    ax.legend(loc='lower right')
+    ax.plot([0, 1], [0, 1], 'r--')
+    ax.xlim([0, 1])
+    ax.ylim([0, 1])
+    ax.set_ylabel('True Positive Rate')
+    ax.set_xlabel('False Positive Rate')
+    ax.figure.savefig(figOutputPath / 'figures/2_roc_{}.svg'.format(classifier_name),
+                      format='svg')
 
 
 def compute_confusion_matrix(true_labels, predicted_labels, classes=['positive', 'negative']):
@@ -85,56 +67,101 @@ def compute_confusion_matrix(true_labels, predicted_labels, classes=['positive',
                                   labels=classes)
     return cm
 
-'''
-def display_confusion_matrix(true_labels, predicted_labels, classes=['positive', 'negative']):
-    
-    total_classes = len(classes)
-    level_labels = [total_classes*[0], list(range(total_classes))]
 
-    cm = compute_confusion_matrix(true_labels=true_labels, 
-                                  predicted_labels=predicted_labels,
-                                  classes=classes)
-    cm_frame = pd.DataFrame(data=cm, 
-                            columns=pd.MultiIndex(levels=[['Predicted:'], classes], 
-                                                  codes=level_labels), 
-                            index=pd.MultiIndex(levels=[['Actual:'], classes], 
-                                                codes=level_labels)) 
-    print(cm_frame) 
-    return cm
+def retrieve_opinion(df, sentiment):
+    opinion = df[df['opinion'] == sentiment]
+    reviews = opinion['preprocessedReview'].tolist()
+    #wordcloud(reviews)
     
-    
-def display_classification_report(true_labels, predicted_labels, classes=['positive', 'negative']):
 
-    report = metrics.classification_report(y_true=true_labels, 
-                                           y_pred=predicted_labels, 
-                                           labels=classes) 
-    print(report
-'''
+def get_term_frequency(df, cvector):
+    cvector.fit(df.preprocessedReview)
     
-'''
-def display_model_performance_metrics(true_labels, predicted_labels, classes=['positive', 'negative']):
-    print('Model Performance metrics:')
-    print('-'*30)
-    get_metrics(true_labels=true_labels, predicted_labels=predicted_labels)
-    print('\nModel Classification report:')
-    print('-'*30)
-    display_classification_report(true_labels=true_labels, predicted_labels=predicted_labels, 
-                                  classes=classes)
+    negative_matrix = cvector.transform(df[df['opinion'] == 'negative']['preprocessedReview'])
+    negative_words = negative_matrix.sum(axis=0)
+    negative_frequency = [(word, negative_words[0, idx]) for word, idx in cvector.vocabulary_.items()]
+    negative_tf = pd.DataFrame(list(sorted(negative_frequency, key = lambda x: x[1], reverse=True)),
+                               columns=['Terms','negative'])
+    negative_tf = negative_tf.set_index('Terms')
     
-    print('\nPrediction Confusion Matrix:')
-    print('-'*30)
-    display_confusion_matrix(true_labels=true_labels, predicted_labels=predicted_labels, 
-                             classes=classes)
-'''
+    positive_matrix = cvector.transform(df[df['opinion'] == 'positive']['preprocessedReview'])
+    positive_words = positive_matrix.sum(axis=0)
+    positive_frequency = [(word, positive_words[0, idx]) for word, idx in cvector.vocabulary_.items()]
+    positive_tf = pd.DataFrame(list(sorted(positive_frequency, key = lambda x: x[1], reverse=True)),
+                               columns=['Terms','positive'])
+    positive_tf = positive_tf.set_index('Terms')
+    
+    term_frequency_df = pd.concat([negative_tf, positive_tf], axis=1)
+    term_frequency_df['total'] = term_frequency_df['negative'] + term_frequency_df['positive']
+    return term_frequency_df
 
-def run(df):
-    current_directory = os.getcwd()
-    #os.chdir('..')
+
+def plot_frequency(df):
+    #Frequency plot
+    y_pos = np.arange(500)
+    plt.figure(figsize=(10,8))
+    s = 1
+    expected_zipf = [df.sort_values(by='total', ascending=False)['total'][0]/(i+1)**s for i in y_pos]
+    plt.bar(y_pos, df.sort_values(by='total', ascending=False)['total'][:500], align='center', alpha=0.5)
+    plt.plot(y_pos, expected_zipf, color='r', linestyle='--', linewidth=2, alpha=0.5)
+    plt.ylabel('Frequency')
+    plt.title('Top 500 tokens in reviews')
     
+
+def token_frequency(df, sentiment):
+    y_pos = np.arange(50)
+    plt.figure(figsize=(12,10))
+    plt.bar(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50], align='center', alpha=0.5)
+    plt.xticks(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50].index,rotation='vertical')
+    plt.ylabel('Frequency')
+    plt.xlabel('Token')
+    plt.title('Top 50 tokens in {} reviews'.format(sentiment))
+
+
+def zipf_law(df):
+    # Plot of absolute frequency
+    from pylab import arange, argsort, loglog, logspace, log10, text
+    counts = df.total
+    tokens = df.index
+    ranks = arange(1, len(counts)+1)
+    indices = argsort(-counts)
+    frequencies = counts[indices]
+    plt.figure(figsize=(8,6))
+    plt.ylim(1,10**6)
+    plt.xlim(1,10**6)
+    loglog(ranks, frequencies, marker=".")
+    plt.plot([1,frequencies[0]],[frequencies[0],1],color='r')
+    plt.title("Zipf plot for phrases tokens")
+    plt.xlabel("Frequency rank of token")
+    plt.ylabel("Absolute frequency of token")
+    plt.grid(True)
+    for n in list(logspace(-0.5, log10(len(counts)-2), 15).astype(int)):
+        dummy = text(ranks[n], frequencies[n], " " + tokens[indices[n]], 
+                     verticalalignment="bottom",
+                     horizontalalignment="left")
+
+
+def undersampling(df):
+    positive, negative = df.opinion.value_counts()
+    df_positive = df[df.opinion == 'positive']
+    df_positive = df_positive.sample(negative, random_state=42)
+    df_negative = df[df.opinion == 'negative']
+    df = pd.concat([df_positive, df_negative])
+    df = df.sample(frac=1)
+    return df
+
+
+def sentiment_analysis_data_preparation(df):
+    df.drop(df[df.opinion == 'neutral'].index, inplace=True)
+    undersampled = undersampling(df)
+    return undersampled
+
+
+def run(df):  
     df = sentiment_analysis_data_preparation(df)
     retrieve_opinion(df, 'positive')
     retrieve_opinion(df, 'negative')
-    count_vector = CountVectorizer() #max_features=10000, min_df=7, max_df=0.8)
+    count_vector = CountVectorizer() #max_features=10000, min_df=7, max_df=0.8, ngram_range=(1, 2))
 
     count_vector2 = CountVectorizer() #Used only to calculate the term frequency on the dataset
     term_frequency = get_term_frequency(df, count_vector)
@@ -147,6 +174,9 @@ def run(df):
     ### Machine learning ###
     reviews = np.array(df['preprocessedReview'])
     sentiments = np.array(df['opinion'])
+    sentiments[sentiments == 'positive'] = 1
+    sentiments[sentiments == 'negative'] = 0
+    sentiments = sentiments.astype('int')
 
     #Simple train/test split
     '''reviews_train, reviews_test, sentiment_train, sentiment_test = train_test_split(reviews,
@@ -223,19 +253,9 @@ def run(df):
     print("Report on validation set")
     print(classification_report(y_true, y_pred))
 
-    fpr, tpr, threshold = metrics.roc_curve(y_true, y_pred, pos_label='positive') #TODO QUI DA' ERRORE!
-    roc_auc = metrics.auc(fpr, tpr)
 
-    import matplotlib.pyplot as plt
-    plt.title('Receiver Operating Characteristic')
-    plt.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
-    plt.legend(loc='lower right')
-    plt.plot([0, 1], [0, 1], 'r--')
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.ylabel('True Positive Rate')
-    plt.xlabel('False Positive Rate')
-    plt.show()
+
+
 
     #SVC CV with grid search su BOW
     '''param_grid = [

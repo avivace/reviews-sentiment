@@ -50,6 +50,7 @@ def products_to_analyze(df, n_best=0, n_worst=0):
     else:
         return products
         
+    
 def create_dictionary(texts):
     dictionary = gensim.corpora.Dictionary(texts)
     dictionary.filter_extremes(no_below=10, no_above=0.5, keep_n=100000)
@@ -87,8 +88,10 @@ def compute_lda_model(corpus, num_topics, dictionary, texts, alpha, beta):
                                                    texts=texts)
         coherences.append(cm.get_coherence())
         print('\nNumber of topic:', n)
+        '''
         for idx, topic in model.print_topics(-1):
             print('\nTopic: {} \nWords: {}'.format(idx, topic)) 
+        '''
     return coherences, lda_models
 
 
@@ -117,7 +120,7 @@ def plot_coherence(num_topics, coherence, product_asin):
     ax0.figure.savefig(figures_folder / '3_coherence_plot_{0}.svg'.format(product_asin), format='svg')
     
     
-def show_topics(model, ideal_topics, num_words):
+def show_topics(model, ideal_topics, num_words, product_asin):
     topics = model.show_topics()
     for topic in topics:
         print(topic)
@@ -127,6 +130,7 @@ def show_topics(model, ideal_topics, num_words):
         words = model.show_topic(i, topn = num_words)
         word_dict['Topic # ' + '{:02d}'.format(i+1)] = [i[0] for i in words]
     topic_df = pd.DataFrame(word_dict)
+    topic_df.to_pickle(dataframes_folder / 'topics_{}.pkl'.format(product_asin))
     print(topic_df)
     
     
@@ -139,7 +143,6 @@ def topic_visualization(model, corpus, dictionary, product_asin):
     pyLDAvis.save_html(lda_display, 'lda_{0}.html'.format(product_asin))
     
 '''
-    
 def format_topics_sentences(model, corpus, texts):
     # Get main topic reviews
     # Init output
@@ -219,8 +222,8 @@ def topic_distribution_across_documents(df, sentiment):
     # Show
     return df_dominant_topics
 
-'''
 
+'''
     
 def run(df):    
     product_list = products_to_analyze(df, n_best=3, n_worst=3)
@@ -242,10 +245,8 @@ def run(df):
             bow_corpus = bag_of_words(bigram_reviews, dictionary)
             #alpha_list = list(np.arange(0.01, 1, 0.3))
             #beta_list = list(np.arange(0.01, 1, 0.3))
-            #alpha_list = [0.1, 1]
-            #beta_list = [0.01, 0.1, 1]
-            alpha_list = [1]
-            beta_list = [1]
+            alpha_list = [0.1, 1]
+            beta_list = [0.01, 0.1, 1]
             num_topics = list(range(2, max_topics+1))
             all_coherences, all_lda_models, all_parameters = compute_multiple_lda_models(alphas=alpha_list,
                                                                                          betas=beta_list,
@@ -266,7 +267,7 @@ def run(df):
             best_coherences = all_coherences[index_best_value[0]]
             best_num_topics = num_topics[0] + index_best_value[1]
             plot_coherence(len(num_topics), best_coherences, product)
-            show_topics(best_model, best_num_topics, 10)
+            show_topics(best_model, best_num_topics, 10, product)
             #save_model(best_model, product)
             topic_visualization(best_model, bow_corpus, dictionary, product)
 
