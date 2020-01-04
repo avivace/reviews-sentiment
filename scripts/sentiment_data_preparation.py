@@ -42,10 +42,10 @@ def data_preparation(df):
 def retrieve_opinion(df, sentiment):
     opinion = df[df['opinion'] == sentiment]
     reviews = opinion['preprocessedReview'].tolist()
-    wordcloud(reviews)
+    #wordcloud(reviews)
     
 
-def vectorization(df, cvector):
+def get_term_frequency(df, cvector):
     cvector.fit(df.preprocessedReview)
     
     negative_matrix = cvector.transform(df[df['opinion'] == 'negative']['preprocessedReview'])
