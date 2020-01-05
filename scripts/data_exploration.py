@@ -155,21 +155,25 @@ def run(df):
     ax4.figure.savefig('figures/1_reviewers.svg', format='svg')
     print("Exported 1_reviewers.svg")
     '''
-    #Non verified reviews
+    # Non verified reviews
     print("### Unverified reviews exploration ###")
     unverified = df[df['verified'] == False]
     analyze_reviews(unverified, df.overall, "Unverified score distribution", 'unverified_score_distribution', 'Score')
 
-    #Verified reviews
+    # Verified reviews
     print("### Verified reviews exploration ###")
     verified = df[df['verified'] == True]
     analyze_reviews(verified, df.overall, "Verified score distribution", 'verified_score_distribution', 'Score')
 
+    
     reduced_df = df.copy()
     reduced_df = reduced_df[reduced_df['n_words'] <= 1000]
+    
+    # Distribution of words in unverified reviews - boxplot
     reduced_unverified = reduced_df[reduced_df['verified'] == False]
     plot_boxplot_words(reduced_unverified['n_words'], 'Distribution of words in unverified reviews', 'length_unverified_reviews')
 
+    # Distribution of words in verified reviews - boxplot
     reduced_verified = reduced_df[reduced_df['verified'] == True]
     fig, ax0 = plt.subplots(figsize=(10, 10))
     ax0 = sns.boxplot(reduced_verified['n_words'])
@@ -177,6 +181,7 @@ def run(df):
     ax0.figure.savefig(figOutputPath / '1_length_verified_reviews.png', format='png')
     print('Exported 1_length_verified_reviews.png')
 
+    # Distribution of words - violin plot
     fig, ax5 = plt.subplots()
     ax5 = sns.violinplot(x=reduced_df['opinion'], y=reduced_df['n_words'])
     ax5.set_title('Distribution of words in review for each opinion')
