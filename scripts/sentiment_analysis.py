@@ -10,6 +10,7 @@ from sklearn import metrics
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.metrics import classification_report
+from sklearn.naive_bayes import MultinomialNB
 
 import itertools
 from pathlib import Path
@@ -56,11 +57,11 @@ def plot_roc(y_true, y_pred, classifier_name, pos_label=1):
     ax.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
     ax.legend(loc='lower right')
     ax.plot([0, 1], [0, 1], 'r--')
-    ax.xlim([0, 1])
-    ax.ylim([0, 1])
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
     ax.set_ylabel('True Positive Rate')
     ax.set_xlabel('False Positive Rate')
-    ax.figure.savefig(figOutputPath / 'figures/2_roc_{}.svg'.format(classifier_name),
+    ax.figure.savefig(figOutputPath / '2_roc_{}.svg'.format(classifier_name),
                       format='svg')
 
 
@@ -179,11 +180,11 @@ def run(df):
     df = df[df['words'] < 300]
     retrieve_opinion(df, 'positive')
     retrieve_opinion(df, 'negative')
-    term_frequency = get_term_frequency(df, count_vector)
+    '''term_frequency = get_term_frequency(df, count_vector)
     plot_frequency(term_frequency)
     zipf_law(term_frequency)
     token_frequency(term_frequency, 'positive')
-    token_frequency(term_frequency, 'negative')
+    token_frequency(term_frequency, 'negative')'''
 
     df = sentiment_analysis_data_preparation(df)
     
@@ -245,7 +246,7 @@ def run(df):
     '''
 
     # Logistic Regression CV with grid search su BOW
-    reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
+    '''reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
                                                                                                 sentiments,
                                                                                                 test_size=0.5,
                                                                                                 random_state=42)
@@ -272,25 +273,71 @@ def run(df):
     print(classification_report(y_true, y_pred))
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
     plot_confusion_matrix(cm, 'lr')
-    plot_roc(y_true, y_pred, 'lr')
+    plot_roc(y_true, y_pred, 'lr')'''
 
+    # Multinomial Bayes CV with grid search su BOW
+    reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
+                                                                                                sentiments,
+                                                                                                test_size=0.5,
+                                                                                                random_state=42)
+    count_vector_features = count_vector.fit_transform(reviews_train)
+    count_vector_validation_features = count_vector.transform(reviews_validation)
 
-
-
-
-    #SVC CV with grid search su BOW
-    '''param_grid = [
+    param_grid = [
         {
-            'C':np.arange(0.01,100,10)
+            'alpha': (1, 0.1, 0.01, 0.001, 0.0001, 0.00001)
         }
     ]
 
     # Create grid search object
-    svc = LinearSVC()
-    lr = GridSearchCV(svc, param_grid=param_grid, cv=5, verbose=True, n_jobs=-1)
+    nb = MultinomialNB()
+    nb_grid = GridSearchCV(nb, param_grid=param_grid, cv=5, verbose=True, n_jobs=-1)
     # Fit on data
-    best_lr = lr.fit(count_vector_features, sentiments)
-    print(sorted(best_lr.cv_results_.keys()))'''
+    best_nb = nb_grid.fit(count_vector_features, sentiment_train)
+    print("Best params")
+    for i in best_nb.best_params_:
+        print(i, best_nb.best_params_[i])
+
+    y_true, y_pred = sentiment_validation, best_nb.predict(count_vector_validation_features)
+    print("Report on validation set")
+    print(classification_report(y_true, y_pred))
+    cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
+    plot_confusion_matrix(cm, 'nb')
+    plot_roc(y_true, y_pred, 'nb')
+
+
+
+    #SVC CV with grid search su BOW
+    '''reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
+                                                                                                sentiments,
+                                                                                                test_size=0.5,
+                                                                                                random_state=42)
+    count_vector_features = count_vector.fit_transform(reviews_train)
+    count_vector_validation_features = count_vector.transform(reviews_validation)
+
+    param_grid = [
+        {
+            'C':np.arange(0.01,100,10)
+        }
+    ]
+    
+    
+
+    # Create grid search object
+    svc = LinearSVC(max_iter=100000)
+    svc_grid = GridSearchCV(svc, param_grid=param_grid, cv=5, verbose=True, n_jobs=-1)
+    # Fit on data
+    best_svc = svc_grid.fit(count_vector_features, sentiment_train)
+    print("Best params")
+    for i in best_svc.best_params_:
+        print(i, best_svc.best_params_[i])
+
+    y_true, y_pred = sentiment_validation, best_svc.predict(count_vector_validation_features)
+    print("Report on validation set")
+    print(classification_report(y_true, y_pred))
+    cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
+    plot_confusion_matrix(cm, 'svc')
+    plot_roc(y_true, y_pred, 'svc')'''
 
 
 
