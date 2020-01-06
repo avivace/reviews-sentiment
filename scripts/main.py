@@ -13,6 +13,7 @@ def load_initial_dataset():
     	# Try to load a cached version of the dataframe
         print("Trying to load the cached dataframe...")
         df = pd.read_pickle(dataset_folder / 'cached_dataframe.pkl')
+        print("Done")
     except:
         print("No cached dataframe, loading the dataset from disk")
         path_file = dataset_folder / 'Cell_Phones_and_Accessories_5.json'
@@ -21,11 +22,6 @@ def load_initial_dataset():
         print("Caching the dataframe")
         df.to_pickle(dataset_folder / 'cached_dataframe.pkl')
     return df
-
-
-def data_exploration_step(df):
-    #Data exploration
-    data_exploration.run(df)
 
 
 def preprocessing_pre_exploration_dataset(df):
@@ -37,8 +33,9 @@ def preprocessing_pre_exploration_dataset(df):
 def preprocessing_post_exploration_dataset(df):
     dataset_folder = Path("../datasets/")
     try:
-        print("Trying to load the cached preprocessed dataframe")
+        print("Trying to load the cached preprocessed dataframe...")
         preprocessed = pd.read_pickle(dataset_folder / 'cached_preprocessed_dataframe.pkl')
+        print("Done")
     except:
         print("No cached dataframe, loading the dataset from disk")
         preprocessed = df.copy(True)
@@ -48,20 +45,10 @@ def preprocessing_post_exploration_dataset(df):
     return preprocessed
 
 
-def sentiment_analysis_step(df_preprocessed):
-    sentiment_analysis.run(df_preprocessed)
-
-def aspect_based_sentiment_analysis_step(df_preprocessed):
-    topic_sentiment_analysis.run(df_preprocessed)
-
 if __name__ == "__main__":
     df = load_initial_dataset()
     df_exploration = preprocessing_pre_exploration_dataset(df)
-    print(df)
-    print(df_exploration)
-    #data_exploration_step(df_exploration)
+    #data_exploration.run(df_exploration)
     df_analysis = preprocessing_post_exploration_dataset(df_exploration)
-    print(df_exploration)
-    print(df_analysis)
-    sentiment_analysis_step(df_analysis)
-    #aspect_based_sentiment_analysis_step(df_analysis)
+    sentiment_analysis.run(df_analysis)
+    #topic_sentiment_analysis.run(df_analysis)

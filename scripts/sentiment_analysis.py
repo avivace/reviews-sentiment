@@ -115,23 +115,37 @@ def get_term_frequency(df, cvector):
 def plot_frequency(df):
     #Frequency plot
     y_pos = np.arange(500)
-    plt.figure(figsize=(10,8))
+    fig, ax = plt.subplots(figsize=(10,8))
     s = 1
     expected_zipf = [df.sort_values(by='total', ascending=False)['total'][0]/(i+1)**s for i in y_pos]
-    plt.bar(y_pos, df.sort_values(by='total', ascending=False)['total'][:500], align='center', alpha=0.5)
-    plt.plot(y_pos, expected_zipf, color='r', linestyle='--', linewidth=2, alpha=0.5)
-    plt.ylabel('Frequency')
-    plt.title('Top 500 tokens in reviews')
+    ax.bar(y_pos, df.sort_values(by='total', ascending=False)['total'][:500], align='center', alpha=0.5)
+    ax.plot(y_pos, expected_zipf, color='r', linestyle='--', linewidth=2, alpha=0.5)
+    ax.set_ylabel('Frequency')
+    ax.set_title('Top 500 tokens in reviews')
+    ax.figure.savefig(figOutputPath / '2_plot_frequency.svg', format='svg')
+    print('Exported 2_plot_frequency.svg')
     
 
 def token_frequency(df, sentiment):
     y_pos = np.arange(50)
+    '''
+    fig, ax = plt.subplots(figsize=(12,10))
+    ax.bar(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50], align='center', alpha=0.5)
+    ax.set_xticklabels(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50].index, rotation='vertical')
+    ax.set_ylabel('Frequency')
+    ax.set_xlabel('Token')
+    ax.set_title('Top 50 tokens in {} reviews'.format(sentiment))
+    ax.figure.savefig(figOutputPath / '2_token_frequency_{}.svg'.format(sentiment), format='svg')
+    print('Exported 2_token_frequency_{}.svg'.format(sentiment))
+    '''
     plt.figure(figsize=(12,10))
     plt.bar(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50], align='center', alpha=0.5)
-    plt.xticks(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50].index,rotation='vertical')
+    plt.xticks(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50].index, rotation='vertical')
     plt.ylabel('Frequency')
     plt.xlabel('Token')
     plt.title('Top 50 tokens in {} reviews'.format(sentiment))
+    plt.savefig(figOutputPath / '2_token_frequency_{}.svg'.format(sentiment), format='svg')
+    print('Exported 2_token_frequency_{}.svg'.format(sentiment))
 
 
 def zipf_law(df):
@@ -142,19 +156,22 @@ def zipf_law(df):
     ranks = arange(1, len(counts)+1)
     indices = argsort(-counts)
     frequencies = counts[indices]
-    plt.figure(figsize=(8,6))
-    plt.ylim(1,10**6)
-    plt.xlim(1,10**6)
+    fig, ax = plt.subplots(figsize=(8,6))
+    ax.set_ylim(1,10**6)
+    ax.set_xlim(1,10**6)
     loglog(ranks, frequencies, marker=".")
-    plt.plot([1,frequencies[0]],[frequencies[0],1],color='r')
-    plt.title("Zipf plot for phrases tokens")
-    plt.xlabel("Frequency rank of token")
-    plt.ylabel("Absolute frequency of token")
-    plt.grid(True)
+    ax.plot([1,frequencies[0]],[frequencies[0],1],color='r')
+    ax.set_title("Zipf plot for phrases tokens")
+    ax.set_xlabel("Frequency rank of token")
+    ax.set_ylabel("Absolute frequency of token")
+    ax.grid(True)
     for n in list(logspace(-0.5, log10(len(counts)-2), 15).astype(int)):
         dummy = text(ranks[n], frequencies[n], " " + tokens[indices[n]], 
                      verticalalignment="bottom",
                      horizontalalignment="left")
+    ax.figure.savefig(figOutputPath / '2_zipf_law.svg', format='svg')
+    print('Exported 2_zipf_law.svg')
+    
 
 
 def undersampling(df):
@@ -180,15 +197,13 @@ def run(df):
     df = df[df['words'] < 300]
     retrieve_opinion(df, 'positive')
     retrieve_opinion(df, 'negative')
-    '''term_frequency = get_term_frequency(df, count_vector)
+    term_frequency = get_term_frequency(df, count_vector)
     plot_frequency(term_frequency)
     zipf_law(term_frequency)
     token_frequency(term_frequency, 'positive')
-    token_frequency(term_frequency, 'negative')'''
+    token_frequency(term_frequency, 'negative')
 
     df = sentiment_analysis_data_preparation(df)
-    
-    
     
     ### Machine learning ###
     reviews = np.array(df['preprocessedReview'])
