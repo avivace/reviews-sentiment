@@ -25,10 +25,10 @@ def train_predict_model(classifier, train_features, train_labels, test_features)
     return predictions    
 
 
-def plot_confusion_matrix(cm, classifier_name, classes=['negative', 'positive']):
+def plot_confusion_matrix(cm, title, name_img, classes=['negative', 'positive']):
     fig, ax = plt.subplots(figsize=(10,10))
     img = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
-    ax.set_title('Confusion matrix {}'.format(classifier_name))
+    ax.set_title('Confusion matrix {}'.format(title))
     ax.axis('off')
     fig.colorbar(img)
     tick_marks = np.arange(len(classes))
@@ -45,15 +45,15 @@ def plot_confusion_matrix(cm, classifier_name, classes=['negative', 'positive'])
     fig.tight_layout()
     ax.set_ylabel('True label')
     ax.set_xlabel('Predicted label')
-    ax.figure.savefig(figOutputPath / '2_confusion_matrix_{}.svg'.format(classifier_name),
+    ax.figure.savefig(figOutputPath / '2_confusion_matrix_{}.svg'.format(name_img),
                       format='svg')
 
 
-def plot_roc(y_true, y_pred, classifier_name, pos_label=1):
+def plot_roc(y_true, y_pred, title, name_img, pos_label=1):
     fpr, tpr, threshold = metrics.roc_curve(y_true, y_pred, pos_label)
     roc_auc = metrics.auc(fpr, tpr)
     fig, ax = plt.subplots(figsize=(10,10))
-    ax.set_title('Receiver Operating Characteristic of {}'.format(classifier_name))
+    ax.set_title('Receiver Operating Characteristic of {}'.format(title))
     ax.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
     ax.legend(loc='lower right')
     ax.plot([0, 1], [0, 1], 'r--')
@@ -61,27 +61,30 @@ def plot_roc(y_true, y_pred, classifier_name, pos_label=1):
     ax.set_ylim(0, 1)
     ax.set_ylabel('True Positive Rate')
     ax.set_xlabel('False Positive Rate')
-    ax.figure.savefig(figOutputPath / '2_roc_{}.svg'.format(classifier_name),
+    ax.figure.savefig(figOutputPath / '2_roc_{}.svg'.format(name_img),
                       format='svg')
 
 
-def wordcloud(text, name_figure, title=None):
+def wordcloud(text, sentiment, title=None):
     wordcloud = WordCloud(
         background_color='whitesmoke',
         max_words=200,
         max_font_size=40,
         scale=3,
-        random_state=42
+        random_state=42,
+        width=800,
+        height=400,
     ).generate(str(text))
 
-    fig = plt.figure(1, figsize=(20, 20))
+    fig, ax = plt.subplots(figsize=(20, 20))
     #ax = plt.axes([0, 0, 1, 1])
-    plt.axis('off')   
-    plt.imshow(wordcloud, interpolation='nearest')
+    ax.axis('off')   
+    ax.imshow(wordcloud, interpolation='nearest')
     
-    plt.savefig(figOutputPath / '2_wordcloud_{}.svg'.format(name_figure),
+    ax.figure.savefig(figOutputPath / '2_wordcloud_{}.svg'.format(sentiment),
                       format='svg')
     #plt.show()
+    print('Exported 2_wordcloud_{}.svg'.format(sentiment))
     
     
 def retrieve_opinion(df, sentiment):
@@ -128,16 +131,6 @@ def plot_frequency(df):
 
 def token_frequency(df, sentiment):
     y_pos = np.arange(50)
-    '''
-    fig, ax = plt.subplots(figsize=(12,10))
-    ax.bar(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50], align='center', alpha=0.5)
-    ax.set_xticklabels(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50].index, rotation='vertical')
-    ax.set_ylabel('Frequency')
-    ax.set_xlabel('Token')
-    ax.set_title('Top 50 tokens in {} reviews'.format(sentiment))
-    ax.figure.savefig(figOutputPath / '2_token_frequency_{}.svg'.format(sentiment), format='svg')
-    print('Exported 2_token_frequency_{}.svg'.format(sentiment))
-    '''
     plt.figure(figsize=(12,10))
     plt.bar(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50], align='center', alpha=0.5)
     plt.xticks(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50].index, rotation='vertical')
@@ -169,8 +162,8 @@ def zipf_law(df):
         dummy = text(ranks[n], frequencies[n], " " + tokens[indices[n]], 
                      verticalalignment="bottom",
                      horizontalalignment="left")
-    ax.figure.savefig(figOutputPath / '2_zipf_law.svg', format='svg')
-    print('Exported 2_zipf_law.svg')
+    ax.figure.savefig(figOutputPath / '2_zipf_law.png', format='png')
+    print('Exported 2_zipf_law.png')
     
 
 
@@ -184,28 +177,23 @@ def undersampling(df):
     return df
 
 
-def sentiment_analysis_data_preparation(df):
-    df.drop(df[df.opinion == 'neutral'].index, inplace=True)
-    undersampled = undersampling(df)
-    return undersampled
-
-
 def run(df):  
-    count_vector = CountVectorizer(max_features=100000, min_df=10, max_df=0.5, ngram_range=(1, 2))
-    #count_vector2 = CountVectorizer() #Used only to calculate the term frequency on the dataset
+    df.drop(df[df.opinion == 'neutral'].index, inplace=True)
+    count_vector_exploration = CountVectorizer(max_features=10000, ngram_range=(1, 2))
     df['words'] = [len(t) for t in df['preprocessedReview']]
-    df = df[df['words'] < 300]
+    df = df[df['words'] <= 300]
+    df = df[df['words'] > 5]
     retrieve_opinion(df, 'positive')
     retrieve_opinion(df, 'negative')
-    term_frequency = get_term_frequency(df, count_vector)
-    plot_frequency(term_frequency)
+    term_frequency = get_term_frequency(df, count_vector_exploration)
     zipf_law(term_frequency)
+    plot_frequency(term_frequency)
     token_frequency(term_frequency, 'positive')
     token_frequency(term_frequency, 'negative')
 
-    df = sentiment_analysis_data_preparation(df)
-    
     ### Machine learning ###
+    df = undersampling(df)
+    count_vector_sentiment = CountVectorizer(max_features=10000, ngram_range=(1, 2))
     reviews = np.array(df['preprocessedReview'])
     sentiments = np.array(df['opinion'])
     sentiments[sentiments == 'positive'] = 1
@@ -261,12 +249,12 @@ def run(df):
     '''
 
     # Logistic Regression CV with grid search su BOW
-    '''reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
+    reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
                                                                                                 sentiments,
                                                                                                 test_size=0.5,
                                                                                                 random_state=42)
-    count_vector_features = count_vector.fit_transform(reviews_train)
-    count_vector_validation_features = count_vector.transform(reviews_validation)
+    count_vector_features = count_vector_sentiment.fit_transform(reviews_train)
+    count_vector_validation_features = count_vector_sentiment.transform(reviews_validation)
 
     param_grid = [
         {
@@ -287,16 +275,16 @@ def run(df):
     print("Report on validation set")
     print(classification_report(y_true, y_pred))
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
-    plot_confusion_matrix(cm, 'lr')
-    plot_roc(y_true, y_pred, 'lr')'''
+    plot_confusion_matrix(cm, 'Logistic Regression', 'lr')
+    plot_roc(y_true, y_pred, 'Logistic Regression', 'lr')
 
     # Multinomial Bayes CV with grid search su BOW
     reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
                                                                                                 sentiments,
                                                                                                 test_size=0.5,
                                                                                                 random_state=42)
-    count_vector_features = count_vector.fit_transform(reviews_train)
-    count_vector_validation_features = count_vector.transform(reviews_validation)
+    count_vector_features = count_vector_sentiment.fit_transform(reviews_train)
+    count_vector_validation_features = count_vector_sentiment.transform(reviews_validation)
 
     param_grid = [
         {
@@ -317,8 +305,8 @@ def run(df):
     print("Report on validation set")
     print(classification_report(y_true, y_pred))
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
-    plot_confusion_matrix(cm, 'nb')
-    plot_roc(y_true, y_pred, 'nb')
+    plot_confusion_matrix(cm,'Naive Bayes', 'nb')
+    plot_roc(y_true, y_pred, 'Naive Bayes', 'nb')
 
 
 
@@ -353,38 +341,6 @@ def run(df):
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
     plot_confusion_matrix(cm, 'svc')
     plot_roc(y_true, y_pred, 'svc')'''
-
-
-
-    '''     
-    #TFIDF Learning
-    tv = TfidfVectorizer(min_df=7, max_df=0.8, ngram_range=(1, 2),
-                     sublinear_tf=True)
-    tv_train_features = tv.fit_transform(reviews_train)
-    tv_test_features = tv.transform(reviews_test)
-    
-    # Logistic regression su TFIDF
-    lr_predictions_tfidf = train_predict_model(classifier=lr,
-                                               train_features=tv_train_features, 
-                                               train_labels=sentiment_train, 
-                                               test_features=tv_test_features)
-    display_model_performance_metrics(true_labels=sentiment_test, 
-                                      predicted_labels=lr_predictions_tfidf)
-    # SVM su TFIDF
-    svc_predictions_tfidf = train_predict_model(classifier=svc,
-                                                train_features=tv_train_features, 
-                                                train_labels=sentiment_train, 
-                                                test_features=tv_test_features)
-    display_model_performance_metrics(true_labels=sentiment_test,
-                                      predicted_labels=svc_predictions_tfidf)
-    
-    # Plot confusion matrix
-    cm = compute_confusion_matrix(true_labels=sentiment_test,
-                                  predicted_labels=svc_predictions_tfidf)
-    
-
-    plot_confusion_matrix(cm)
-    '''
 
 
 

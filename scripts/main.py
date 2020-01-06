@@ -1,6 +1,6 @@
 import data_exploration
 import sentiment_analysis
-import topic_sentiment_analysis
+import topic_analysis
 import pandas as pd
 from data_utils import load_dataset
 from data_utils import feature_manipulation
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     #data_exploration.run(df_exploration)
     df_analysis = preprocessing_post_exploration_dataset(df_exploration)
     sentiment_analysis.run(df_analysis)
-    #topic_sentiment_analysis.run(df_analysis)
+    #topic_analysis.run(df_analysis)

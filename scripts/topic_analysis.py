@@ -54,7 +54,8 @@ def products_to_analyze(df, n_best=0, n_worst=0):
     
 def create_dictionary(texts):
     dictionary = gensim.corpora.Dictionary(texts)
-    dictionary.filter_extremes(no_below=10, no_above=0.5, keep_n=100000)
+    #dictionary.filter_extremes(no_below=10, no_above=0.5, keep_n=100000)
+    dictionary.filter_extremes(keep_n=10000)
     dictionary.compactify()
     return dictionary
     
