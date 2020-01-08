@@ -42,7 +42,7 @@ def most_active_reviewers(df, n_reviewers):
     return definitive
 
 
-def analyze_reviews(df, df_attribute, name_file, ylabel):
+def analyze_reviews(df, df_attribute, name_file, xlabel):
     fig, ax = plt.subplots(figsize=(10, 10))
     sns.countplot(df_attribute, ax=ax)
     label_typography(ax)
@@ -50,13 +50,19 @@ def analyze_reviews(df, df_attribute, name_file, ylabel):
     # Set and style the title, and move it up a bit (1.02 = 2%)
     #ax.set_title(title, fontname='Inter', fontsize=20, fontweight=500, y=1.02)
     
-    ax.xaxis.label.set_text(ylabel)
+    ax.xaxis.label.set_text(xlabel)
     ax.yaxis.label.set_text("Review count")
     if (name_file=="review_distribution_per_day"):
         ax.set_xticklabels(["Sunday", "Monday", "Thuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
         ax.xaxis.label.set_fontsize(13)
         ax.set_yticks([0, 100000, 200000])
         ax.set_yticklabels(["0", "100K", "200K"])
+    elif (name_file=="unverified_overall_distribution"):
+        ax.set_yticks([0, 50000, 100000])
+        ax.set_yticklabels(["0", "50K", "100K"])
+    elif (name_file=="verified_overall_distribution"):
+        ax.set_yticks([0, 300000, 600000])
+        ax.set_yticklabels(["0", "300K", "600K"])
     else:
         ax.set_yticks([0, 100000, 500000, 1000000])
         ax.set_yticklabels(["0", "100K", "500K", "1M"])
@@ -162,11 +168,11 @@ def run(df):
     
     # 8 - Unverified reviews
     unverified = df[df['verified'] == False]
-    analyze_reviews(unverified, df.overall, 'unverified_score_distribution', 'Score')
+    analyze_reviews(unverified, unverified.overall, 'unverified_overall_distribution', 'Overall')
 
     # 9 - Verified reviews
     verified = df[df['verified'] == True]
-    analyze_reviews(verified, df.overall, 'verified_score_distribution', 'Score')
+    analyze_reviews(verified, verified.overall, 'verified_overall_distribution', 'Overall')
 
     # 10 - verified vs unverified of top 50 reviewers
     fig, ax7 = plt.subplots(figsize=(15, 15))
