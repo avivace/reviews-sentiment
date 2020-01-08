@@ -1,29 +1,23 @@
 # -*- coding: utf-8 -*-
+
+### Import libraries ###
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
-
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn import metrics
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import LinearSVC
 from sklearn.metrics import classification_report
 from sklearn.naive_bayes import MultinomialNB
-
 import itertools
 from pathlib import Path
 
 figOutputPath = Path("../figures/")
 
-def train_predict_model(classifier, train_features, train_labels, test_features):
-    # build model    
-    classifier.fit(train_features, train_labels)
-    # predict using model
-    predictions = classifier.predict(test_features) 
-    return predictions    
-
+### Functions ###
 
 def plot_confusion_matrix(cm, title, name_img, classes=['negative', 'positive']):
     fig, ax = plt.subplots(figsize=(10,10))
@@ -34,7 +28,6 @@ def plot_confusion_matrix(cm, title, name_img, classes=['negative', 'positive'])
     tick_marks = np.arange(len(classes))
     ax.set_xticks(tick_marks, classes)
     ax.set_yticks(tick_marks, classes)
-    
     fmt = '.2f'
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
@@ -69,21 +62,18 @@ def wordcloud(text, sentiment, title=None):
     wordcloud = WordCloud(
         background_color='whitesmoke',
         max_words=200,
-        max_font_size=40,
+        max_font_size=120,
         scale=3,
         random_state=42,
-        width=800,
-        height=400,
+        width=1000,
+        height=1000,
     ).generate(str(text))
 
-    fig, ax = plt.subplots(figsize=(20, 20))
-    #ax = plt.axes([0, 0, 1, 1])
+    fig, ax = plt.subplots(figsize=(10, 10))
     ax.axis('off')   
     ax.imshow(wordcloud, interpolation='nearest')
-    
     ax.figure.savefig(figOutputPath / '2_wordcloud_{}.svg'.format(sentiment),
                       format='svg')
-    #plt.show()
     print('Exported 2_wordcloud_{}.svg'.format(sentiment))
     
     
@@ -166,7 +156,6 @@ def zipf_law(df):
     print('Exported 2_zipf_law.png')
     
 
-
 def undersampling(df):
     positive, negative = df.opinion.value_counts()
     df_positive = df[df.opinion == 'positive']
@@ -200,54 +189,6 @@ def run(df):
     sentiments[sentiments == 'negative'] = 0
     sentiments = sentiments.astype('int')
 
-    #Simple train/test split
-    '''reviews_train, reviews_test, sentiment_train, sentiment_test = train_test_split(reviews,
-                                                                                    sentiments, 
-                                                                                    test_size=0.2, 
-                                                                                    random_state=42)
-    cv_train_features = count_vector.fit_transform(reviews_train)
-    cv_test_features = count_vector.transform(reviews_test)
-    print(reviews_train.shape)
-    print(reviews_test.shape)
-    print(sentiment_train.shape)
-    print(sentiment_test.shape)
-    print("Words in BOW: ", len(count_vector.vocabulary_))'''
-
-    
-    # Logistic regression su BOW
-    '''
-    lr = LogisticRegression(penalty='l2', max_iter=4000, C=1)
-    lr_predictions_bow = train_predict_model(classifier=lr,
-                                             train_features=cv_train_features, 
-                                             train_labels=sentiment_train, 
-                                             test_features=cv_test_features)'''
-    '''
-    display_model_performance_metrics(true_labels=sentiment_test, 
-                                      predicted_labels=lr_predictions_bow)
-    '''
-    '''cm = compute_confusion_matrix(true_labels=sentiment_test,
-                                  predicted_labels=lr_predictions_bow)
-    
-    plot_confusion_matrix(cm, 'Logistic Regression')'''
-    
-    
-    
-    # SVM su BOW
-    ''' svc = LinearSVC()
-    svc_predictions_bow = train_predict_model(classifier=svc,
-                                              train_features=cv_train_features, 
-                                              train_labels=sentiment_train, 
-                                              test_features=cv_test_features)
-    
-    cm = compute_confusion_matrix(true_labels=sentiment_test,
-                                  predicted_labels=svc_predictions_bow)
-    
-    plot_confusion_matrix(cm, 'SVM')'''
-    '''
-    display_model_performance_metrics(true_labels=sentiment_test,
-                                      predicted_labels=svc_predictions_bow)
-    '''
-
     # Logistic Regression CV with grid search su BOW
     reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
                                                                                                 sentiments,
@@ -263,7 +204,7 @@ def run(df):
     ]
 
     # Create grid search object
-    lr = LogisticRegression(max_iter=10000)
+    lr = LogisticRegression(max_iter=10000, random_state=42)
     lr_grid = GridSearchCV(lr, param_grid=param_grid, cv=5, verbose=True, n_jobs=-1)
     # Fit on data
     best_lr = lr_grid.fit(count_vector_features, sentiment_train)
@@ -307,44 +248,3 @@ def run(df):
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
     plot_confusion_matrix(cm,'Naive Bayes', 'nb')
     plot_roc(y_true, y_pred, 'Naive Bayes', 'nb')
-
-
-
-    #SVC CV with grid search su BOW
-    '''reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
-                                                                                                sentiments,
-                                                                                                test_size=0.5,
-                                                                                                random_state=42)
-    count_vector_features = count_vector.fit_transform(reviews_train)
-    count_vector_validation_features = count_vector.transform(reviews_validation)
-
-    param_grid = [
-        {
-            'C':np.arange(0.01,100,10)
-        }
-    ]
-    
-    
-
-    # Create grid search object
-    svc = LinearSVC(max_iter=100000)
-    svc_grid = GridSearchCV(svc, param_grid=param_grid, cv=5, verbose=True, n_jobs=-1)
-    # Fit on data
-    best_svc = svc_grid.fit(count_vector_features, sentiment_train)
-    print("Best params")
-    for i in best_svc.best_params_:
-        print(i, best_svc.best_params_[i])
-
-    y_true, y_pred = sentiment_validation, best_svc.predict(count_vector_validation_features)
-    print("Report on validation set")
-    print(classification_report(y_true, y_pred))
-    cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
-    plot_confusion_matrix(cm, 'svc')
-    plot_roc(y_true, y_pred, 'svc')'''
-
-
-
-
-
-
-
