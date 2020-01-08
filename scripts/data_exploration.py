@@ -115,10 +115,13 @@ def run(df):
     ax3.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edgecolor='white', width=bar_width, label='neutral')
     ax3.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width, label='negative')
     ax3.set_xticklabels(r, rotation=90)
-    ax3.set_xlabel('Code product')
+    ax3.set_xlabel('Unique product')
+    ax3.set_xticks([])
     ax3.set_ylabel('Percentage')
-    legend = ax3.legend(loc='lower left', shadow=True, fontsize='large')
-    legend.get_frame().set_facecolor('#00FFCC')
+    ax3.set_xticks([])
+    label_typography(ax3)
+    #legend = ax3.legend(loc='lower left', shadow=True, fontsize='large')
+    #legend.get_frame().set_facecolor('#00FFCC')
     #ax3.set_title('Opinion for besteller products')
     ax3.figure.savefig(figOutputPath / '1_sentiment_reviews_bestseller_products.svg', format='svg')
     print("Exported 1_sentiment_reviews_besteller_products.svg")
@@ -130,6 +133,9 @@ def run(df):
     r = list(top_reviewers['reviewerID'].unique())
     ax4.set_xticklabels(r, rotation=90)
     ax4.set_ylabel('Review count')
+    ax4.set_xlabel('Unique Reviewers')
+    ax4.set_xticks([])
+    label_typography(ax4)
     #ax4.set_title('Reviewers with most reviews')
     ax4.figure.savefig(figOutputPath / '1_reviewers_most_reviews.svg', format='svg')
     
@@ -151,16 +157,20 @@ def run(df):
     neutral_percentage = [i / j * 100 for i, j in zip(raw_data['neutral'], totals)]
     negative_percentage = [i / j * 100 for i, j in zip(raw_data['negative'], totals)]
 
-    bar_width = 0.85
+    bar_width = 1
 
     ax6.bar(r, positive_percentage, color='#b5ffb9', edgecolor='white', width=bar_width, label='positive')
     ax6.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edgecolor='white', width=bar_width, label='neutral')
     ax6.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width, label='negative')
     ax6.set_xticklabels(r, rotation=90)
-    ax6.set_xlabel('Reviewer ID')
+    ax6.set_xlabel('Unique Reviewers')
+    ax3.set_xticks([])
+    ax6.set_xticks([])
     ax6.set_ylabel('Percentage')
-    legend = ax6.legend(loc='lower left', shadow=True, fontsize='large')
-    legend.get_frame().set_facecolor('#00FFCC')
+    label_typography(ax6)
+    label_typography(ax3)
+    #legend = ax6.legend(loc='lower left', shadow=True, fontsize='large')
+    #legend.get_frame().set_facecolor('#00FFCC')
     #ax6.set_title('Opinion of top reviewers')
     plt.show()
     ax6.figure.savefig(figOutputPath / '1_opinion_top_reviewers.svg', format='svg')
@@ -186,15 +196,20 @@ def run(df):
     verified_percentage = [i / j * 100 for i, j in zip(raw_data['verified'], totals)]
     unverified_percentage = [i / j * 100 for i, j in zip(raw_data['unverified'], totals)]
 
-    bar_width = 0.85
+    bar_width = 1
 
     ax7.bar(r, verified_percentage, color='#b5ffb9', edgecolor='white', width=bar_width, label='verified')
     ax7.bar(r, unverified_percentage, bottom=verified_percentage, color='#f9bc86', edgecolor='white', width=bar_width, label='unverified')
     ax7.set_xticklabels(r, rotation=90)
-    ax7.set_xlabel('Reviewer ID')
+
+    ax7.set_xlabel('Unique Reviewers')
+    ax7.set_xticks([])
+    ax3.set_xticks([])
     ax7.set_ylabel('Percentage')
-    legend = ax7.legend(loc='upper right', shadow=True, fontsize='large')
-    legend.get_frame().set_facecolor('#00FFCC')
+    label_typography(ax3)
+    label_typography(ax7)
+    #legend = ax7.legend(loc='upper right', shadow=True, fontsize='large')
+    #legend.get_frame().set_facecolor('#00FFCC')
     #ax7.set_title('Verified vs Unverified reviews of top reviewers')
     plt.show()
     ax7.figure.savefig(figOutputPath / '1_verified_unverified.svg', format='svg')
