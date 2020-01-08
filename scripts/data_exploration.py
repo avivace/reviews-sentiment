@@ -84,6 +84,9 @@ def run(df):
     fig, ax5 = plt.subplots()
     ax5 = sns.violinplot(x=reduced_df['opinion'], y=reduced_df['n_words'])
     #ax5.set_title('Distribution of words in review for each opinion')
+    ax5.xaxis.label.set_text("Opinion")
+    ax5.yaxis.label.set_text("Number of words")
+    label_typography(ax5)
     ax5.figure.savefig(figOutputPath / '1_correlation_words_opinion.svg', format='svg')
     
     # 4 - Review distribution per day
