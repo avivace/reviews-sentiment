@@ -13,6 +13,7 @@ from data_utils import most_reviewed_products
 from pathlib import Path
 from matplotlib import rcParams
 
+figOutputPath = Path("../figures/")
 
 ### Functions ###
 
@@ -20,7 +21,6 @@ def label_typography(ax):
     ax.xaxis.label.set_fontweight(500)
     ax.yaxis.label.set_fontsize(15)
     ax.yaxis.label.set_fontweight(500)
-
     ax.xaxis.label.set_fontsize(15)
     return
 
@@ -34,15 +34,15 @@ def most_active_reviewers(df, n_reviewers):
     definitive = definitive.drop('index', axis=1)
     return definitive
 
-# Overall distributions
-def analyze_reviews(df, df_attribute, title, name_file, ylabel):
+
+def analyze_reviews(df, df_attribute, name_file, ylabel):
     print("Shape of df: ", df.shape)
     fig, ax = plt.subplots(figsize=(10, 10))
     sns.countplot(df_attribute, ax=ax)
     label_typography(ax)
 
     # Set and style the title, and move it up a bit (1.02 = 2%)
-    ax.set_title(title, fontname='Inter', fontsize=20, fontweight=500, y=1.02)
+    #ax.set_title(title, fontname='Inter', fontsize=20, fontweight=500, y=1.02)
     
     ax.xaxis.label.set_text(ylabel)
     ax.yaxis.label.set_text("Review Count")
@@ -65,21 +65,21 @@ def analyze_reviews(df, df_attribute, title, name_file, ylabel):
 
 def run(df):
     # 1 - Countplot: score distribution    
-    analyze_reviews(df, df.overall, 'Score distribution', 'score_distribution', 'Score')
+    analyze_reviews(df, df.overall, 'score_distribution', 'Score')
     
     # 2 - Countplot: opinion distribution    
-    analyze_reviews(df, df.opinion, 'Opinion distribution', 'opinion_distribution', 'Opinion')
+    analyze_reviews(df, df.opinion, 'opinion_distribution', 'Opinion')
 
     # 3 - Distribution of words
     reduced_df = df.copy()
     reduced_df = reduced_df[reduced_df['n_words'] <= 1000]
     fig, ax5 = plt.subplots()
     ax5 = sns.violinplot(x=reduced_df['opinion'], y=reduced_df['n_words'])
-    ax5.set_title('Distribution of words in review for each opinion')
+    #ax5.set_title('Distribution of words in review for each opinion')
     ax5.figure.savefig(figOutputPath / '1_correlation_words_opinion.svg', format='svg')
     
     # 4 - Review distribution per day
-    analyze_reviews(df, df.week_day, 'Review distribution per day', 'review_distribution_per_day', 'Day')
+    analyze_reviews(df, df.week_day, 'review_distribution_per_day', 'Day')
     
     # 5 - Top 20 products
     fig, ax3 = plt.subplots(figsize=(15, 15))
@@ -105,7 +105,7 @@ def run(df):
     ax3.set_xlabel('Code product')
     legend = ax3.legend(loc='lower left', shadow=True, fontsize='large')
     legend.get_frame().set_facecolor('#00FFCC')
-    ax3.set_title('Opinion for besteller products')
+    #ax3.set_title('Opinion for besteller products')
     ax3.figure.savefig(figOutputPath / '1_sentiment_reviews_bestseller_products.svg', format='svg')
     print("Exported 1_sentiment_reviews_besteller_products.svg")
 
@@ -115,7 +115,7 @@ def run(df):
     sns.countplot(top_reviewers.reviewerID, ax=ax4, order=top_reviewers['reviewerID'].value_counts().index)
     r = list(top_reviewers['reviewerID'].unique())
     ax4.set_xticklabels(r, rotation=90)
-    ax4.set_title('Reviewers with most reviews')
+    #ax4.set_title('Reviewers with most reviews')
     ax4.figure.savefig(figOutputPath / '1_reviewers_most_reviews.svg', format='svg')
     
     # 7 - Opinion of top reviewers
@@ -145,18 +145,18 @@ def run(df):
     ax6.set_xlabel('Reviewer ID')
     legend = ax6.legend(loc='lower left', shadow=True, fontsize='large')
     legend.get_frame().set_facecolor('#00FFCC')
-    ax6.set_title('Opinion of top reviewers')
+    #ax6.set_title('Opinion of top reviewers')
     plt.show()
     ax6.figure.savefig(figOutputPath / '1_opinion_top_reviewers.svg', format='svg')
     print("Exported 1_opinion_top_reviewers.svg")
     
     # 8 - Unverified reviews
     unverified = df[df['verified'] == False]
-    analyze_reviews(unverified, df.overall, "Unverified score distribution", 'unverified_score_distribution', 'Score')
+    analyze_reviews(unverified, df.overall, 'unverified_score_distribution', 'Score')
 
     # 9 - Verified reviews
     verified = df[df['verified'] == True]
-    analyze_reviews(verified, df.overall, "Verified score distribution", 'verified_score_distribution', 'Score')
+    analyze_reviews(verified, df.overall, 'verified_score_distribution', 'Score')
 
     # 10 - verified vs unverified of top 50 reviewers
     fig, ax7 = plt.subplots(figsize=(15, 15))
@@ -178,7 +178,7 @@ def run(df):
     ax7.set_xlabel('Reviewer ID')
     legend = ax7.legend(loc='upper right', shadow=True, fontsize='large')
     legend.get_frame().set_facecolor('#00FFCC')
-    ax7.set_title('Verified vs Unverified reviews of top reviewers')
+    #ax7.set_title('Verified vs Unverified reviews of top reviewers')
     plt.show()
     ax7.figure.savefig(figOutputPath / '1_verified_unverified.svg', format='svg')
     print("Exported 1_verified_unverified.svg")

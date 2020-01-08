@@ -19,10 +19,10 @@ figOutputPath = Path("../figures/")
 
 ### Functions ###
 
-def plot_confusion_matrix(cm, title, name_img, classes=['negative', 'positive']):
+def plot_confusion_matrix(cm, name_img, classes=['negative', 'positive']):
     fig, ax = plt.subplots(figsize=(10,10))
     img = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
-    ax.set_title('Confusion matrix {}'.format(title))
+    #ax.set_title('Confusion matrix {}'.format(title))
     ax.axis('off')
     fig.colorbar(img)
     tick_marks = np.arange(len(classes))
@@ -42,11 +42,11 @@ def plot_confusion_matrix(cm, title, name_img, classes=['negative', 'positive'])
                       format='svg')
 
 
-def plot_roc(y_true, y_pred, title, name_img, pos_label=1):
+def plot_roc(y_true, y_pred, name_img, pos_label=1):
     fpr, tpr, threshold = metrics.roc_curve(y_true, y_pred, pos_label)
     roc_auc = metrics.auc(fpr, tpr)
     fig, ax = plt.subplots(figsize=(10,10))
-    ax.set_title('Receiver Operating Characteristic of {}'.format(title))
+    #ax.set_title('Receiver Operating Characteristic of {}'.format(title))
     ax.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
     ax.legend(loc='lower right')
     ax.plot([0, 1], [0, 1], 'r--')
@@ -114,7 +114,7 @@ def plot_frequency(df):
     ax.bar(y_pos, df.sort_values(by='total', ascending=False)['total'][:500], align='center', alpha=0.5)
     ax.plot(y_pos, expected_zipf, color='r', linestyle='--', linewidth=2, alpha=0.5)
     ax.set_ylabel('Frequency')
-    ax.set_title('Top 500 tokens in reviews')
+    #ax.set_title('Top 500 tokens in reviews')
     ax.figure.savefig(figOutputPath / '2_plot_frequency.svg', format='svg')
     print('Exported 2_plot_frequency.svg')
     
@@ -126,7 +126,7 @@ def token_frequency(df, sentiment):
     plt.xticks(y_pos, df.sort_values(by=sentiment, ascending=False)[sentiment][:50].index, rotation='vertical')
     plt.ylabel('Frequency')
     plt.xlabel('Token')
-    plt.title('Top 50 tokens in {} reviews'.format(sentiment))
+    #plt.title('Top 50 tokens in {} reviews'.format(sentiment))
     plt.savefig(figOutputPath / '2_token_frequency_{}.svg'.format(sentiment), format='svg')
     print('Exported 2_token_frequency_{}.svg'.format(sentiment))
 
@@ -144,7 +144,7 @@ def zipf_law(df):
     ax.set_xlim(1,10**6)
     loglog(ranks, frequencies, marker=".")
     ax.plot([1,frequencies[0]],[frequencies[0],1],color='r')
-    ax.set_title("Zipf plot for phrases tokens")
+    #ax.set_title("Zipf plot for phrases tokens")
     ax.set_xlabel("Frequency rank of token")
     ax.set_ylabel("Absolute frequency of token")
     ax.grid(True)
@@ -216,8 +216,8 @@ def run(df):
     print("Report on validation set")
     print(classification_report(y_true, y_pred))
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
-    plot_confusion_matrix(cm, 'Logistic Regression', 'lr')
-    plot_roc(y_true, y_pred, 'Logistic Regression', 'lr')
+    plot_confusion_matrix(cm, 'lr')
+    plot_roc(y_true, y_pred, 'lr')
 
     # Multinomial Bayes CV with grid search su BOW
     reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
@@ -246,5 +246,5 @@ def run(df):
     print("Report on validation set")
     print(classification_report(y_true, y_pred))
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
-    plot_confusion_matrix(cm,'Naive Bayes', 'nb')
-    plot_roc(y_true, y_pred, 'Naive Bayes', 'nb')
+    plot_confusion_matrix(cm, 'nb')
+    plot_roc(y_true, y_pred, 'nb')
