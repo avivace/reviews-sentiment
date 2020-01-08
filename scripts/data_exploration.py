@@ -151,7 +151,7 @@ def run(df):
     neutral_percentage = [i / j * 100 for i, j in zip(raw_data['neutral'], totals)]
     negative_percentage = [i / j * 100 for i, j in zip(raw_data['negative'], totals)]
 
-    bar_width = 0.85
+    bar_width = 1
 
     ax6.bar(r, positive_percentage, color='#b5ffb9', edgecolor='white', width=bar_width, label='positive')
     ax6.bar(r, neutral_percentage, bottom=positive_percentage, color='#f9bc86', edgecolor='white', width=bar_width, label='neutral')
@@ -190,7 +190,7 @@ def run(df):
     verified_percentage = [i / j * 100 for i, j in zip(raw_data['verified'], totals)]
     unverified_percentage = [i / j * 100 for i, j in zip(raw_data['unverified'], totals)]
 
-    bar_width = 0.85
+    bar_width = 1
 
     ax7.bar(r, verified_percentage, color='#b5ffb9', edgecolor='white', width=bar_width, label='verified')
     ax7.bar(r, unverified_percentage, bottom=verified_percentage, color='#f9bc86', edgecolor='white', width=bar_width, label='unverified')
