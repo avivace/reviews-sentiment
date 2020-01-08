@@ -43,7 +43,6 @@ def most_active_reviewers(df, n_reviewers):
 
 
 def analyze_reviews(df, df_attribute, name_file, ylabel):
-    print("Shape of df: ", df.shape)
     fig, ax = plt.subplots(figsize=(10, 10))
     sns.countplot(df_attribute, ax=ax)
     label_typography(ax)
@@ -52,7 +51,7 @@ def analyze_reviews(df, df_attribute, name_file, ylabel):
     #ax.set_title(title, fontname='Inter', fontsize=20, fontweight=500, y=1.02)
     
     ax.xaxis.label.set_text(ylabel)
-    ax.yaxis.label.set_text("Review Count")
+    ax.yaxis.label.set_text("Review count")
     if (name_file=="review_distribution_per_day"):
         ax.set_xticklabels(["Sunday", "Monday", "Thuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
         ax.xaxis.label.set_fontsize(13)
@@ -67,13 +66,10 @@ def analyze_reviews(df, df_attribute, name_file, ylabel):
     ax.figure.savefig(figOutputPath / '1_{0}.svg'.format(name_file), format='svg')
     print('Exported 1_{}.svg'.format(name_file))
 
-    print("Average Score: ", np.mean(df.overall))
-    print("Median Score: ", np.median(df.overall))
-
 
 def run(df):
-    # 1 - Countplot: score distribution    
-    analyze_reviews(df, df.overall, 'score_distribution', 'Score')
+    # 1 - Countplot: overall distribution    
+    analyze_reviews(df, df.overall, 'overall_distribution', 'Overall')
     
     # 2 - Countplot: opinion distribution    
     analyze_reviews(df, df.opinion, 'opinion_distribution', 'Opinion')
@@ -114,6 +110,7 @@ def run(df):
     ax3.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width, label='negative')
     ax3.set_xticklabels(r, rotation=90)
     ax3.set_xlabel('Code product')
+    ax3.set_ylabel('Percentage')
     legend = ax3.legend(loc='lower left', shadow=True, fontsize='large')
     legend.get_frame().set_facecolor('#00FFCC')
     #ax3.set_title('Opinion for besteller products')
@@ -126,6 +123,7 @@ def run(df):
     sns.countplot(top_reviewers.reviewerID, ax=ax4, order=top_reviewers['reviewerID'].value_counts().index)
     r = list(top_reviewers['reviewerID'].unique())
     ax4.set_xticklabels(r, rotation=90)
+    ax4.set_ylabel('Review count')
     #ax4.set_title('Reviewers with most reviews')
     ax4.figure.savefig(figOutputPath / '1_reviewers_most_reviews.svg', format='svg')
     
@@ -154,6 +152,7 @@ def run(df):
     ax6.bar(r, negative_percentage, bottom=[i + j for i, j in zip(positive_percentage, neutral_percentage)], color='#a3acff', edgecolor='white', width=bar_width, label='negative')
     ax6.set_xticklabels(r, rotation=90)
     ax6.set_xlabel('Reviewer ID')
+    ax6.set_ylabel('Percentage')
     legend = ax6.legend(loc='lower left', shadow=True, fontsize='large')
     legend.get_frame().set_facecolor('#00FFCC')
     #ax6.set_title('Opinion of top reviewers')
@@ -187,6 +186,7 @@ def run(df):
     ax7.bar(r, unverified_percentage, bottom=verified_percentage, color='#f9bc86', edgecolor='white', width=bar_width, label='unverified')
     ax7.set_xticklabels(r, rotation=90)
     ax7.set_xlabel('Reviewer ID')
+    ax7.set_ylabel('Percentage')
     legend = ax7.legend(loc='upper right', shadow=True, fontsize='large')
     legend.get_frame().set_facecolor('#00FFCC')
     #ax7.set_title('Verified vs Unverified reviews of top reviewers')
