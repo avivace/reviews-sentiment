@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
 
 ### Import libraries ###
+
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 nltk.download('wordnet')
 import gensim
 import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
-import numpy as np
 import pyLDAvis.gensim
-
-from data_exploration import most_reviewed_products
-
+from data_utils import most_reviewed_products
 from pathlib import Path
 
 figures_folder = Path("../figures/")
 dataframes_folder = Path("../dataframes/")
+
 ### Functions ###
 
 def worst_products_asin(df, n_worst):
@@ -67,7 +65,6 @@ def make_bigrams(texts):
 
 
 def bag_of_words(texts, dictionary):
-    #dictionary = create_dictionary(texts)
     corpus = [dictionary.doc2bow(text) for text in texts]
     return corpus
     
@@ -90,10 +87,6 @@ def compute_lda_model(corpus, num_topics, dictionary, texts, alpha, beta):
                                                    texts=texts)
         coherences.append(cm.get_coherence())
         print('\nNumber of topic:', n)
-        '''
-        for idx, topic in model.print_topics(-1):
-            print('\nTopic: {} \nWords: {}'.format(idx, topic)) 
-        '''
     return coherences, lda_models
 
 
@@ -134,10 +127,6 @@ def show_topics(model, ideal_topics, num_words, product_asin):
     topic_df = pd.DataFrame(word_dict)
     topic_df.to_pickle(dataframes_folder / 'topics_{}.pkl'.format(product_asin))
     print(topic_df)
-    
-    
-def save_model(model, product_asin):
-    model.save('models/3_model_{0}.model'.format(product_asin))
     
     
 def topic_visualization(model, corpus, dictionary, product_asin):
@@ -193,12 +182,9 @@ def sentiment_polarity(df):
 
 
 def most_representative_document(df):
-
     # Most representative document for each topic
     sent_topics_sorted_df = pd.DataFrame()
-    
     sent_topics_outdf_grpd = df.groupby('topic_num')
-    
     for i, grp in sent_topics_outdf_grpd:
         sent_topics_sorted_df = pd.concat([sent_topics_sorted_df, 
                                            grp.sort_values(['topic_perc_contribution'], 
@@ -217,10 +203,8 @@ def topic_distribution_across_documents(df, sentiment):
     topic_contribution = round(topic_counts/topic_counts.sum(), 4)
     topic_contribution.rename(columns={'topic_num':'perc_contribution'})
     df_dominant_topics = pd.concat([sentiment, topic_contribution], axis=1)
-    
     # Change Column names
     #df_dominant_topics.columns = ['Dominant_Topic', 'Topic_Keywords', 'Num_Documents', 'Perc_Documents']
-    
     # Show
     return df_dominant_topics
 
@@ -240,13 +224,9 @@ def run(df):
             df_product = df[df['asin'] == product]
             reviews_product = [r.split(' ') for r in df_product['preprocessedReview']]
             bigram_reviews = make_bigrams(reviews_product)
-            dictionary = create_dictionary(reviews_product)
-            max_topics = 10
-        
-            # LDA using Bag of Words
+            dictionary = create_dictionary(bigram_reviews)
             bow_corpus = bag_of_words(bigram_reviews, dictionary)
-            #alpha_list = list(np.arange(0.01, 1, 0.3))
-            #beta_list = list(np.arange(0.01, 1, 0.3))
+            max_topics = 10
             alpha_list = [0.1, 1]
             beta_list = [0.01, 0.1, 1]
             num_topics = list(range(2, max_topics+1))
@@ -270,28 +250,17 @@ def run(df):
             best_num_topics = num_topics[0] + index_best_value[1]
             plot_coherence(len(num_topics), best_coherences, product)
             show_topics(best_model, best_num_topics, 10, product)
-            #save_model(best_model, product)
             topic_visualization(best_model, bow_corpus, dictionary, product)
+            '''
+            topic_sents_keywords = format_topics_sentences(best_model, bow_corpus, bigram_reviews)
+        
+            topic_sents_keywords.to_pickle('dataframes/topic_sents_keywords.pkl')
+            
+            sentiment_df, words = sentiment_polarity(topic_sents_keywords)
+            pos = words[words["words_nb"] >= 5].sort_values("pos", ascending = False)[["text", "pos"]].head(20)
+            neg = words[words["words_nb"] >= 5].sort_values("neg", ascending = False)[["text", "neg"]].head(20)
 
-    '''
-    topic_sents_keywords = format_topics_sentences(best_model, bow_corpus, bigram_reviews)
-
-    topic_sents_keywords.to_pickle('dataframes/topic_sents_keywords.pkl')
-    
-    sentiment_df, words = sentiment_polarity(topic_sents_keywords)
-    pos = words[words["words_nb"] >= 5].sort_values("pos", ascending = False)[["text", "pos"]].head(20)
-    neg = words[words["words_nb"] >= 5].sort_values("neg", ascending = False)[["text", "neg"]].head(20)
-    
-    pos.to_pickle('dataframes/positive.pkl')
-    
-    neg.to_pickle('dataframes/negative.pkl')
-    
-    most_repr_rews = most_representative_document(topic_sents_keywords)
-
-    
-    most_repr_rews.to_pickle('dataframes/most_repr_rews.pkl')
-    
-    df_dominant_topics = topic_distribution_across_documents(topic_sents_keywords, sentiment_df)
-    
-    df_dominant_topics.to_pickle('dataframes/dominant_topics.pkl')
-    '''
+            most_repr_rews = most_representative_document(topic_sents_keywords)
+            df_dominant_topics = topic_distribution_across_documents(topic_sents_keywords, sentiment_df)
+            '''
+            

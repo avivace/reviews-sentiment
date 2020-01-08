@@ -48,7 +48,7 @@ def preprocessing_post_exploration_dataset(df):
 if __name__ == "__main__":
     df = load_initial_dataset()
     df_exploration = preprocessing_pre_exploration_dataset(df)
-    #data_exploration.run(df_exploration)
+    data_exploration.run(df_exploration)
     df_analysis = preprocessing_post_exploration_dataset(df_exploration)
     sentiment_analysis.run(df_analysis)
-    #topic_analysis.run(df_analysis)
+    topic_analysis.run(df_analysis)

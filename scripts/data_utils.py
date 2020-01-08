@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 
-
-import re
-from nltk.tokenize import RegexpTokenizer
-
-import nltk
-
-nltk.download('punkt')
-nltk.download('stopwords')
-
-from collections import defaultdict
-
-import spacy
+### Import libraries ###
 
 import pandas as pd
 import numpy as np
+import re
+import nltk
+from nltk.tokenize import RegexpTokenizer
+nltk.download('punkt')
+nltk.download('stopwords')
+import spacy
 
+from collections import defaultdict
+
+### Functions ###
 
 def load_dataset(pathfile):
     df = pd.read_json(pathfile, lines=True)
@@ -255,3 +253,12 @@ def add_features(df):
     words_count(df)
     transform_unix_date(df)
     
+    
+def most_reviewed_products(df, n_products):
+    reviews_per_product = df['asin'].value_counts()
+    most_reviews = reviews_per_product.nlargest(n_products)
+    most_reviews = most_reviews.reset_index()
+    most_reviews = most_reviews.drop('asin', axis=1)
+    definitive = df.merge(most_reviews, left_on='asin', right_on='index')
+    definitive = definitive.drop('index', axis=1)
+    return definitive
