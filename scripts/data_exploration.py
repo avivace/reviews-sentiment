@@ -8,19 +8,7 @@ from pandas import Grouper
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-color = sns.color_palette()
-sns.set_style(style="darkgrid")
-from pathlib import Path
-from matplotlib import rcParams
 
-# Default text styling for figures
-rcParams['font.family'] = 'sans-serif'
-rcParams['font.sans-serif'] = ['Inter']
-rcParams['font.weight'] = 500
-rcParams['xtick.labelsize'] = 13
-rcParams['ytick.labelsize'] = 13
-
-figOutputPath = Path("../figures/")
 
 ### Functions ###
 
@@ -28,6 +16,7 @@ def label_typography(ax):
     ax.xaxis.label.set_fontweight(500)
     ax.yaxis.label.set_fontsize(15)
     ax.yaxis.label.set_fontweight(500)
+
     ax.xaxis.label.set_fontsize(15)
     return
 
