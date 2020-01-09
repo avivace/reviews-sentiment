@@ -14,6 +14,8 @@ from sklearn.metrics import classification_report
 from sklearn.naive_bayes import MultinomialNB
 import itertools
 from pathlib import Path
+from data_utils import text_preprocessing
+
 
 figOutputPath = Path("../figures/")
 
@@ -193,10 +195,7 @@ def run(df):
     sentiments = sentiments.astype('int')
 
     # Logistic Regression CV with grid search su BOW
-    reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
-                                                                                                sentiments,
-                                                                                                test_size=0.5,
-                                                                                                random_state=42)
+    reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews, sentiments, test_size=0.2, random_state=42)
     count_vector_features = count_vector_sentiment.fit_transform(reviews_train)
     count_vector_validation_features = count_vector_sentiment.transform(reviews_validation)
 
@@ -223,10 +222,7 @@ def run(df):
     plot_roc(y_true, y_pred, 'lr')
 
     # Multinomial Bayes CV with grid search su BOW
-    reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
-                                                                                                sentiments,
-                                                                                                test_size=0.5,
-                                                                                                random_state=42)
+    reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews, sentiments, test_size=0.2, random_state=42)
     count_vector_features = count_vector_sentiment.fit_transform(reviews_train)
     count_vector_validation_features = count_vector_sentiment.transform(reviews_validation)
 
@@ -241,6 +237,7 @@ def run(df):
     nb_grid = GridSearchCV(nb, param_grid=param_grid, cv=5, verbose=True, n_jobs=-1)
     # Fit on data
     best_nb = nb_grid.fit(count_vector_features, sentiment_train)
+
     print("Best params")
     for i in best_nb.best_params_:
         print(i, best_nb.best_params_[i])
@@ -251,3 +248,14 @@ def run(df):
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
     plot_confusion_matrix(cm, 'nb')
     plot_roc(y_true, y_pred, 'nb')
+
+    ### Run model on single instance
+
+    a = text_preprocessing(["Overall a great product with a fair price. I have had absolutely no problems with the product except for the volume level, which is *NOT* below standard, it is just simply what is to be expected from a headset. Very comfortable, and I personally prefer the boom mic to be longer (unlike the newer models of this headset which have shortened mics). Recommended."])
+    a = np.asarray([ " ".join(a[0]) ])
+
+    print("PRINTING", a)
+    print(reviews_validation)
+
+    count_vector_validation_features2 = count_vector_sentiment.transform(a)
+    print("TEST", best_nb.predict_proba(count_vector_validation_features2))
