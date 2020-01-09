@@ -210,13 +210,15 @@ def lemmatization(text, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     return [token.lemma_ for token in doc if token.pos_ in allowed_postags]
 
 
-def text_preprocessing(reviews):
+def text_preprocessing(reviews, remove_less_frequent_words=True):
+    print(reviews)
     # reviews = reviews.lower()
     reviews = [review.lower() for review in reviews]
     stopwords = nltk.corpus.stopwords.words("english")
     filtered_reviews = []
     no_review = 0
     for review in reviews:
+        print("processing review", review)
         no_review += 1
         if no_review % 100 == 0:
             print('Review n.', no_review, '/', len(reviews))
@@ -224,14 +226,19 @@ def text_preprocessing(reviews):
             review = fix_punctuation(review)
             review = expand_contractions(review)
         except:
-            print(review)
+            print(review, "something happened")
+        print(review)
         filtered_review = []
         for word in tokenizer.tokenize(review):
             if word not in stopwords and len(word) > 2:
+                print("appending")
                 filtered_review.append(word)
         lemmatized = lemmatization(filtered_review)
         filtered_reviews.append(lemmatized)
-    filtered_reviews = remove_less_frequent_words(filtered_reviews)
+    
+    if (remove_less_frequent_words):
+        filtered_reviews = remove_less_frequent_words(filtered_reviews)
+    
     return filtered_reviews
 
 
