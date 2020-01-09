@@ -8,7 +8,7 @@
 Amazon Reviews Sentiment Analysis
 <v-spacer></v-spacer>
     <v-tabs
-grow=false
+
 right="right"
 align-with-title
           background-color="transparent"
@@ -51,7 +51,12 @@ align-with-title
             hint="English only!"
           ></v-text-field>
         </v-col>
+        
       </v-row>
+      <v-row justify="center"> <center> {{ (value.toFixed(5) * 100).toFixed(2) }}% </center> </v-row>
+      <br>
+      <v-btn @click=compute
+      >compute </v-btn>
     
   </v-flex>
 
@@ -114,16 +119,34 @@ align-with-title
 <script>
 export default {
   name: 'HelloWorld',
+  methods: {
+    compute: function(){
+      
+      this.$axios.get('http://localhost:5000/', {params: {
+        text: this.formText
+      }}).then(function (response) {
+        self.value=response.data.positive
+      })
+    }
+  },
   watch: {
     formText: function (val) {
       // Do things
       this.test = "A" + val
+      var self = this;
+      this.$axios.get('http://localhost:5000/', {params: {
+        text: self.formText
+      }}).then(function (response) {
+        self.value=response.data.positive
+      })
+    
   },
 },
   data: () => ({
     formText: "",
     test: "aa",
     toggledlda: false,
+    value: 0,
     toggledsent: false,
     lda: [
     {
