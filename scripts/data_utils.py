@@ -210,7 +210,7 @@ def lemmatization(text, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     return [token.lemma_ for token in doc if token.pos_ in allowed_postags]
 
 
-def text_preprocessing(reviews, remove_less_frequent_words=True):
+def text_preprocessing(reviews, remove_less_frequent=True):
     #print(reviews)
     #reviews = reviews.lower()
     reviews = [review.lower() for review in reviews]
@@ -233,7 +233,7 @@ def text_preprocessing(reviews, remove_less_frequent_words=True):
         lemmatized = lemmatization(filtered_review)
         filtered_reviews.append(lemmatized)
     
-    if (remove_less_frequent_words):
+    if (remove_less_frequent):
         filtered_reviews = remove_less_frequent_words(filtered_reviews)
     
     return filtered_reviews

@@ -251,7 +251,7 @@ def run(df):
 
     ### Run model on single instance
 
-    a = text_preprocessing(["Overall a great product with a fair price. I have had absolutely no problems with the product except for the volume level, which is *NOT* below standard, it is just simply what is to be expected from a headset. Very comfortable, and I personally prefer the boom mic to be longer (unlike the newer models of this headset which have shortened mics). Recommended."])
+    a = text_preprocessing(["Overall a great product with a fair price. I have had absolutely no problems with the product except for the volume level, which is *NOT* below standard, it is just simply what is to be expected from a headset. Very comfortable, and I personally prefer the boom mic to be longer (unlike the newer models of this headset which have shortened mics). Recommended."], remove_less_frequent=False)
     a = np.asarray([ " ".join(a[0]) ])
 
     print("PRINTING", a)
