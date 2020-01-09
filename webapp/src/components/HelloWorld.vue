@@ -136,6 +136,7 @@ export default {
 
 body{
   font-family: 'Barlow' !important;
+  font-size:20px;
 }
 
 html{

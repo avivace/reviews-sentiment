@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar
+    <v-app-bar class="navtitle"
       app
       color="red darken-4"
       dark
@@ -29,3 +29,10 @@ export default {
   }),
 };
 </script>
+
+<style>
+.navtitle{
+  font-size:24px;
+}
+
+</style>
