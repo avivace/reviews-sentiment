@@ -195,7 +195,7 @@ def run(df):
     # Logistic Regression CV with grid search su BOW
     reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
                                                                                                 sentiments,
-                                                                                                test_size=0.5,
+                                                                                                test_size=0.2,
                                                                                                 random_state=42)
     count_vector_features = count_vector_sentiment.fit_transform(reviews_train)
     count_vector_validation_features = count_vector_sentiment.transform(reviews_validation)
@@ -225,7 +225,7 @@ def run(df):
     # Multinomial Bayes CV with grid search su BOW
     reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews,
                                                                                                 sentiments,
-                                                                                                test_size=0.5,
+                                                                                                test_size=0.2,
                                                                                                 random_state=42)
     count_vector_features = count_vector_sentiment.fit_transform(reviews_train)
     count_vector_validation_features = count_vector_sentiment.transform(reviews_validation)
