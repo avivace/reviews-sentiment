@@ -45,7 +45,7 @@ def plot_confusion_matrix(cm, name_img, classes=['negative', 'positive']):
 
 
 def plot_roc(y_true, y_pred, name_img, pos_label=1):
-    fpr, tpr, _ = metrics.roc_curve(y_true, y_pred[:, 0], pos_label)
+    fpr, tpr, _ = metrics.roc_curve(y_true, y_pred[:, 1], pos_label)
     roc_auc = metrics.auc(fpr, tpr)
     fig, ax = plt.subplots(figsize=(10,10))
     #ax.set_title('Receiver Operating Characteristic of {}'.format(title))
@@ -171,7 +171,7 @@ def undersampling(df):
     return df
 
 
-def run(df):  
+def run(df):   
     df.drop(df[df.opinion == 'neutral'].index, inplace=True)
     count_vector_exploration = CountVectorizer(max_features=10000, ngram_range=(1, 2))
     df['words'] = [len(t) for t in df['preprocessedReview']]
@@ -184,7 +184,6 @@ def run(df):
     plot_frequency(term_frequency)
     token_frequency(term_frequency, 'positive')
     token_frequency(term_frequency, 'negative')
-
     ### Machine learning ###
     df = undersampling(df)
     count_vector_sentiment = CountVectorizer(max_features=10000, ngram_range=(1, 2))
@@ -214,12 +213,12 @@ def run(df):
     for i in best_lr.best_params_:
         print(i, best_lr.best_params_[i])
 
-    y_true, y_pred = sentiment_validation, best_lr.predict_proba(count_vector_validation_features)
+    y_true, y_pred, y_pred_roc = sentiment_validation, best_lr.predict(count_vector_validation_features), best_lr.predict_proba(count_vector_validation_features)
     print("Report on validation set")
     print(classification_report(y_true, y_pred))
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
     plot_confusion_matrix(cm, 'lr')
-    plot_roc(y_true, y_pred, 'lr')
+    plot_roc(y_true, y_pred_roc, 'lr')
 
     # Multinomial Bayes CV with grid search su BOW
     reviews_train, reviews_validation, sentiment_train, sentiment_validation = train_test_split(reviews, sentiments, test_size=0.2, random_state=42)
@@ -242,12 +241,12 @@ def run(df):
     for i in best_nb.best_params_:
         print(i, best_nb.best_params_[i])
 
-    y_true, y_pred = sentiment_validation, best_nb.predict_proba(count_vector_validation_features)
+    y_true, y_pred, y_pred_roc = sentiment_validation, best_nb.predict(count_vector_validation_features), best_nb.predict_proba(count_vector_validation_features)
     print("Report on validation set")
     print(classification_report(y_true, y_pred))
     cm = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[0, 1])
     plot_confusion_matrix(cm, 'nb')
-    plot_roc(y_true, y_pred, 'nb')
+    plot_roc(y_true, y_pred_roc, 'nb')
 
     ### Run model on single instance
 
