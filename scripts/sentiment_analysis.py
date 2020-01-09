@@ -255,7 +255,7 @@ def run(df):
     a = np.asarray([ " ".join(a[0]) ])
 
     print("PRINTING", a)
-    print(reviews_validation)
+    #print(reviews_validation)
 
     count_vector_validation_features2 = count_vector_sentiment.transform(a)
     print("TEST", best_nb.predict_proba(count_vector_validation_features2))

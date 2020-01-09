@@ -172,7 +172,7 @@ def run(df):
     #legend = ax6.legend(loc='lower left', shadow=True, fontsize='large')
     #legend.get_frame().set_facecolor('#00FFCC')
     #ax6.set_title('Opinion of top reviewers')
-    plt.show()
+    #plt.show()
     ax6.figure.savefig(figOutputPath / '1_opinion_top_reviewers.svg', format='svg')
     print("Exported 1_opinion_top_reviewers.svg")
     
@@ -211,7 +211,7 @@ def run(df):
     #legend = ax7.legend(loc='upper right', shadow=True, fontsize='large')
     #legend.get_frame().set_facecolor('#00FFCC')
     #ax7.set_title('Verified vs Unverified reviews of top reviewers')
-    plt.show()
+    #plt.show()
     ax7.figure.savefig(figOutputPath / '1_verified_unverified.svg', format='svg')
     print("Exported 1_verified_unverified.svg")
     
