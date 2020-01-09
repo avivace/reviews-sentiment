@@ -5,7 +5,7 @@
       wrap
     >
 
-      <v-flex mb-4>
+      <v-flex xs12>
         <h1 class="title1">
           Demo
         </h1>
@@ -14,7 +14,200 @@
         </p>
       </v-flex>
 
-      
+  <v-flex xs12>
+
+      <div class="my-2">
+        <v-btn color="primary" depressed @click="toggled=!toggled">LDA</v-btn>
+      </div>
+
+
+      <div class="my-2">
+        <v-btn color="primary" depressed>SENTIMENT ANALYSIS TEST</v-btn>
+      </div>
+
+
+  </v-flex>
+
+  <v-flex xs12 v-if="toggled">
+  <v-row>
+        <v-card
+    class="mx-auto"
+    max-width="344"
+  >
+    <v-img
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+      height="200px"
+    ></v-img>
+
+    <v-card-title>
+      Top western road trips
+    </v-card-title>
+
+    <v-card-subtitle>
+      1,000 miles of wonder
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-btn
+        color="purple"
+        text
+      >
+        PYLAVDIS
+      </v-btn>
+
+    </v-card-actions>
+
+  </v-card>        
+
+  <v-card
+    class="mx-auto"
+    max-width="344"
+  >
+    <v-img
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+      height="200px"
+    ></v-img>
+
+    <v-card-title>
+      Top western road trips
+    </v-card-title>
+
+    <v-card-subtitle>
+      1,000 miles of wonder
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-btn
+        color="purple"
+        text
+      >
+        PYLAVDIS
+      </v-btn>
+
+    </v-card-actions>
+
+  </v-card>
+  
+</v-row> <br>
+
+ <v-row>
+
+    <v-card
+    class="mx-auto"
+    max-width="344"
+  >
+    <v-img
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+      height="200px"
+    ></v-img>
+
+    <v-card-title>
+      Top western road trips
+    </v-card-title>
+
+    <v-card-subtitle>
+      1,000 miles of wonder
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-btn
+        color="purple"
+        text
+      >
+        PYLAVDIS
+      </v-btn>
+
+    </v-card-actions>
+
+  </v-card>        <v-card
+    class="mx-auto"
+    max-width="344"
+  >
+    <v-img
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+      height="200px"
+    ></v-img>
+
+    <v-card-title>
+      Top western road trips
+    </v-card-title>
+
+    <v-card-subtitle>
+      1,000 miles of wonder
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-btn
+        color="purple"
+        text
+      >
+        PYLAVDIS
+      </v-btn>
+
+    </v-card-actions>
+
+  </v-card>
+  
+</v-row> <br> <v-row>
+
+        <v-card
+    class="mx-auto"
+    max-width="344"
+  >
+    <v-img
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+      height="200px"
+    ></v-img>
+
+    <v-card-title>
+      Top western road trips
+    </v-card-title>
+
+    <v-card-subtitle>
+      1,000 miles of wonder
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-btn
+        color="purple"
+        text
+      >
+        PYLAVDIS
+      </v-btn>
+
+    </v-card-actions>
+
+  </v-card>        <v-card
+    class="mx-auto"
+    max-width="344"
+  >
+    <v-img
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+      height="200px"
+    ></v-img>
+
+    <v-card-title>
+      Top western road trips
+    </v-card-title>
+
+    <v-card-subtitle>
+      1,000 miles of wonder
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-btn
+        color="purple"
+        text
+      >
+        PYLAVDIS
+      </v-btn>
+
+    </v-card-actions>
+
+  </v-card>
+  
+</v-row>
+      </v-flex>
 
     </v-layout>
   </v-container>
@@ -25,6 +218,7 @@ export default {
   name: 'HelloWorld',
 
   data: () => ({
+    toggled: false,
     ecosystem: []
   }),
 };

@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
+      color="red darken-4"
       dark
     >
 Amazon Reviews Sentiment Analysis
