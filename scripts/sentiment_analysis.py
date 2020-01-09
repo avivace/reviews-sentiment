@@ -17,6 +17,7 @@ from pathlib import Path
 from data_utils import text_preprocessing
 
 
+
 figOutputPath = Path("../figures/")
 
 ### Functions ###
@@ -171,6 +172,7 @@ def undersampling(df):
     return df
 
 
+    
 def run(df):   
     df.drop(df[df.opinion == 'neutral'].index, inplace=True)
     count_vector_exploration = CountVectorizer(max_features=10000, ngram_range=(1, 2))
@@ -248,13 +250,13 @@ def run(df):
     plot_confusion_matrix(cm, 'nb')
     plot_roc(y_true, y_pred_roc, 'nb')
 
-    ### Run model on single instance
+    return best_nb, best_lr, count_vector_sentiment
 
-    a = text_preprocessing(["Overall a great product with a fair price. I have had absolutely no problems with the product except for the volume level, which is *NOT* below standard, it is just simply what is to be expected from a headset. Very comfortable, and I personally prefer the boom mic to be longer (unlike the newer models of this headset which have shortened mics). Recommended."], remove_less_frequent=False)
+
+    
+
+def compute_single(string, model, count_vector_sentiment):
+    a = text_preprocessing([string], remove_less_frequent=False)
     a = np.asarray([ " ".join(a[0]) ])
-
-    print("PRINTING", a)
-    #print(reviews_validation)
-
     count_vector_validation_features2 = count_vector_sentiment.transform(a)
-    print("TEST", best_nb.predict_proba(count_vector_validation_features2))
+    return model.predict_proba(count_vector_validation_features2)
