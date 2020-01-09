@@ -1,4 +1,25 @@
 <template>
+    <v-app>
+      <v-app-bar class="navtitle"
+      app
+      color="red darken-4"
+      dark
+    >
+Amazon Reviews Sentiment Analysis
+<v-spacer></v-spacer>
+    <v-tabs
+grow=false
+right="right"
+align-with-title
+          background-color="transparent"
+    >
+      <v-tab  @click="toggledlda=!toggledlda;toggledsent=false" style="font-size: 1rem"> LDA </v-tab>
+      <v-tab style="font-size: 1rem" @click="toggledsent=!toggledsent;toggledlda=false"> SENTIMENT ANALYSIS </v-tab>
+
+      </v-tabs>
+    </v-app-bar>
+    <v-content>
+
   <v-container>
     <v-layout
       text-center
@@ -6,6 +27,8 @@
     >
 
       <v-flex xs12>
+        <br><br>
+    
         <h1 class="title1">
           Demo
         </h1>
@@ -14,25 +37,31 @@
         </p>
       </v-flex>
 
-  <v-flex xs12>
-
-      <div class="my-2">
-        <v-btn color="primary" depressed @click="toggledlda=!toggledlda;toggledsent=false">LDA</v-btn> &nbsp;&nbsp;&nbsp;
-         <v-btn color="primary" depressed @click="toggledsent=!toggledsent;toggledlda=false">SENTIMENT ANALYSIS TEST</v-btn>
-      </div>
 
 
+  <v-flex lg12 xs12 v-if="toggledsent">
+    <v-row justify="center">
+            <v-col cols="6" sm="6" >
+          <v-text-field
+            v-model="formText"
+            label="Custom Review"
+            outlined
+            clearable
+            counter
+            hint="English only!"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+    
   </v-flex>
-  <v-flex xs12 v-if="toggledsent">
-    ecomi
-  </v-flex>
+
   <v-flex xs12 v-if="toggledlda">
   <v-container fluid>
       <v-row dense>
         <v-col
           v-for="object in lda"
           :key="object.nam"
-          cols=6
+          cols=4
         >
 
         <v-card
@@ -78,13 +107,22 @@
 
     </v-layout>
   </v-container>
+  </v-content>
+</v-app>
 </template>
 
 <script>
 export default {
   name: 'HelloWorld',
-
+  watch: {
+    formText: function (val) {
+      // Do things
+      this.test = "A" + val
+  },
+},
   data: () => ({
+    formText: "",
+    test: "aa",
     toggledlda: false,
     toggledsent: false,
     lda: [

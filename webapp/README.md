@@ -20,5 +20,9 @@ npm run build
 npm run lint
 ```
 
+### Deploy
+
+scp dist root@IP:/var/www/html
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
