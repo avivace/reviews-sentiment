@@ -1,10 +1,12 @@
 # Analytics on Amazon Reviews
 
-Data Analytics exam final project. MSc in Computer Science.
+Data Analytics exam final project, MSc in Computer Science.
 
 By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://github.com/lucapalazzi), [Antonio Vivace](https://github.com/avivace).
 
 Exploration, Sentiment Analysis, Topic Analysis (LDA) and a VueJS web application exposing the trained models.
+
+[Documentation](report.pdf)
 
 #### Exploration
 
