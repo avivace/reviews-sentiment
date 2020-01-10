@@ -1,8 +1,22 @@
-# Amazon Reviews sentiment analysis
+# Analytics on Amazon Reviews
 
-Data Analytics exam final project.
+Data Analytics exam final project. MSc in Computer Science.
 
 By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://github.com/lucapalazzi), [Antonio Vivace](https://github.com/avivace).
+
+Exploration, Sentiment Analysis, Topic Analysis (LDA) and a VueJS web application exposing the trained models.
+
+#### Exploration
+
+<img src="figures/1_rew_len_over_time.svg" width="50%"><img src="figures/1_avg_help_25_100_traffic.svg"  width="50%">
+
+<img src="figures/1_ver_unver_time_traffic.svg"  width="50%"><img src="figures/1_correlation_words_opinion.svg"  width="50%">
+
+#### Web demo
+
+<img src="https://github.com/avivace/reviews-sentiment/blob/master/figures/ext/webapp1.png">
+
+<img src="https://github.com/avivace/reviews-sentiment/blob/master/figures/ext/webapp2.png">
 
 ## Run
 
@@ -32,4 +46,13 @@ jupyter lab
 Now, to run the full pipeline:
 ```bash
 python3 main.py
+```
+
+A Flask web application exposes a simple API (on port 5000) allowing the trained models to be used on demand via simple HTTP requests (in main.py). The VueJS application needs a recent version of NodeJS and npm.
+
+```bash
+cd webapp
+npm install
+# serve the web application with hot reload
+npm run serve
 ```
