@@ -50,7 +50,7 @@ Now, to run the full pipeline:
 python3 main.py
 ```
 
-A Flask web application exposes a simple API (on port 5000) allowing the trained models to be used on demand via simple HTTP requests (in main.py). The VueJS application needs a recent version of NodeJS and npm.
+A Flask application exposes a simple API (on port 5000) allowing the trained models to be used on demand via simple HTTP requests (in main.py). The VueJS application needs a recent version of NodeJS and npm.
 
 ```bash
 cd webapp
@@ -58,3 +58,6 @@ npm install
 # serve the web application with hot reload
 npm run serve
 ```
+
+
+Antuz notes: accent is `#B71C1C`, typeface is *Barlow* 500. On the plots and graphs, typeface is *Inter* 600, palette is `#4DAF4A`, `#FF7F00`, `#C73E31`.
