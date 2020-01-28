@@ -385,3 +385,8 @@ TSWLatexianTemp*
 ### LaTeX Patch ###
 # glossaries
 *.glstex
+
+# 
+*/etc/*
+*/.idea/*
+*/.ipynb_checkpoints/*

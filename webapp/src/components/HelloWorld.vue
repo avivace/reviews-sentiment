@@ -122,7 +122,7 @@ export default {
   methods: {
     compute: function(){
       
-      this.$axios.get('http://localhost:5000/', {params: {
+      this.$axios.get('http://142.93.167.34:5000/', {params: {
         text: this.formText
       }}).then(function (response) {
         self.value=response.data.positive
@@ -134,7 +134,7 @@ export default {
       // Do things
       this.test = "A" + val
       var self = this;
-      this.$axios.get('http://localhost:5000/', {params: {
+      this.$axios.get('http://142.93.167.34:5000/', {params: {
         text: self.formText
       }}).then(function (response) {
         self.value=response.data.positive
@@ -146,7 +146,7 @@ export default {
     formText: "",
     test: "aa",
     toggledlda: false,
-    value: 0,
+    value: 0.5724,
     toggledsent: false,
     lda: [
     {
