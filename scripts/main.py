@@ -24,7 +24,8 @@ def load_initial_dataset():
         print("Done")
     except:
         print("No cached dataframe, loading the dataset from disk")
-        path_file = dataset_folder / 'Cell_Phones_and_Accessories_5.json'
+        path_file = dataset_folder / 'Cell_Phones_and_Accessories.json'
+        print(path_file)
         df = load_dataset(path_file)
         # Store the dataframe on disk
         print("Caching the dataframe")
@@ -58,17 +59,26 @@ def hello():
     result["positive"] = sentiment_analysis.compute_single(request.args.get('text'), best_nb, count_vector)[0][1]
     return jsonify(result)
 
+def html_review_debug(df):
+    for r in df['reviewText']:
+        if "input_type" in r:
+            print("DEBUG REVIEW:\n", r)
+            return
+
+
+
 if __name__ == "__main__":
     df = load_initial_dataset()
+    html_review_debug(df)
     # Remember to set this back to df
-    df_exploration = preprocessing_pre_exploration_dataset(df.head(1000))
+    #df_exploration = preprocessing_pre_exploration_dataset(df.head(1000))
     
-    data_exploration.run(df_exploration)
-    df_analysis = preprocessing_post_exploration_dataset(df_exploration)
+    #data_exploration.run(df_exploration)
+    #df_analysis = preprocessing_post_exploration_dataset(df_exploration)
     
     # Web server exposing the trained models
-    best_nb, best_lr, count_vector = sentiment_analysis.run(df_analysis)
-    app.run()
+    #best_nb, best_lr, count_vector = sentiment_analysis.run(df_analysis)
+    #app.run()
 
     # Enable Topic Analysis
     #topic_analysis.run(df_analysis)

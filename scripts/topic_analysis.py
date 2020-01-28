@@ -28,19 +28,19 @@ def worst_products_asin(df, n_worst):
     return worst_n_products
     
 
-def top_products_asin(df, n_best):
+def best_products_asin(df, n_best):
     if n_best == 0:
         return []
     top_products = most_reviewed_products(df, 20)
-    overall_count = top_products.groupby(['asin'], as_index=False)['overall'].count()
-    overall_count = overall_count.sort_values('overall', ascending=False)
-    best_n_products = overall_count['asin'].iloc[:n_best].tolist()
+    overall_mean = top_products.groupby(['asin'], as_index=False)['overall'].mean()
+    overall_mean = overall_mean.sort_values('overall', ascending=False)
+    best_n_products = overall_mean['asin'].iloc[:n_best].tolist()
     return best_n_products
 
 
 def products_to_analyze(df, n_best=0, n_worst=0):
     worst = worst_products_asin(df, n_worst)
-    best = top_products_asin(df, n_best)
+    best = best_products_asin(df, n_best)
     products = worst + best
     if products == []:
         # Most reviewed product
@@ -248,6 +248,7 @@ def run(df):
                                                                                              best_beta))
             best_coherences = all_coherences[index_best_value[0]]
             best_num_topics = num_topics[0] + index_best_value[1]
+            print('Best num of topics: {}'.format(best_num_topics))
             plot_coherence(len(num_topics), best_coherences, product)
             show_topics(best_model, best_num_topics, 10, product)
             topic_visualization(best_model, bow_corpus, dictionary, product)

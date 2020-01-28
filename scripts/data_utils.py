@@ -13,6 +13,8 @@ import spacy
 
 from collections import defaultdict
 
+from html.parser import HTMLParser
+
 ### Functions ###
 
 def load_dataset(pathfile):
@@ -209,11 +211,26 @@ def lemmatization(text, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
     doc = nlp(' '.join(text))
     return [token.lemma_ for token in doc if token.pos_ in allowed_postags]
 
+class MLStripper(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def get_data(self):
+        return ''.join(self.fed)
+
+def remove_html(review):
+    s = MLStripper()
+    s.feed(review)
+    return s.get_data()
 
 def text_preprocessing(reviews, remove_less_frequent=True):
     #print(reviews)
     #reviews = reviews.lower()
     reviews = [review.lower() for review in reviews]
+    reviews = [remove_html(review) for review in reviews]
     stopwords = nltk.corpus.stopwords.words("english")
     filtered_reviews = []
     no_review = 0
