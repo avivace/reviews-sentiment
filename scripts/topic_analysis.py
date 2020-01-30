@@ -217,7 +217,7 @@ def run(df):
         figures_folder = Path("../figures/")
         name_file = '3_coherence_plot_{0}.svg'.format(product)
         path_file = figures_folder / name_file
-        if path_file.is_file():
+        if False:
             print('{} already computed.'.format(product))
         else:
             print(product)
