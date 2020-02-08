@@ -6,6 +6,7 @@ import axios from 'axios'
 import '@mdi/font/css/materialdesignicons.css'
 import './stylus/main.styl'
 import 'typeface-barlow'
+import 'roboto-fontface/css/roboto/roboto-fontface.css'
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
