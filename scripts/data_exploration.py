@@ -57,6 +57,16 @@ def analyze_reviews(df, df_attribute, name_file, xlabel):
         ax.xaxis.label.set_fontsize(13)
         ax.set_yticks([0, 100000, 200000])
         ax.set_yticklabels(["0", "100K", "200K"])
+    elif (name_file=="review_distribution_per_month"):
+        ax.set_xticklabels(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])
+        ax.xaxis.label.set_fontsize(13)
+        ax.set_yticks([0, 100000, 200000])
+        ax.set_yticklabels(["0", "100K", "200K"])
+    elif (name_file=="review_distribution_per_year"):
+        ax.set_xticklabels([2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018])
+        ax.xaxis.label.set_fontsize(13)
+        ax.set_yticks([0, 100000, 200000])
+        ax.set_yticklabels(["0", "100K", "200K"])
     elif (name_file=="unverified_overall_distribution"):
         ax.set_yticks([0, 50000, 100000])
         ax.set_yticklabels(["0", "50K", "100K"])
@@ -71,6 +81,24 @@ def analyze_reviews(df, df_attribute, name_file, xlabel):
 
     ax.figure.savefig(figOutputPath / '1_{0}.svg'.format(name_file), format='svg')
     print('Exported 1_{}.svg'.format(name_file))
+
+def top_50_products_verified_unverified_both(df):
+    print("top_50_products_verified_unverified_both")
+    top_products = most_reviewed_products(df, 50)
+    r = list(top_products['asin'].unique())
+    for asin in r:
+        print("Product: ", asin)
+        verified = df.loc[(df['asin'] == asin) & (df['verified'] == True), 'overall'].mean()
+        print("-verified: ",verified)
+        unverified = df.loc[(df['asin'] == asin) & (df['verified'] == False), 'overall'].mean()
+        print("-unverified: ", unverified)
+        all = df.loc[(df['asin'] == asin), 'overall'].mean()
+        print("-all: ", all)
+
+def year_month_day_reviews(df):
+    analyze_reviews(df, df.week_day, 'review_distribution_per_day', 'Day')
+    analyze_reviews(df, df.month, 'review_distribution_per_month', 'Month')
+    analyze_reviews(df, df.year, 'review_distribution_per_year', 'Year')
 
 
 def run(df):

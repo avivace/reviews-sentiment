@@ -210,7 +210,43 @@ def topic_distribution_across_documents(df, sentiment):
 
 
 '''
-    
+
+def run_for_custom_analysis(df):
+    print("CUSTOM LDA ANALYSIS!")
+    df = df.head(15000)
+    product = "PORTABLECHARGERS"
+    reviews_product = [r.split(' ') for r in df['preprocessedReview']]
+    bigram_reviews = make_bigrams(reviews_product)
+    dictionary = create_dictionary(bigram_reviews)
+    bow_corpus = bag_of_words(bigram_reviews, dictionary)
+    max_topics = 10
+    alpha_list = [0.1, 1]
+    beta_list = [0.01, 0.1, 1]
+    num_topics = list(range(2, max_topics + 1))
+    all_coherences, all_lda_models, all_parameters = compute_multiple_lda_models(alphas=alpha_list,
+                                                                                 betas=beta_list,
+                                                                                 num_topics=num_topics,
+                                                                                 corpus=bow_corpus,
+                                                                                 texts=bigram_reviews,
+                                                                                 dictionary=dictionary)
+    # Extract best coherence and index
+    best_coherence_value, index_best_value = max((x, (i, j))
+                                                 for i, row in enumerate(all_coherences)
+                                                 for j, x in enumerate(row))
+    best_alpha = all_parameters[index_best_value[0]][0]
+    best_beta = all_parameters[index_best_value[0]][1]
+    best_model = all_lda_models[index_best_value[0]][index_best_value[1]]
+    print('Best model has {} coherence with {} alpha value and {} beta value'.format(best_coherence_value,
+                                                                                     best_alpha,
+                                                                                     best_beta))
+    best_coherences = all_coherences[index_best_value[0]]
+    best_num_topics = num_topics[0] + index_best_value[1]
+    print('Best num of topics: {}'.format(best_num_topics))
+    plot_coherence(len(num_topics), best_coherences, product)
+    show_topics(best_model, best_num_topics, 10, product)
+    topic_visualization(best_model, bow_corpus, dictionary, product)
+
+
 def run(df):    
     product_list = products_to_analyze(df, n_best=3, n_worst=3)
     for product in product_list:

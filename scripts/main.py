@@ -92,24 +92,60 @@ def check_dirt(df):
             c = c+1        
     print(c,"dirty reviews")
 
+def find_reviews_with_custom_text(df):
+    list_res = []
+    i = 0
+
+    while i < 200: #while len(df.index) > 0:
+        print("Finding reviews at chunk ", i)
+        temp_df = df.head(10000)
+        for index, row in temp_df.iterrows():
+            if "portable charger" in row['reviewText']:
+                list_res.append(row)
+        df = df.iloc[10000:]
+        i += 1
+
+    result = pd.DataFrame(list_res, columns=df.columns)
+    print("Result df is ", len(result.index))
+    return result
+
+def preprocess_for_custom_LDA(df):
+    print("Preprocessing for custom LDA")
+    preprocessed = df.copy(True)
+    add_features(preprocessed)
+    feature_manipulation(preprocessed)
+    return preprocessed
 
 
 if __name__ == "__main__":
     df = load_initial_dataset()
-    #html_review_debug(df)
+
     # Remember to set this back to df
     df_exploration = preprocessing_pre_exploration_dataset(df)
-    
+    #print(df_exploration.columns)
+    #print("MIN YEAR ", df_exploration.year.min())
+    #print("MAX YEAR ", df_exploration.year.max())
+
+    data_exploration.top_50_products_verified_unverified_both(df_exploration)
+
+    data_exploration.year_month_day_reviews(df_exploration)
+
     #data_exploration.run(df_exploration)
-    df_analysis = preprocessing_post_exploration_dataset(df_exploration)
+    #df_analysis = preprocessing_post_exploration_dataset(df_exploration)
     
-    check_dirt(df_analysis)
-    clean_dirt(df_analysis)
-    check_dirt(df_analysis)
+    #check_dirt(df_analysis)
+    #clean_dirt(df_analysis)
+    #check_dirt(df_analysis)
 
     # Web server exposing the trained models
     #best_nb, best_lr, count_vector = sentiment_analysis.run(df_analysis)
     #app.run()
 
     # Enable Topic Analysis
-    topic_analysis.run(df_analysis)
+    #topic_analysis.run(df_analysis)
+
+    #"Portable charger" reviews topic analysis
+    #df = find_reviews_with_custom_text(df)
+    #df_final = preprocess_for_custom_LDA(df)
+    #topic_analysis.run_for_custom_analysis(df_final)
+
