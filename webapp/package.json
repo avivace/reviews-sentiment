@@ -13,6 +13,7 @@
     "core-js": "^3.4.4",
     "roboto-fontface": "*",
     "vue": "^2.6.10",
+    "vue-plotly": "^1.1.0",
     "vuetify": "^2.1.0"
   },
   "devDependencies": {
