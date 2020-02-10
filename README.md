@@ -8,6 +8,8 @@ Exploration, Sentiment Analysis, Topic Analysis (LDA) and a VueJS web applicatio
 
 [Documentation](report.pdf)
 
+[Web app demo deployment](https://avivace.github.io/review-sentiment)
+
 #### Exploration
 
 <img src="figures/1_rew_len_over_time.svg" width="50%"><img src="figures/1_avg_help_25_100_traffic.svg"  width="50%">
@@ -57,6 +59,10 @@ cd webapp
 npm install
 # serve the web application with hot reload
 npm run serve
+# builds the web application for production
+npm run build
+# deploys the build on the master branch, making github serve it on https://avivace.github.io/reviews-sentiment
+npm run deploy
 ```
 
 
