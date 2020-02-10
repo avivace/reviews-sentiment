@@ -1,6 +1,5 @@
 <template>
   <v-app>
-
     <v-content>
       <v-container>
         <v-layout text-center wrap>
@@ -12,17 +11,15 @@
               Data Analytics project, Coppola, Palazzi, Vivace - January 2020
             </p>
           </v-flex>
-
-      <v-tabs :grow="true" right="right" align-with-title background-color="transparent">
-                <v-tab @click="toggledsent=!toggledsent;toggledlda=false;toggledexploration=false" style="font-size: 1.2rem"> SENTIMENT ANALYSIS </v-tab>
-
-        <v-tab @click="toggledlda=!toggledlda;toggledsent=false;toggledexploration=false" style="font-size: 1.2rem"> LDA </v-tab>
-        <v-tab @click="toggledexploration=!toggledexploration;toggledlda=false;toggledsent=false" style="font-size: 1.2rem"> EXPLORATION</v-tab>
-      </v-tabs>
+          <v-tabs :grow="true" right="right" align-with-title background-color="transparent">
+            <v-tab @click="toggledsent=!toggledsent;toggledlda=false;toggledexploration=false" style="font-size: 1.2rem"> SENTIMENT ANALYSIS </v-tab>
+            <v-tab @click="toggledlda=!toggledlda;toggledsent=false;toggledexploration=false" style="font-size: 1.2rem"> LDA </v-tab>
+            <v-tab @click="toggledexploration=!toggledexploration;toggledlda=false;toggledsent=false" style="font-size: 1.2rem"> EXPLORATION</v-tab>
+          </v-tabs>
           <v-flex lg12 xs12 v-if="toggledexploration">
             <v-row justify="center">
               <v-col cols="6" sm="6">
-                Exploration tab
+                <apexchart width="500" type="bar" :options="chartOptions" :series="series"></apexchart>
               </v-col>
             </v-row>
           </v-flex>
@@ -33,13 +30,15 @@
                 Write a custom review to see the evaluated sentiment:
                 <v-text-field @change="compute" v-model="formText" label="Custom Review" outlined clearable counter hint="English only!"></v-text-field>
               </v-col>
-  
-
-      </v-row>
-      <v-row justify="center"> <center v-if="!errormsg"> {{ (value.toFixed(5) * 100).toFixed(2) }}% </center> <center v-else> <p class="red"> {{ errormsg }} <br></p> Did you check the backend is running correctly?  </center></v-row>
-      <br>
-      <v-btn @click=compute
-      >compute </v-btn>
+            </v-row>
+            <v-row justify="center">
+              <center v-if="!errormsg"> {{ (value.toFixed(5) * 100).toFixed(2) }}% </center>
+              <center v-else>
+                <p class="red"> {{ errormsg }} <br></p> Did you check the backend is running correctly?
+              </center>
+            </v-row>
+            <br>
+            <v-btn @click=compute>compute </v-btn>
           </v-flex>
           <v-flex xs12 v-if="toggledlda">
             <v-container fluid>
@@ -70,18 +69,20 @@
 <script>
 export default {
   name: 'Demo',
-    methods: {
-    compute: function(){
+  methods: {
+    compute: function() {
       this.errormsg = null
       let self = this
-      this.$axios.get('http://localhost:5000/', {params: {
-        text: this.formText
-      }}).then(function (response) {
-        self.value=response.data.positive
-      })
-      .catch( function(error) {
-        self.errormsg = error + " on " + self.apiEndpoint
-      })
+      this.$axios.get('http://localhost:5000/', {
+          params: {
+            text: this.formText
+          }
+        }).then(function(response) {
+          self.value = response.data.positive
+        })
+        .catch(function(error) {
+          self.errormsg = error + " on " + self.apiEndpoint
+        })
     }
   },
   watch: {
@@ -97,8 +98,20 @@ export default {
     test: "aa",
     toggledlda: false,
     toggledsent: true,
-        value: 0,
+    value: 0,
     toggledexploration: false,
+    chartOptions: {
+      chart: {
+        id: 'vuechart-example'
+      },
+      xaxis: {
+        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+      }
+    },
+    series: [{
+      name: 'series-1',
+      data: [30, 40, 35, 50, 49, 60, 70, 91]
+    }],
     lda: [{
         name: "TaoTronics Car Phone Mount Holder, Windshield /",
         description: "Dashboard Universal Car Mobile Phone cradle for iOS / Android Smartphone and More",
