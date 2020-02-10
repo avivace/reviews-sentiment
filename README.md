@@ -4,11 +4,11 @@ Data Analytics exam final project, MSc in Computer Science.
 
 By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://github.com/lucapalazzi), [Antonio Vivace](https://github.com/avivace).
 
-Exploration, Sentiment Analysis, Topic Analysis (LDA) and a VueJS web application exposing the trained models.
+> Exploration, Sentiment Analysis, Topic Analysis (LDA) and a VueJS web application exposing the trained models.
 
 [Documentation](report.pdf)
 
-[Web app demo deployment](https://avivace.github.io/review-sentiment)
+[Web app demo deployment](https://avivace.github.io/reviews-sentiment)
 
 #### Exploration
 
@@ -18,9 +18,9 @@ Exploration, Sentiment Analysis, Topic Analysis (LDA) and a VueJS web applicatio
 
 #### Web demo
 
-<img src="https://github.com/avivace/reviews-sentiment/blob/master/figures/ext/webapp1.png">
+<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp1.png">
 
-<img src="https://github.com/avivace/reviews-sentiment/blob/master/figures/ext/webapp2.png">
+<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp2.png">
 
 ## Run
 
