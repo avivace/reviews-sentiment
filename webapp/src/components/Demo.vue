@@ -13,9 +13,10 @@
             </p>
           </v-flex>
 
-      <v-tabs grow=false right="right" align-with-title background-color="transparent">
+      <v-tabs :grow="true" right="right" align-with-title background-color="transparent">
+                <v-tab @click="toggledsent=!toggledsent;toggledlda=false;toggledexploration=false" style="font-size: 1.2rem"> SENTIMENT ANALYSIS </v-tab>
+
         <v-tab @click="toggledlda=!toggledlda;toggledsent=false;toggledexploration=false" style="font-size: 1.2rem"> LDA </v-tab>
-        <v-tab @click="toggledsent=!toggledsent;toggledlda=false;toggledexploration=false" style="font-size: 1.2rem"> SENTIMENT ANALYSIS </v-tab>
         <v-tab @click="toggledexploration=!toggledexploration;toggledlda=false;toggledsent=false" style="font-size: 1.2rem"> EXPLORATION</v-tab>
       </v-tabs>
           <v-flex lg12 xs12 v-if="toggledexploration">
@@ -28,9 +29,17 @@
           <v-flex lg12 xs12 v-if="toggledsent">
             <v-row justify="center">
               <v-col cols="6" sm="6">
-                <v-text-field v-model="formText" label="Custom Review" outlined clearable counter hint="English only!"></v-text-field>
+                <br>
+                Write a custom review to see the evaluated sentiment:
+                <v-text-field @change="compute" v-model="formText" label="Custom Review" outlined clearable counter hint="English only!"></v-text-field>
               </v-col>
-            </v-row>
+  
+
+      </v-row>
+      <v-row justify="center"> <center v-if="!errormsg"> {{ (value.toFixed(5) * 100).toFixed(2) }}% </center> <center v-else> <p class="red"> {{ errormsg }} <br></p> Did you check the backend is running correctly?  </center></v-row>
+      <br>
+      <v-btn @click=compute
+      >compute </v-btn>
           </v-flex>
           <v-flex xs12 v-if="toggledlda">
             <v-container fluid>
@@ -61,6 +70,20 @@
 <script>
 export default {
   name: 'Demo',
+    methods: {
+    compute: function(){
+      this.errormsg = null
+      let self = this
+      this.$axios.get('http://localhost:5000/', {params: {
+        text: this.formText
+      }}).then(function (response) {
+        self.value=response.data.positive
+      })
+      .catch( function(error) {
+        self.errormsg = error + " on " + self.apiEndpoint
+      })
+    }
+  },
   watch: {
     formText: function(val) {
       // Do things
@@ -68,10 +91,13 @@ export default {
     },
   },
   data: () => ({
+    apiEndpoint: "http://localhost:5000/",
+    errormsg: null,
     formText: "",
     test: "aa",
     toggledlda: false,
-    toggledsent: false,
+    toggledsent: true,
+        value: 0,
     toggledexploration: false,
     lda: [{
         name: "TaoTronics Car Phone Mount Holder, Windshield /",

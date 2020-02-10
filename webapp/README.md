@@ -5,7 +5,7 @@
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads for development on localhost:8080/reviews-sentiment
 ```
 npm run serve
 ```
