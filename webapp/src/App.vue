@@ -2,19 +2,19 @@
 
 
 
-      <HelloWorld/>
+      <Demo/>
     
 
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import Demo from './components/Demo';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    Demo,
   },
 
   data: () => ({
