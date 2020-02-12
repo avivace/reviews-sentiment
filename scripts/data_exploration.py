@@ -12,6 +12,7 @@ sns.set_style(style="darkgrid")
 from data_utils import most_reviewed_products
 from pathlib import Path
 from matplotlib import rcParams
+import json
 
 # Default text styling for figures
 rcParams['font.family'] = 'sans-serif'
@@ -227,16 +228,41 @@ def run(df):
 
 def top_50_products_verified_unverified_both(df):
     print("top_50_products_verified_unverified_both")
-    top_products = most_reviewed_products(df, 50)
+    top_products = most_reviewed_products(df, 20)
     r = list(top_products['asin'].unique())
+    products = []
+    verified_series = []
+    unverified_series = []
+    overall_series = []
+
     for asin in r:
         print("Product: ", asin)
+        products.append(asin)
         verified = df.loc[(df['asin'] == asin) & (df['verified'] == True), 'overall'].mean()
         print("-verified: ",verified)
+        verified_series.append(verified)
         unverified = df.loc[(df['asin'] == asin) & (df['verified'] == False), 'overall'].mean()
+        unverified_series.append(unverified)
         print("-unverified: ", unverified)
-        all = df.loc[(df['asin'] == asin), 'overall'].mean()
-        print("-all: ", all)
+        aall = df.loc[(df['asin'] == asin), 'overall'].mean()
+        overall_series.append(aall)
+        print("-all: ", aall)
+
+    obj = [
+        {"name": "products",
+        "data": products},
+        {"name": "verified",
+        "data": verified_series},
+        {"name": "unverified",
+        "data": unverified_series},
+        {"name": "all",
+        "data": overall_series
+    }]
+
+    with open('ver_unver.json', 'w') as outfile:
+        json.dump(obj, outfile)
+    
+    print(products)
 
 def year_month_day_reviews(df):
     analyze_reviews(df, df.week_day, 'review_distribution_per_day', 'Day')
