@@ -12,10 +12,9 @@
             </p>
           </v-flex>
           <v-tabs :grow="true" right="right" align-with-title background-color="transparent">
-                        <v-tab @click="toggledlda=!toggledlda;toggledsent=false;toggledexploration=false" style="font-size: 1.2rem"> LDA </v-tab>
-
-            <v-tab @click="toggledsent=!toggledsent;toggledlda=false;toggledexploration=false" style="font-size: 1.2rem"> SENTIMENT ANALYSIS </v-tab>
+            <v-tab @click="toggledlda=!toggledlda;toggledsent=false;toggledexploration=false" style="font-size: 1.2rem"> LDA </v-tab>
             <v-tab @click="toggledexploration=!toggledexploration;toggledlda=false;toggledsent=false" style="font-size: 1.2rem"> EXPLORATION</v-tab>
+            <v-tab @click="toggledsent=!toggledsent;toggledlda=false;toggledexploration=false" style="font-size: 1.2rem"> SENTIMENT ANALYSIS </v-tab>
           </v-tabs>
           <v-flex lg12 xs12 v-if="toggledexploration">
             <v-row justify="center">
@@ -114,7 +113,7 @@ export default {
       data: [30, 40, 35, 50, 49, 60, 70, 91]
     }],
     lda: [{
-      //
+        //
         name: "TaoTronics Car Phone Mount Holder, Windshield /",
         description: "Dashboard Universal Car Mobile Phone cradle for iOS / Android Smartphone and More",
         code: "B00MXWFUQC",
@@ -157,7 +156,6 @@ export default {
   }),
 };
 </script>
-
 <style>
 @import url('https://fonts.googleapis.com/css?family=Barlow');
 
