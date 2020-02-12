@@ -113,14 +113,15 @@ export default {
       data: [30, 40, 35, 50, 49, 60, 70, 91]
     }],
     lda: [{
+      //
         name: "TaoTronics Car Phone Mount Holder, Windshield /",
         description: "Dashboard Universal Car Mobile Phone cradle for iOS / Android Smartphone and More",
         code: "B00MXWFUQC",
       },
       {
-        name: "Samsung Qi Certified Wireless Charging Pad",
-        description: "with 2A Wall Charger- Supports wireless charging on Qi compatible smartphones.",
-        code: "B00UCZGS6S",
+        name: "ArmorSuit MilitaryShield Max Coverage Screen Protector for Apple Watch",
+        description: "42mm (Series 3 / 2 / 1 Compatible) [2 Pack] - Anti-Bubble HD Clear Film",
+        code: "B00UH3L82Y",
       },
       {
         name: "Portable Charger Anker PowerCore 20100mAh",
@@ -128,16 +129,18 @@ export default {
         code: "B00X5RV14Y",
       },
       {
+        //
         name: "Anker 24W Dual USB Car Charger",
         description: "PowerDrive 2 for iPhone X / 8/7 / 6s / Plus, iPad Pro/Air 2 / Mini, Note 5/4, LG, Nexus, HTC, and More",
         code: "B00VH88CJ0",
       },
       {
-        name: "Anker PowerCore+ mini 3350mAh Lipstick-Sized Portable Charger",
-        description: "(3rd Generation, Premium Aluminum Power Bank) One of the Most Compact External Batteries",
-        code: "B005NF5NTK",
+        name: "Anker Astro E1 5200mAh Candy bar-Sized Ultra Compact Portable Charger",
+        description: "(External Battery Power Bank) with High-Speed Charging PowerIQ Technology",
+        code: "B018JW3EOY",
       },
       {
+        //
         name: "Plantronics Voyager Legend Wireless Bluetooth Headset",
         description: "Compatible with iPhone, Android, and Other Leading Smartphones - Black",
         code: "B0092KJ9BU",
