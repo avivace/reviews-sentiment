@@ -36,8 +36,9 @@ def load_initial_dataset():
     return df
 
 
-def preprocessing_pre_exploration_dataset(df):
+def pp_add_features(df):
     preprocessed = df.copy(True)
+    # Runs vote_to_opinion(), words_count(), transform_unix_date()
     add_features(preprocessed)
     return preprocessed
     
@@ -121,14 +122,14 @@ if __name__ == "__main__":
     df = load_initial_dataset()
 
     # Remember to set this back to df
-    df_exploration = preprocessing_pre_exploration_dataset(df)
+    df_rich = pp_add_features(df)
+    
     #print(df_exploration.columns)
     #print("MIN YEAR ", df_exploration.year.min())
     #print("MAX YEAR ", df_exploration.year.max())
 
-    data_exploration.top_50_products_verified_unverified_both(df_exploration)
-
-    data_exploration.year_month_day_reviews(df_exploration)
+    data_exploration.top_50_products_verified_unverified_both(df_rich)
+    data_exploration.year_month_day_reviews(df_rich)
 
     #data_exploration.run(df_exploration)
     #df_analysis = preprocessing_post_exploration_dataset(df_exploration)

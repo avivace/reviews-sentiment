@@ -31,7 +31,6 @@ def label_typography(ax):
     ax.xaxis.label.set_fontsize(15)
     return
 
-
 def most_active_reviewers(df, n_reviewers):
     n_reviews = df['reviewerID'].value_counts()
     most_reviews = n_reviews.nlargest(n_reviewers)
@@ -40,7 +39,6 @@ def most_active_reviewers(df, n_reviewers):
     definitive = df.merge(most_reviews, left_on='reviewerID', right_on='index')
     definitive = definitive.drop('index', axis=1)
     return definitive
-
 
 def analyze_reviews(df, df_attribute, name_file, xlabel):
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -81,25 +79,6 @@ def analyze_reviews(df, df_attribute, name_file, xlabel):
 
     ax.figure.savefig(figOutputPath / '1_{0}.svg'.format(name_file), format='svg')
     print('Exported 1_{}.svg'.format(name_file))
-
-def top_50_products_verified_unverified_both(df):
-    print("top_50_products_verified_unverified_both")
-    top_products = most_reviewed_products(df, 50)
-    r = list(top_products['asin'].unique())
-    for asin in r:
-        print("Product: ", asin)
-        verified = df.loc[(df['asin'] == asin) & (df['verified'] == True), 'overall'].mean()
-        print("-verified: ",verified)
-        unverified = df.loc[(df['asin'] == asin) & (df['verified'] == False), 'overall'].mean()
-        print("-unverified: ", unverified)
-        all = df.loc[(df['asin'] == asin), 'overall'].mean()
-        print("-all: ", all)
-
-def year_month_day_reviews(df):
-    analyze_reviews(df, df.week_day, 'review_distribution_per_day', 'Day')
-    analyze_reviews(df, df.month, 'review_distribution_per_month', 'Month')
-    analyze_reviews(df, df.year, 'review_distribution_per_year', 'Year')
-
 
 def run(df):
     # 1 - Countplot: overall distribution    
@@ -243,3 +222,23 @@ def run(df):
     ax7.figure.savefig(figOutputPath / '1_verified_unverified.svg', format='svg')
     print("Exported 1_verified_unverified.svg")
     
+
+# Exporting raw data for the web demo
+
+def top_50_products_verified_unverified_both(df):
+    print("top_50_products_verified_unverified_both")
+    top_products = most_reviewed_products(df, 50)
+    r = list(top_products['asin'].unique())
+    for asin in r:
+        print("Product: ", asin)
+        verified = df.loc[(df['asin'] == asin) & (df['verified'] == True), 'overall'].mean()
+        print("-verified: ",verified)
+        unverified = df.loc[(df['asin'] == asin) & (df['verified'] == False), 'overall'].mean()
+        print("-unverified: ", unverified)
+        all = df.loc[(df['asin'] == asin), 'overall'].mean()
+        print("-all: ", all)
+
+def year_month_day_reviews(df):
+    analyze_reviews(df, df.week_day, 'review_distribution_per_day', 'Day')
+    analyze_reviews(df, df.month, 'review_distribution_per_month', 'Month')
+    analyze_reviews(df, df.year, 'review_distribution_per_year', 'Year')
