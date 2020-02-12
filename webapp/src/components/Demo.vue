@@ -12,8 +12,9 @@
             </p>
           </v-flex>
           <v-tabs :grow="true" right="right" align-with-title background-color="transparent">
+                        <v-tab @click="toggledlda=!toggledlda;toggledsent=false;toggledexploration=false" style="font-size: 1.2rem"> LDA </v-tab>
+
             <v-tab @click="toggledsent=!toggledsent;toggledlda=false;toggledexploration=false" style="font-size: 1.2rem"> SENTIMENT ANALYSIS </v-tab>
-            <v-tab @click="toggledlda=!toggledlda;toggledsent=false;toggledexploration=false" style="font-size: 1.2rem"> LDA </v-tab>
             <v-tab @click="toggledexploration=!toggledexploration;toggledlda=false;toggledsent=false" style="font-size: 1.2rem"> EXPLORATION</v-tab>
           </v-tabs>
           <v-flex lg12 xs12 v-if="toggledexploration">
@@ -96,8 +97,8 @@ export default {
     errormsg: null,
     formText: "",
     test: "aa",
-    toggledlda: false,
-    toggledsent: true,
+    toggledlda: true,
+    toggledsent: false,
     value: 0,
     toggledexploration: false,
     chartOptions: {
@@ -144,12 +145,19 @@ export default {
         name: "Plantronics Voyager Legend Wireless Bluetooth Headset",
         description: "Compatible with iPhone, Android, and Other Leading Smartphones - Black",
         code: "B0092KJ9BU",
+      },
+      {
+        //
+        name: "Portable chargers",
+        description: "Aggregated LDA",
+        code: "PORTABLECHARGERS",
       }
     ],
     ecosystem: []
   }),
 };
 </script>
+
 <style>
 @import url('https://fonts.googleapis.com/css?family=Barlow');
 
