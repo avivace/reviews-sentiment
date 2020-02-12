@@ -8,7 +8,6 @@ datasets/*
 *.pkl
 
 # Exported images and web pages
-*.html
 *.svg
 
 ### Python ###
