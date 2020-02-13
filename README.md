@@ -6,9 +6,10 @@ By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://gi
 
 > Exploration, Sentiment Analysis, Topic Analysis (LDA) and a VueJS web application exposing the trained models.
 
+[GO. PLAY. WITH THE PLOTS.](https://avivace.github.io/reviews-sentiment) (web demo deployment)
+
 [Documentation](report.pdf)
 
-[Web app demo deployment](https://avivace.github.io/reviews-sentiment)
 
 #### Exploration
 
@@ -64,4 +65,6 @@ npm run deploy
 ```
 
 
-Antuz notes: accent is `#B71C1C`, typeface is *Barlow* 500. On the plots and graphs, typeface is *Inter* 600, palette is `#4DAF4A`, `#FF7F00`, `#C73E31`.
+#### Antuz notes
+
+Accent is `#B71C1C`, typeface is *Barlow* 500. On the plots and graphs, typeface is *Inter* 600, palette is `#4DAF4A`, `#FF7F00`, `#C73E31`.
