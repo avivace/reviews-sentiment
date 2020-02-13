@@ -23,6 +23,14 @@ By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://gi
 
 <img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp2.png">
 
+<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp3.png">
+
+<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp4.png">
+
+<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp_plot1.png">
+
+<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp_plot2.png">
+
 ## Run
 
 Set up the a Python virtual environment and install required packages
