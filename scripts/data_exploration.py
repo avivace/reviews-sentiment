@@ -228,7 +228,7 @@ def run(df):
 
 def top_50_products_verified_unverified_both(df):
     print("top_50_products_verified_unverified_both")
-    top_products = most_reviewed_products(df, 20)
+    top_products = most_reviewed_products(df, 5)
     r = list(top_products['asin'].unique())
     products = []
     verified_series = []
@@ -260,9 +260,37 @@ def top_50_products_verified_unverified_both(df):
     }]
 
     with open('ver_unver.json', 'w') as outfile:
-        json.dump(obj, outfile)
+        json.dump(obj, outfile, indent=2, sort_keys=True)
     
     print(products)
+
+def count_reviews(df):
+    top_products = most_reviewed_products(df, 20)
+    r = list(top_products['asin'].unique())
+    products = []
+    # One element per product
+    verified_score_qty = []
+    unverified_score_qty = []
+    n = 0
+
+    for asin in r:
+        print("Product: ", asin)
+        products.append(asin)
+        dataseries_ver = []
+        dataseries_unver = []
+
+        for i in range(1,6):
+            key = { "name" : int(i), "data": [int(df.loc[(df['asin'] == asin) & (df['verified'] == True) & (df['overall'] == i), 'overall'].count()), int(df.loc[(df['asin'] == asin) & (df['verified'] == False) & (df['overall'] == i), 'overall'].count())]}
+            dataseries_ver.append(key)
+
+        verified_score_qty.append(dataseries_ver)
+        n = n+1
+
+    obj = {'products': products, 'count':verified_score_qty,}
+    print(obj)
+    with open('ver_counts.json', 'w') as outfile:
+        json.dump(obj, outfile, indent=2, sort_keys=True)
+
 
 def year_month_day_reviews(df):
     analyze_reviews(df, df.week_day, 'review_distribution_per_day', 'Day')
