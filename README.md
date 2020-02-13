@@ -55,7 +55,7 @@ A Flask application exposes a simple API (on port 5000) allowing the trained mod
 ```bash
 cd webapp
 npm install
-# serve the web application with hot reload
+# serve the web application with hot reload at localhost:8080/reviews-sentiment
 npm run serve
 # builds the web application for production
 npm run build
