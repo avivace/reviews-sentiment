@@ -28,9 +28,14 @@
                 <h3> </h3>
                 <br>
                 <template v-if="selectedPlot==1">
-                  <h3> Published review per month </h3>
+                  <h3> Published reviews timeseries </h3>
                   
-                  <apexchart @dataPointSelection="clickedPlot" width="100%" height="460px" :options="timeseriesPlot" :series="timeseries"></apexchart>
+                  
+                  <apexchart @dataPointSelection="clickedPlot" width="100%" height="460px" :options="chartOptions" :series="series" type="bar"></apexchart>
+
+                  <apexchart width="100%" height="460px" :options="weekdayPlot" :series="weekdaySeries"></apexchart>
+
+                  <apexchart width="100%" height="460px" :options="monthPlot" :series="monthSeries"></apexchart>
                 </template>
                 <template v-if="selectedPlot==0">
                   <h3> Verified VS Unverified average score </h3>
@@ -648,7 +653,50 @@ export default {
         type: 'datetime'
       }
     },
-
+    weekdayPlot: {
+      dataLabels: {
+        enabled: true
+      },
+      chart: {
+        type: 'bar',
+        height: 350,
+        stacked: true,
+        stackType: '100%',
+        toolbar: {
+          show: false
+        }
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+        },
+      },
+      xaxis: {
+        categories: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+      },
+    },
+    monthPlot: {
+      dataLabels: {
+        enabled: true
+      },
+      chart: {
+        type: 'bar',
+        height: 350,
+        stacked: true,
+        stackType: '100%',
+        toolbar: {
+          show: false
+        }
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+        },
+      },
+      xaxis: {
+        categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+      },
+    },
     reviewCountPlot: {
       dataLabels: {
         enabled: true
