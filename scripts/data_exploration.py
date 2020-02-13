@@ -287,7 +287,7 @@ def count_reviews(df):
         n = n+1
 
     obj = {'products': products, 'count':verified_score_qty,}
-    print(obj)
+    
     with open('ver_counts.json', 'w') as outfile:
         json.dump(obj, outfile, indent=2, sort_keys=True)
 

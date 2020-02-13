@@ -27,14 +27,21 @@
               <v-col cols="12" sm="12">
                 <h3> </h3>
                 <br>
-                <h3> Verified VS Unverified average score </h3>
-                Click on a bar to view the detailed distribution of reviews for that product
-                <apexchart v-if="selectedPlot==0" @dataPointSelection="clickedPlot" width="100%" height="460px" :options="chartOptions" :series="series" type="bar"></apexchart>
+                <template v-if="selectedPlot==1">
+                  <h3> Published review per month </h3>
+                  
+                  <apexchart @dataPointSelection="clickedPlot" width="100%" height="460px" :options="timeseriesPlot" :series="timeseries"></apexchart>
+                </template>
+                <template v-if="selectedPlot==0">
+                  <h3> Verified VS Unverified average score </h3>
+                  Click on a bar to view the detailed distribution of reviews for that product
+                  <apexchart @dataPointSelection="clickedPlot" width="100%" height="460px" :options="chartOptions" :series="series" type="bar"></apexchart>
+                </template>
                 <br>
-                <template v-if="selectedProduct!=null">
-                <h3> Review count per rating for the product {{ this.chartOptions.xaxis.categories[selectedProduct] }} </h3>
-                <apexchart type="bar" height="250" :options="reviewCountPlot" :series="count[selectedProduct]"></apexchart>
-              </template>
+                <template v-if="selectedProduct!=null && selectedPlot==0">
+                  <h3> Review count per rating for the product {{ this.chartOptions.xaxis.categories[selectedProduct] }} </h3>
+                  <apexchart type="bar" height="250" :options="reviewCountPlot" :series="count[selectedProduct]"></apexchart>
+                </template>
               </v-col>
             </v-row>
           </v-flex>
@@ -122,7 +129,526 @@ export default {
     toggledexploration: true,
     selectedPlot: 0,
     selectedProduct: null,
-    plots: [{ value: 0, text: 'Verified VS Unverified study' }],
+    plots: [{ value: 0, text: 'Verified VS Unverified study' },
+      { value: 1, text: 'Time series' }
+    ],
+    timeseries: [{
+        name: 'Unverified',
+        data: [{
+            "x": 1359590400000,
+            "y": 694
+          },
+          {
+            "x": 1362009600000,
+            "y": 548
+          },
+          {
+            "x": 1364688000000,
+            "y": 537
+          },
+          {
+            "x": 1367280000000,
+            "y": 501
+          },
+          {
+            "x": 1369958400000,
+            "y": 607
+          },
+          {
+            "x": 1372550400000,
+            "y": 587
+          },
+          {
+            "x": 1375228800000,
+            "y": 663
+          },
+          {
+            "x": 1377907200000,
+            "y": 583
+          },
+          {
+            "x": 1380499200000,
+            "y": 532
+          },
+          {
+            "x": 1383177600000,
+            "y": 665
+          },
+          {
+            "x": 1385769600000,
+            "y": 605
+          },
+          {
+            "x": 1388448000000,
+            "y": 732
+          },
+          {
+            "x": 1391126400000,
+            "y": 795
+          },
+          {
+            "x": 1393545600000,
+            "y": 682
+          },
+          {
+            "x": 1396224000000,
+            "y": 824
+          },
+          {
+            "x": 1398816000000,
+            "y": 868
+          },
+          {
+            "x": 1401494400000,
+            "y": 985
+          },
+          {
+            "x": 1404086400000,
+            "y": 1847
+          },
+          {
+            "x": 1406764800000,
+            "y": 4862
+          },
+          {
+            "x": 1409443200000,
+            "y": 5429
+          },
+          {
+            "x": 1412035200000,
+            "y": 5189
+          },
+          {
+            "x": 1414713600000,
+            "y": 5991
+          },
+          {
+            "x": 1417305600000,
+            "y": 3784
+          },
+          {
+            "x": 1419984000000,
+            "y": 2402
+          },
+          {
+            "x": 1422662400000,
+            "y": 2805
+          },
+          {
+            "x": 1425081600000,
+            "y": 2738
+          },
+          {
+            "x": 1427760000000,
+            "y": 3529
+          },
+          {
+            "x": 1430352000000,
+            "y": 3527
+          },
+          {
+            "x": 1433030400000,
+            "y": 3331
+          },
+          {
+            "x": 1435622400000,
+            "y": 2781
+          },
+          {
+            "x": 1438300800000,
+            "y": 2593
+          },
+          {
+            "x": 1440979200000,
+            "y": 2829
+          },
+          {
+            "x": 1443571200000,
+            "y": 3360
+          },
+          {
+            "x": 1446249600000,
+            "y": 3333
+          },
+          {
+            "x": 1448841600000,
+            "y": 4304
+          },
+          {
+            "x": 1451520000000,
+            "y": 4071
+          },
+          {
+            "x": 1454198400000,
+            "y": 4149
+          },
+          {
+            "x": 1456704000000,
+            "y": 3320
+          },
+          {
+            "x": 1459382400000,
+            "y": 4051
+          },
+          {
+            "x": 1461974400000,
+            "y": 4759
+          },
+          {
+            "x": 1464652800000,
+            "y": 4484
+          },
+          {
+            "x": 1467244800000,
+            "y": 6143
+          },
+          {
+            "x": 1469923200000,
+            "y": 4830
+          },
+          {
+            "x": 1472601600000,
+            "y": 3115
+          },
+          {
+            "x": 1475193600000,
+            "y": 2665
+          },
+          {
+            "x": 1477872000000,
+            "y": 1869
+          },
+          {
+            "x": 1480464000000,
+            "y": 1260
+          },
+          {
+            "x": 1483142400000,
+            "y": 1396
+          },
+          {
+            "x": 1485820800000,
+            "y": 1132
+          },
+          {
+            "x": 1488240000000,
+            "y": 723
+          },
+          {
+            "x": 1490918400000,
+            "y": 800
+          },
+          {
+            "x": 1493510400000,
+            "y": 746
+          },
+          {
+            "x": 1496188800000,
+            "y": 666
+          },
+          {
+            "x": 1498780800000,
+            "y": 666
+          },
+          {
+            "x": 1501459200000,
+            "y": 833
+          },
+          {
+            "x": 1504137600000,
+            "y": 679
+          },
+          {
+            "x": 1506729600000,
+            "y": 500
+          },
+          {
+            "x": 1509408000000,
+            "y": 459
+          },
+          {
+            "x": 1512000000000,
+            "y": 407
+          },
+          {
+            "x": 1514678400000,
+            "y": 403
+          }
+        ]
+      },
+      {
+        name: 'Total',
+        data: [{
+            "x": 1359590400000,
+            "y": 7389
+          },
+          {
+            "x": 1362009600000,
+            "y": 6121
+          },
+          {
+            "x": 1364688000000,
+            "y": 6232
+          },
+          {
+            "x": 1367280000000,
+            "y": 5897
+          },
+          {
+            "x": 1369958400000,
+            "y": 6590
+          },
+          {
+            "x": 1372550400000,
+            "y": 6730
+          },
+          {
+            "x": 1375228800000,
+            "y": 7585
+          },
+          {
+            "x": 1377907200000,
+            "y": 7784
+          },
+          {
+            "x": 1380499200000,
+            "y": 6660
+          },
+          {
+            "x": 1383177600000,
+            "y": 7830
+          },
+          {
+            "x": 1385769600000,
+            "y": 7970
+          },
+          {
+            "x": 1388448000000,
+            "y": 9832
+          },
+          {
+            "x": 1391126400000,
+            "y": 10697
+          },
+          {
+            "x": 1393545600000,
+            "y": 8668
+          },
+          {
+            "x": 1396224000000,
+            "y": 9675
+          },
+          {
+            "x": 1398816000000,
+            "y": 9086
+          },
+          {
+            "x": 1401494400000,
+            "y": 9135
+          },
+          {
+            "x": 1404086400000,
+            "y": 9717
+          },
+          {
+            "x": 1406764800000,
+            "y": 17970
+          },
+          {
+            "x": 1409443200000,
+            "y": 19101
+          },
+          {
+            "x": 1412035200000,
+            "y": 18890
+          },
+          {
+            "x": 1414713600000,
+            "y": 22104
+          },
+          {
+            "x": 1417305600000,
+            "y": 22577
+          },
+          {
+            "x": 1419984000000,
+            "y": 27335
+          },
+          {
+            "x": 1422662400000,
+            "y": 28805
+          },
+          {
+            "x": 1425081600000,
+            "y": 28347
+          },
+          {
+            "x": 1427760000000,
+            "y": 28717
+          },
+          {
+            "x": 1430352000000,
+            "y": 25657
+          },
+          {
+            "x": 1433030400000,
+            "y": 24539
+          },
+          {
+            "x": 1435622400000,
+            "y": 24519
+          },
+          {
+            "x": 1438300800000,
+            "y": 25943
+          },
+          {
+            "x": 1440979200000,
+            "y": 26416
+          },
+          {
+            "x": 1443571200000,
+            "y": 26011
+          },
+          {
+            "x": 1446249600000,
+            "y": 28206
+          },
+          {
+            "x": 1448841600000,
+            "y": 27989
+          },
+          {
+            "x": 1451520000000,
+            "y": 27912
+          },
+          {
+            "x": 1454198400000,
+            "y": 30385
+          },
+          {
+            "x": 1456704000000,
+            "y": 26183
+          },
+          {
+            "x": 1459382400000,
+            "y": 29246
+          },
+          {
+            "x": 1461974400000,
+            "y": 28392
+          },
+          {
+            "x": 1464652800000,
+            "y": 28183
+          },
+          {
+            "x": 1467244800000,
+            "y": 28803
+          },
+          {
+            "x": 1469923200000,
+            "y": 28538
+          },
+          {
+            "x": 1472601600000,
+            "y": 27613
+          },
+          {
+            "x": 1475193600000,
+            "y": 24331
+          },
+          {
+            "x": 1477872000000,
+            "y": 20732
+          },
+          {
+            "x": 1480464000000,
+            "y": 18169
+          },
+          {
+            "x": 1483142400000,
+            "y": 20972
+          },
+          {
+            "x": 1485820800000,
+            "y": 20163
+          },
+          {
+            "x": 1488240000000,
+            "y": 14324
+          },
+          {
+            "x": 1490918400000,
+            "y": 15718
+          },
+          {
+            "x": 1493510400000,
+            "y": 12842
+          },
+          {
+            "x": 1496188800000,
+            "y": 11181
+          },
+          {
+            "x": 1498780800000,
+            "y": 10209
+          },
+          {
+            "x": 1501459200000,
+            "y": 10101
+          },
+          {
+            "x": 1504137600000,
+            "y": 9644
+          },
+          {
+            "x": 1506729600000,
+            "y": 8017
+          },
+          {
+            "x": 1509408000000,
+            "y": 7343
+          },
+          {
+            "x": 1512000000000,
+            "y": 7196
+          },
+          {
+            "x": 1514678400000,
+            "y": 6432
+          }
+        ]
+      }
+    ],
+    timeseriesPlot: {
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 0.5,
+          inverseColors: false,
+          opacityFrom: 1,
+          opacityTo: 0.9,
+          stops: [0, 90, 100]
+        },
+      },
+      legend: {
+        fontSize: '18px',
+      },
+      chart: {
+
+        toolbar: {
+          show: true,
+
+
+        },
+        height: 350,
+      },
+      xaxis: {
+        type: 'datetime'
+      }
+    },
+
     reviewCountPlot: {
       dataLabels: {
         enabled: true
@@ -131,7 +657,10 @@ export default {
         type: 'bar',
         height: 350,
         stacked: true,
-        stackType: '100%'
+        stackType: '100%',
+        toolbar: {
+          show: false
+        }
       },
       plotOptions: {
         bar: {
@@ -161,10 +690,26 @@ export default {
         enabled: false
       },
       yaxis: {
+        labels: {
+          style: {
+            fontSize: '18px'
+          },
+
+        },
         'decimalsInFloat': 1
       },
-      chart: {},
+      chart: {
+        toolbar: {
+          show: false
+        }
+      },
       xaxis: {
+        labels: {
+          style: {
+            fontSize: '18px'
+          },
+
+        },
         'decimalsInFloat': 1,
         categories: ["B005NF5NTK", "B0092KJ9BU", "B00AANQLRI", "B00BT8L2MW", "B00D856NOG", "B00G7UY3EG", "B00IGISUTG", "B00M51DDT2", "B00M6QODH2", "B00MQSMDYU", "B00MXWFUQC", "B00P7N0320", "B00QN1T6NM", "B00UCZGS6S", "B00UH3L82Y", "B00VH88CJ0", "B00X5RV14Y", "B014EB532U", "B018JW3EOY", "B019PV2I3G"]
       },

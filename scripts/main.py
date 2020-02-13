@@ -130,8 +130,8 @@ if __name__ == "__main__":
     #print("MAX YEAR ", df_exploration.year.max())
     print("\n# Data Exploration")
     # data_exploration.top_50_products_verified_unverified_both(df_rich)
-    data_exploration.count_reviews(df_rich)
-    #data_exploration.year_month_day_reviews(df_rich)
+    #data_exploration.count_reviews(df_rich)
+    data_exploration.year_month_day_reviews(df_rich)
 
     #data_exploration.run(df_exploration)
     #df_analysis = preprocessing_post_exploration_dataset(df_exploration)
