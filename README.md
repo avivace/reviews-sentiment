@@ -80,3 +80,7 @@ npm run deploy
 #### Antuz notes
 
 Accent is `#B71C1C`, typeface is *Barlow* 500. On the plots and graphs, typeface is *Inter* 600, palette is `#4DAF4A`, `#FF7F00`, `#C73E31`.
+
+#### Final notes from our supervisor, E.Fersini
+
+Unverified/Spam "boom" happens around the first-publishing of some product, aggregating data from a category will hardly show this (there are papers on this)
