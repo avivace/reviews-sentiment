@@ -132,7 +132,8 @@ if __name__ == "__main__":
     # data_exploration.top_50_products_verified_unverified_both(df_rich)
     #data_exploration.count_reviews(df_rich)
     data_exploration.export_week_day(df_rich)
-
+    data_exploration.export_month(df_rich)
+    #data_exploration.export_year(df_rich)
     #data_exploration.run(df_exploration)
     #df_analysis = preprocessing_post_exploration_dataset(df_exploration)
     

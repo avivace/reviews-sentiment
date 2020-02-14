@@ -296,3 +296,15 @@ def year_month_day_reviews(df):
     analyze_reviews(df, df.week_day, 'review_distribution_per_day', 'Day')
     analyze_reviews(df, df.month, 'review_distribution_per_month', 'Month')
     analyze_reviews(df, df.year, 'review_distribution_per_year', 'Year')
+
+def export_week_day(df):
+    for i in range(1,6):
+        print(i, df.loc[df['overall']==i].groupby(['week_day']).size())
+
+def export_month(df):
+        for i in range(1,6):
+            print(i, df.loc[df['overall']==i].groupby(['month']).size().values.tolist())
+
+def export_year(df):
+        for i in range(1,6):
+            print(i, df.loc[df['overall']==i].groupby(['year']).size().values.tolist())
