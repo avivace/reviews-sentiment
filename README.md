@@ -19,7 +19,7 @@ By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://gi
 
 #### Web demo
 
-<!--<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp1.png">-->
+<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp1.png">
 
 <img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp2.png">
 
@@ -30,6 +30,8 @@ By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://gi
 <img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp_plot2.png">
 
 <img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp_plot1.png">
+
+<img src="https://github.com/avivace/reviews-sentiment/blob/develop/figures/ext/webapp_plot3.png">
 
 
 
