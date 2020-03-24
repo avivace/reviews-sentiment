@@ -6,7 +6,7 @@ attrs==19.3.0
 autopep8==1.4.4
 Babel==2.7.0
 backcall==0.1.0
-bleach==3.1.1
+bleach==3.1.2
 blis==0.4.1
 boto==2.49.0
 boto3==1.10.34
@@ -150,7 +150,7 @@ attrs==19.3.0
 autopep8==1.4.4
 Babel==2.7.0
 backcall==0.1.0
-bleach==3.1.1
+bleach==3.1.2
 blis==0.4.1
 boto==2.49.0
 boto3==1.10.34
@@ -327,7 +327,7 @@ attrs==19.3.0
 autopep8==1.4.4
 Babel==2.7.0
 backcall==0.1.0
-bleach==3.1.1
+bleach==3.1.2
 blis==0.4.1
 boto==2.49.0
 boto3==1.10.34
