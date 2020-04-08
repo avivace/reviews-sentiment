@@ -1,0 +1,72 @@
+\chapter{Introduzione}
+
+Negli ultimi decenni, l'avvento e la popolarizzazione di servizi online ha cambiato il volto dello shopping su larga scala. Piattaforme come Amazon ed eBay fanno parte della vita di tutti i giorni ed è frequente consultare risorse online prima di acquistare. Nel 2017, il volume di vendite nel mercato statunitense che vengono effettuate online ha raggiunto il 9\% e ci si aspetta che arrivi al 12\% nel 2021 \cite{usb1}.
+
+La crescita del traffico e della portata dei portali di commercio online genera una quantità crescente di dati sulla natura delle transizioni e degli utenti di questo servizio.
+
+Una parte importante di questi dati è costituita dai contenuti generati dagli utenti che valutano i prodotti acquistati e condividono la loro esperienza. Si tratta principalmente di valutazioni numeriche, spesso corredate da un breve paragrafo testuale.
+
+Avere a disposizione un insieme di strumenti che possa processare in modo automatico questa mole di dati è fondamentale per tutti gli attori coinvolti nelle transazioni: produttori, clienti/consumatori, venditori, piattaforme di vendita e pubblicitari.
+
+Discipline come la Sentiment Analysis estraggono dei dati strutturati da questi contenuti testuali, permettendo uno sguardo statistico sulle tendenze di comunità di acquirenti sotto diversi aspetti di diversi prodotti. Avere un'idea di quali siano gli elementi più o meno apprezzati di un prodotto, secondo le diverse categorie di utenti permette di agire in modo dinamico e veloce sul loro sviluppo e sulla loro pubblicizzazione. I gestori di questi portali invece saranno interessanti a profilare gruppi di utenti, estraendone le preferenze, e gli elementi di successo dei prodotti, per proporre raccomandazioni sempre più vincenti, accurate e vicine ai desideri dell'utente.
+
+Un altro aspetto da non sottovalutare è quello del valore "genuino" che i contenuti generati da altri consumatori riescono a trasmettere. Le recensioni vengono infatti recepite come fonti affidabili e privi di  natura pubblicitaria, rappresentando uno strumento molto potente.
+
+Amazon ha sviluppato un sistema per assegnare rilevanza alle recensioni e non è raro che venga usato insieme ad altre tecniche di (auto) marketing, promuovendo articoli con recensioni positive e utili, presentandole ordinate dalla più "convincente" all'utente che sta attraversando il processo di decisione.
+
+\section{Obiettivo del progetto}
+
+Questo lavoro si sviluppa in tre fasi di seguito sintetizzate.
+
+\subsection{Esplorazione}
+
+Per approfondire e comprendere la natura di questi contributi, sono state effettuate analisi preliminari sulle recensioni, concentrandoci sulla distribuzione delle opinioni, sulle caratteristiche delle recensioni sui prodotti più rilevanti e sull'evoluzione di questi ultimi fattori nel tempo.
+\par
+L'obbiettivo è sviluppare una visione su diversi aspetti soggettivi (e variabili nel tempo e per categoria) che caratterizzano le recensioni, al fine di comprendere in che modo vengano prodotte ed interpretate.
+\par
+Abbiamo approfondito caratteristiche come \texttt{verified} e in che modo influenzano il totale dei dati.
+\par
+Infine, vengono brevemente presentate alcune ricerche che investigano la questione dello sbilanciamento delle recensioni.
+
+\subsection{Sentiment Analysis}
+
+In questa fase, analizziamo sistematicamente le parti testuali delle recensioni per estrarne un'opinione.
+\par
+Una parte preliminare pre-processa e prepara il dataset. Vengono scartate recensioni prolisse e ritenute inutili e fatte ulteriori esplorazioni sul nuovo (ristretto) corpo di recensioni.
+\par
+Infine, alleniamo due classificatori, Naive Bayes e Logistic Regression, che etichettano queste istanze con la variabile target \texttt{opinion} e valutiamo le loro performance.
+
+\subsection{Topic Analysis}
+
+In questa fase, viene utilizzato un algoritmo che consente di identificare gli argomenti più discussi all'interno di un corpus di documenti. 
+\par La fase di preparazione del dataset è la stessa della fase di sentiment analysis.
+\par
+Vengono inoltre analizzati gli svantaggi e alcune possibili soluzioni del metodo analizzato. Infine, gli argomenti risultanti dalla sua applicazione vengono visualizzati in maniera interattiva.
+
+\section{Dataset}
+
+Il dataset utilizzato \cite{amazondataset} proviene da un gruppo di ricerca dell'Università di San Diego, che ha estratto e processato le recensioni rilasciate dagli utenti sul sito Amazon.com fino al 2018 in formato JSON.
+\par
+Abbiamo scelto il dataset della categoria "Cellulari ed Accessori", in una versione densa, contenente solo i dati generati da utenti con almeno 5 recensioni (\textit{5-core}).
+
+\section{Software utilizzati}
+
+Python è stato lo strumento fondamentale in questo lavoro, scelta dovuta alla grande quantità di strumenti e librerie open source disponibili per questo linguaggio.
+\paragraph{}
+Tra le librerie utilizzate, ricordiamo:
+\begin{itemize}
+    \item Pandas per il caricamento, manipolazione e querying dei dataset
+    \item Matplotlib per il rendering di grafici e figure direttamente da dataframe pandas
+    \item numpy per un supporto efficiente a matrici e vettori di grosse dimensioni
+    \item sklearn per machine learning
+    \item pyLDAvis per la visualizzazione interattiva dei topic model
+    \item NLTK per Natural Language Processing
+    \item VueJS per applicazioni web reattive
+    \item Flask per realizzare un'API Restful con le funzionalità implementate
+\end{itemize}
+
+Il versionamento del codice e la possibilità di lavorare in gruppo sono due importanti strumenti offerti da Git, mentre la documentazione è scritta in \LaTeX{}. 
+\par
+I prodotti del progetto sono: script per ogni fase della pipeline, Notebook Jupyter interattivi, figure e grafici vettoriali ed un'applicazione web composta da un backend in Python e un frontend in Vue.js che offre un un'interfaccia utente di facile utilizzo che espone alcune funzionalità del nostro lavoro.
+\par
+Inoltre, per lo sviluppo della demo sono state utilizzate tecnologie frontend basate su Javascript.

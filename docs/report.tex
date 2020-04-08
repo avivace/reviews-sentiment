@@ -9,10 +9,19 @@
 \usepackage{graphicx}
 \usepackage{subfigure}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage{titling}
-  \usepackage{float}
-  \usepackage{textcomp}
-  
+\usepackage{float}
+\usepackage{textcomp}
+\setlength\parindent{0pt}
+\usepackage[
+backend=biber,
+style=numeric,
+sorting=ynt
+]{biblatex}
+
+\addbibresource{bibliography.bib}
+
 \begin{document}
 \title{%
   \Huge Amazon Reviews \\
@@ -30,4 +39,21 @@
 }
 \date{Data Analytics, January 2020}
 \maketitle
+
+\input{abstract.tex}
+\tableofcontents
+\listoffigures
+\listoftables
+\pagebreak
+%%
+\input{1_introduction.tex}
+\input{2_esplorazione.tex}
+\input{3_sentiment_analysis.tex}
+\input{4_topic_analysis.tex}
+\input{5_conclusioni.tex}
+
+\newpage
+\addcontentsline{toc}{chapter}{Bibliografia}
+\printbibliography
+
 \end{document}

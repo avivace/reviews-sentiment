@@ -1,0 +1,130 @@
+\chapter{Topic analysis}
+La topic analysis consente di identificare gli argomenti più discussi semplicemente contando le parole all’interno di un corpus di documenti e raggruppando modelli di parole simili. 
+\par 
+È una tecnica di machine learning che organizza e comprende grandi raccolte di dati testuali, assegnando tag o categorie in base all’argomento o al tema di ogni singolo testo. 
+\par 
+I risultati sono più dettagliati e interessanti rispetto alla sentiment analysis, in quanto la topic analysis esamina più da vicino le informazioni dietro un testo.
+\par
+Sono comunque due metodi che, se usati in combinazione, consentono di restringere ulteriormente queste informazioni per trovare con precisione quali temi vengono discussi, fornendo quindi informazioni fruibili riguardanti il prodotto.
+
+\section{Algoritmo utilizzato}
+Il metodo di riferimento di topic analysis è Latent Dirichlet Allocation (LDA) \cite{blei2003latent}: è una tecnica di machine learning non supervisionata che consente di inferire schemi e raggruppare espressioni simili senza la necessità di definire gli argomenti a priori. L'assunzione di LDA è che ogni documento può essere descritto da una distribuzione di argomenti, e ciascun argomento può altresì essere descritto da una distribuzione di parole.
+\par
+LDA è un modello ampiamente documentato in Python e per questo motivo è stata la scelta naturale per effettuare il task di topic analysis. 
+\par 
+Detto questo, è da far notare che la letteratura scientifica negli ultimi anni ha prodotto diversi modelli che mettono in risalto alcuni svantaggi del modello LDA. 
+\subsection{Individuazione topic}
+\label{indiv_topic}
+Una limitazione è stata riscontrata nello sviluppo del modello MG-LDA in cui viene asserito che i modelli standard (come LDA) tendono a produrre topic che corrispondono alle proprietà globali degli oggetti in analisi piuttosto che agli aspetti di un oggetto che tendono ad essere valutati da un utente. 
+\par
+La soluzione adottata in questo progetto, vista l'assenza di una implementazione per il modello MG-LDA \cite{titov2008joint}, è stata quella di applicare LDA su prodotti presi singolarmente - considerando ovviamente i prodotti con più osservazioni all'interno del dataset - nonostante la pratica più diffusa in letteratura sembra quella di applicare il modello sull'intero corpus di documenti a prescindere dall'eterogeneità dei documenti stessi. Questa scelta è stata presa di proprosito per evitare la formazione di macro-topic.
+\subsection{Sentiment topic}
+Un'altra carenza riscontrata è l'assenza di rilevazione del sentiment: questo compito è risolto da diversi modelli (per esempio JST \cite{lin2009joint}, basato su LDA), che suddividono il testo in argomenti, assegnando simultaneamente a ciascuno un livello di sentimento.
+\par
+L'idea per questo progetto, vista la mancanza di una implementazione del modello JST, è stata quella di utilizzare un approccio lexicon-based (VADER \cite{hutto2014vader}) in combinazione con l'approccio non supervisionato, in modo da poter fornire una visione generale ed approssimata del sentiment dei topic prodotti da LDA. Di seguito viene presentata la procedura implementata:
+\begin{itemize}
+    \item Per ogni recensione viene calcolato il rispettivo sentiment. In particolare, l'output fornito è una variabile \texttt{compound} $\in [-1, +1]$ che rappresenta un sentiment:
+        \begin{itemize}
+            \item \textbf{positivo} se \texttt{compound} $\geq 0.05$
+            \item \textbf{neutrale} se -0.05 < \texttt{compound} < 0.05
+            \item \textbf{negativo} se \texttt{compound} $\leq -0.05$
+        \end{itemize}
+    \item In seguito all'applicazione del modello LDA, ogni recensione ha associata la probabilità con la quale ha contribuito alla formazione del topic.
+    \item Per ogni recensione viene estratto il topic con probabilità maggiore (se > 0.7). In questo caso, si assume che la recensione sia inerente al suddetto topic, altrimenti viene scartata dal conto.
+    \item Per ogni topic viene effettuata la media del sentiment delle recensioni associate al suddetto topic
+\end{itemize}
+
+Questa soluzione non è parsa consistente in quanto circa il 0.1\% delle recensioni appartenevano ad un topic specifico con probabilità superiore a 0.7. L'abbassamento della soglia di probabilità è anch'essa una soluzione inconsistente.
+
+\section{Procedimento}
+
+La fase di topic analysis condivide le operazioni preliminari di preparazione del dataset presentate nel Capitolo \ref{preprocessing} e nel Capitolo \ref{bow}.
+\par
+L'algoritmo LDA è stato applicato su oggetti presi singolarmente per i problemi sottolineati nel Capitolo \ref{indiv_topic}. Il criterio di scelta dei prodotti da analizzare è la loro popolarità in termini di recensioni.
+\par 
+In particolare, soffermandoci sulla Figura \ref{opinion_bestseller_products} si può notare quanto sono dominanti, in percentuale, le recensioni positive. Ciò rispecchia connotati già riscontrati durante l'esplorazione del dataset; nonostante ciò alcuni prodotti tra i più recensiti mostrano una percentuale di recensioni negative e neutrali elevata rispetto alla media.
+\par 
+Considerando i tempi di computazione, un totale di 6 prodotti si è rivelato essere un buon trade-off per un'analisi variegata, prendendo i 3 prodotti con la media di \texttt{overall} più alta e i 3 prodotti con la media di \texttt{overall} più bassa.
+\par
+Essendo LDA un algoritmo non supervisionato che produce argomenti astratti senza conoscerne il numero a priori, solitamente necessita di un tuning degli iperparametri per individuare il modello migliore. Gli iperparametri sono:
+
+\begin{itemize}
+    \item K: è il numero di argomenti da estrarre dal corpus di documenti disponibile
+    \item $\alpha$: è il parametro relativo alla distribuzione che regola l’aspetto della distribuzione degli argomenti per tutti i documenti del corpus. Tipicamente viene scelto un valore di $\alpha < 1$ per ottenere una distribuzione sparsa di argomenti per documento.
+    \item $\beta$: è il parametro relativo alla distribuzione che regola l’aspetto della distribuzione delle parole in ciascun argomento. Per lo stesso motivo di $\alpha$, viene scelto un valore $\beta < 1$.
+\end{itemize}{}
+
+Nella Tabella \ref{values_hyper} vengono mostrati i possibili valori assumibili dagli iperparametri.
+\begin{table}[H]
+\small  
+\centering
+\begin{tabular}{|p{0.20\textwidth}|p{0.28\textwidth}|}
+\hline
+Iperparametro & Valori possibili\\
+\hline
+K & [2, 3, 4, 5, 6, 7, 8, 9, 10]\\
+$\alpha$ & [0.1, 1]\\
+$\beta$ & [0.01, 0.1, 1]\\
+\hline
+\end{tabular}
+\caption{Possibili valori degli iperparametri di LDA}
+\label{values_hyper}
+\end{table}
+
+Per valutare la qualità degli argomenti appresi viene usato il punteggio di \textit{coherence}. Per ogni prodotto:
+\begin{itemize}
+    \item Viene applicato l'algoritmo iterando sull'insieme di iperparametri
+    \item Ogni modello risultante ottiene un punteggio
+    \item Il modello con il punteggio più alto è l'ottimale
+\end{itemize}{}
+
+Nella Tabella \ref{hyper_opt} vengono mostrati i modelli ottimali per ciascun prodotto considerato per l'analisi. 
+
+\begin{table}[H]
+\small  
+\centering
+\begin{tabular}{|p{0.20\textwidth}|p{0.05\textwidth}|p{0.05\textwidth}|p{0.05\textwidth}||p{0.20\textwidth}|}
+\hline
+Codice prodotto & $\alpha$ & $\beta$ & K & Coherence score\\
+\hline
+B00MXWFUQC & 1 & 1 & 3 & 0.48 \\
+B0092KJ9BU & 0.1 & 1 & 7 & 0.50 \\
+B00UC7G565 & 0.1 & 0.01 & 2 & 0.55 \\
+B00VH88CJ0 & 0.1 & 0.01 & 2 & 0.57 \\
+B005NF5NTK & 1 & 0.1 & 3 & 0.60 \\
+B00X5RV14Y & 0.1 & 1 & 6 & 0.55 \\
+\hline
+\end{tabular}
+\caption{Iperparametri del modello ottimale con rispettivo punteggio di coherence}
+\label{hyper_opt}
+\end{table}
+
+In Figura \ref{coherence_plots} vengono invece mostrati i grafici del punteggio di \textit{coherence} per ciascun prodotto e con gli iperparametri $\alpha$ e $\beta$ mostrati nella Tabella \ref{hyper_opt}. 
+
+\begin{figure}[H]
+    \centering
+    \subfigure[Coherence plot of B005NF5NTK]{\includesvg[width=0.42\textwidth]{figures/3_coherence_plot_B005NF5NTK.svg}} 
+    \subfigure[Coherence plot of B0092KJ9BU]{\includesvg[width=0.42\textwidth]{figures/3_coherence_plot_B0092KJ9BU.svg}}
+    \subfigure[Coherence plot of B00MXWFUQC]{\includesvg[width=0.42\textwidth]{figures/3_coherence_plot_B00MXWFUQC.svg}}
+    \subfigure[Coherence plot of B00UCZGS6S]{\includesvg[width=0.42\textwidth]{figures/3_coherence_plot_B00UCZGS6S.svg}}
+    \subfigure[Coherence plot of B00VH88CJ0]{\includesvg[width=0.42\textwidth]{figures/3_coherence_plot_B00VH88CJ0.svg}}
+    \subfigure[Coherence plot of B00X5RV14Y]{\includesvg[width=0.42\textwidth]{figures/3_coherence_plot_B00X5RV14Y.svg}}
+    \caption{Coherence plots of products}
+    \label{coherence_plots}
+\end{figure}
+
+\section{Visualizzazione dei risultati}
+
+Per valutare i risultati prodotti dall'algoritmo LDA abbiamo usufruito di pyLDAvis, una libreria Python basata su \cite{sievert2014ldavis} che permette di visualizzare gli argomenti in maniera interattiva. 
+\par
+Fornisce una visione globale degli argomenti e di come differiscono l'uno dall'altro, consentendo allo stesso tempo un'analisi approfondita dei termini maggiormente associati a ciascun singolo argomento.
+\par
+Il pannello di sinistra visualizza gli argomenti come cerchi nel piano bidimensionale i cui centri sono determinati calcolando la divergenza di Jensen-Shannon tra gli argomenti.
+\par
+Il pannello di destra mostra un grafico a barre orizzontali, le cui barre rappresentano i (30) singoli termini che sono i più rilevanti per interpretare l'argomento attualmente selezionato a sinistra. Una coppia di barre sovrapposte rappresenta sia la frequenza di un determinato termine a livello di corpus (barre blu) sia la frequenza specifica dell'argomento del termine (barre rosse).
+\par
+Sempre nel pannello di destra, appena sopra il grafico a barre orizzontali, è possibile regolare per mezzo di uno slider il valore $\lambda$, con $0 \leq \lambda \leq 1$. Esso consente di classificare la pertinenza di un termine rispetto a un argomento.
+\par 
+Valori di $\lambda$ vicino a 0 evidenziano i termini potenzialmente rari ma esclusivi per l'argomento selezionato, mentre valori di $ \lambda$ vicino a 1 evidenziano i termini frequenti ma non necessariamente esclusivi per l'argomento selezionato.
+\par
+L'impostazione consigliata in \cite{sievert2014ldavis} suggerisce un valore di $\lambda$ intorno a 0.6, che è stato dimostrato essere di aiuto per gli utenti per interpretare l'argomento, nonostante sia fatto presente che il valore ottimale può variare in base al dataset e gli argomenti stessi.
