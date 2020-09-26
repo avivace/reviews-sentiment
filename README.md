@@ -1,6 +1,6 @@
 # Analytics on Amazon Reviews
 
-Data Analytics exam final project, MSc in Computer Science.
+Data Analytics exam final project, [MSc in Computer Science](https://github.com/avivace/compsci).
 
 By [Matteo Coppola](https://github.com/matteocoppola), [Luca Palazzi](https://github.com/lucapalazzi), [Antonio Vivace](https://github.com/avivace).
 
