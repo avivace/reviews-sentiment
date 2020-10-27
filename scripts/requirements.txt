@@ -16,7 +16,7 @@ certifi==2019.11.28
 cffi==1.13.2
 chardet==3.0.4
 cloudpickle==1.2.2
-cryptography==2.8
+cryptography==3.2
 cycler==0.10.0
 cymem==2.0.3
 decorator==4.4.1
@@ -162,7 +162,7 @@ chardet==3.0.4
 Click==7.0
 cloudpickle==1.2.2
 confuse==1.0.0
-cryptography==2.8
+cryptography==3.2
 cycler==0.10.0
 cymem==2.0.3
 dash==1.7.0
@@ -339,7 +339,7 @@ chardet==3.0.4
 Click==7.0
 cloudpickle==1.2.2
 confuse==1.0.0
-cryptography==2.8
+cryptography==3.2
 cycler==0.10.0
 cymem==2.0.3
 dash==1.7.0
