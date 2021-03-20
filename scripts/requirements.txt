@@ -39,7 +39,7 @@ ipython-genutils==0.2.0
 isort==4.3.21
 jedi==0.14.1
 jeepney==0.4.1
-Jinja2==2.10.3
+Jinja2==2.11.3
 jmespath==0.9.4
 joblib==0.14.0
 jsonschema==3.2.0
@@ -195,7 +195,7 @@ isort==4.3.21
 itsdangerous==1.1.0
 jedi==0.14.1
 jeepney==0.4.1
-Jinja2==2.10.3
+Jinja2==2.11.3
 jmespath==0.9.4
 joblib==0.14.0
 json5==0.8.5
@@ -373,7 +373,7 @@ isort==4.3.21
 itsdangerous==1.1.0
 jedi==0.14.1
 jeepney==0.4.1
-Jinja2==2.10.3
+Jinja2==2.11.3
 jmespath==0.9.4
 joblib==0.14.0
 json5==0.8.5
