@@ -79,7 +79,7 @@ pycodestyle==2.5.0
 pycparser==2.19
 pydocstyle==4.0.1
 pyflakes==2.1.1
-Pygments==2.5.2
+Pygments==2.7.4
 pyLDAvis==2.1.2
 pylint==2.4.4
 Pympler==0.8
@@ -249,7 +249,7 @@ pycodestyle==2.5.0
 pycparser==2.19
 pydocstyle==4.0.1
 pyflakes==2.1.1
-Pygments==2.5.2
+Pygments==2.7.4
 pyLDAvis==2.1.2
 pylint==2.4.4
 Pympler==0.8
@@ -427,7 +427,7 @@ pycodestyle==2.5.0
 pycparser==2.19
 pydocstyle==4.0.1
 pyflakes==2.1.1
-Pygments==2.5.2
+Pygments==2.7.4
 pyLDAvis==2.1.2
 pylint==2.4.4
 Pympler==0.8
