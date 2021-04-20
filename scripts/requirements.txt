@@ -74,7 +74,7 @@ preshed==3.0.2
 prompt-toolkit==2.0.10
 psutil==5.6.7
 ptyprocess==0.6.0
-py==1.8.0
+py==1.10.0
 pycodestyle==2.5.0
 pycparser==2.19
 pydocstyle==4.0.1
@@ -244,7 +244,7 @@ prometheus-client==0.7.1
 prompt-toolkit==2.0.10
 psutil==5.6.7
 ptyprocess==0.6.0
-py==1.8.0
+py==1.10.0
 pycodestyle==2.5.0
 pycparser==2.19
 pydocstyle==4.0.1
@@ -422,7 +422,7 @@ prometheus-client==0.7.1
 prompt-toolkit==2.0.10
 psutil==5.6.7
 ptyprocess==0.6.0
-py==1.8.0
+py==1.10.0
 pycodestyle==2.5.0
 pycparser==2.19
 pydocstyle==4.0.1
